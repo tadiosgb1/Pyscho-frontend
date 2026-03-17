@@ -42,9 +42,7 @@
                       $route.name === item.route ? 'text-white' : 'text-slate-400 group-hover:text-primary'
                     ]"
                   ></i>
-                  
                   <span class="whitespace-nowrap tracking-tight">{{ item.name }}</span>
-
                   <div 
                     v-if="$route.name === item.route" 
                     class="absolute right-0 w-1.5 h-6 bg-white/40 rounded-l-full animate-pulse"
@@ -53,12 +51,6 @@
               </li>
             </ul>
           </div>
-
-          <div class="mx-6 my-4 p-4 bg-slate-50 rounded-2xl border border-slate-100">
-            <p class="text-[10px] font-bold text-slate-400 uppercase mb-1">Total Credits</p>
-            <p class="text-lg font-black text-primary">240,582.00</p>
-          </div>
-
           <div class="h-10"></div>
         </div>
       </aside>
@@ -74,11 +66,13 @@ export default {
       is_superuser: false,
       menuItems: [
 
+ 
+
+
+
 
     
 
-
-    
 
       {
         name: "Dashboard", 
@@ -104,85 +98,48 @@ export default {
           icon: "fas fa-folder",
           color: "#22c55e"
         },
+      
+   
+
         {
-          name: "Teams",
-          route: "Team-view",
+          name: "Organizations",
+          route: "Organization-view",
           icon: "fas fa-folder",
           color: "#22c55e"
         },
-      {
-        name: "Contacts",
-        route: "Contacts-view",
-        icon: "fas fa-folder",
-        color: "#22c55e"
-      },
-      {
-      name: "ContactFields",
-      route: "ContactFields-view",
+    {
+      name: "Tests",
+      route: "Test-view",
       icon: "fas fa-folder",
       color: "#22c55e"
     },
 
     {
-      name: "Group Contacts",
-      route: "ContactGroup-view",
+      name: "Answers",
+      route: "Answer-view",
       icon: "fas fa-folder",
       color: "#22c55e"
     },
-
-
     {
-      name: "Identifiers",
-      route: "Identifier-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-
-{
-      name: "Sender Names",
-      route: "SendeNames-view",
+      name: "Questions",
+      route: "Question-view",
       icon: "fas fa-folder",
       color: "#22c55e"
     },
 
     {
-      name: "Tokens",
-      route: "Token-view",
+      name: "Results",
+      route: "Result-view",
       icon: "fas fa-folder",
       color: "#22c55e"
     },
-
-
-    {
-      name: "Schedules",
-      route: "Schedules-view",
+  
+     {
+      name: "Progresses",
+      route: "Progress-view",
       icon: "fas fa-folder",
       color: "#22c55e"
     },
-
-    {
-      name: "Tages",
-      route: "Tage-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-
-
-    {
-      name: "Templates",
-      route: "Template-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-
-
-    {
-      name: "Messages",
-      route: "Message-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-
    ],
     };
   },

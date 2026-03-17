@@ -58,11 +58,11 @@ export default {
         // primary: '#FA7118',
           secondary: '#FF6B00',
           
+          dprimary:'#3730A3',
+          primary: '#4F46E5',
           // dprimary:'#5f5ffc',
           // primary: '#5f5ffc',
 
-          dprimary:'#1ce670',
-          primary: '#27dd73',
           // dprimary:'#008bcf',
           // primary: '#008bcf',
 

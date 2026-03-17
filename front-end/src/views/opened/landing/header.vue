@@ -6,11 +6,11 @@
       
       <router-link to="/" class="flex items-center space-x-3 group cursor-pointer">
         <div class="h-10 w-10 sm:h-11 sm:w-11 bg-white rounded-xl flex items-center justify-center shadow-2xl transform group-hover:rotate-6 transition-all duration-500">
-          <i class="fas fa-layer-group text-primary text-xl"></i>
+          <i class="fas fa-brain text-primary text-xl"></i>
         </div>
         <div class="flex flex-col">
           <span class="text-xl font-black text-white tracking-tighter leading-none">ALPHA</span>
-          <span class="text-[9px] font-bold text-white/60 uppercase tracking-[0.2em] leading-none mt-1 hidden sm:block">SMS Aggregator</span>
+          <span class="text-[9px] font-bold text-white/60 uppercase tracking-[0.2em] leading-none mt-1 hidden sm:block">Psychometric Solutions</span>
         </div>
       </router-link>
 
@@ -42,7 +42,7 @@
           to="/login"
           class="px-6 py-2.5 bg-secondary text-white text-[11px] font-black uppercase tracking-tighter rounded-xl shadow-[0_10px_20px_-5px_rgba(var(--secondary-rgb),0.4)] hover:scale-105 active:scale-95 transition-all duration-300"
         >
-          Login
+          Portal Login
         </router-link>
       </div>
 
@@ -81,8 +81,8 @@
         </div>
 
         <div class="pt-4 border-t border-white/10 flex flex-col gap-3">
-          <button class="w-full p-4 rounded-2xl bg-secondary text-white font-black text-xs uppercase tracking-[0.2em]">
-            Get Started
+          <button @click="$router.push('/take-test')" class="w-full p-4 rounded-2xl bg-secondary text-white font-black text-xs uppercase tracking-[0.2em]">
+            Take a Test
           </button>
           <div class="flex items-center justify-center gap-6 py-4">
              <span @click="selectedLang = 'en'" :class="selectedLang === 'en' ? 'text-white' : 'text-white/40'" class="text-xs font-bold cursor-pointer transition-all">ENGLISH</span>
@@ -104,16 +104,14 @@ export default {
       selectedLang: 'en',
       navLinks: [
         { name: 'Home', path: '/' },
-        { name: 'Products', path: '/products' },
-        { name: 'Pricing', path: '/pricing' },
-        { name: 'API Reference', path: '/send-sms' },
-        { name: 'Company', path: '/about' },
-        // { name: 'Support', path: '/support' }
+        { name: 'Assessments', path: '/assessments' }, // Interactive Assessment (31 SP)
+        { name: 'For Organizations', path: '/organizations' }, // Admin Dashboard (18 SP)
+        { name: 'Result Analytics', path: '/results' }, // Result Analysis (21 SP)
+        { name: 'Pricing', path: '/pricing' }
       ]
     };
   },
   watch: {
-    // Close mobile menu when route changes
     $route() {
       this.mobileMenuOpen = false;
     }
@@ -122,7 +120,6 @@ export default {
 </script>
 
 <style scoped>
-/* Optional: Adds a subtle line animation on desktop hover */
 nav a {
   position: relative;
 }

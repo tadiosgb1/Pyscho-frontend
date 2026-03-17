@@ -1,27 +1,27 @@
 <template>
   <div class="min-h-screen flex bg-slate-50 font-sans">
     <div class="hidden lg:flex lg:w-7/12 bg-slate-900 flex-col justify-between p-16 relative overflow-hidden">
-      <div class="absolute -top-24 -left-24 w-96 h-96 bg-dprimary/20 blur-[120px] rounded-full"></div>
+      <div class="absolute -top-24 -left-24 w-96 h-96 bg-primary-dense/20 blur-[120px] rounded-full"></div>
       <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary/10 blur-[120px] rounded-full"></div>
 
       <div class="relative z-10">
         <div class="flex items-center gap-4 mb-16">
           <div class="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30">
-            <i class="fas fa-microchip text-slate-900 text-xl"></i>
+            <i class="fas fa-brain text-white text-xl"></i>
           </div>
-          <span class="text-white font-black text-3xl tracking-tighter uppercase">Alpha<span class="text-primary">Integrator</span></span>
+          <span class="text-white font-black text-3xl tracking-tighter uppercase">Alpha<span class="text-primary">Psych</span></span>
         </div>
 
         <div class="space-y-6">
           <h1 class="text-6xl font-black text-white leading-tight">
-            Connect to <br/>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-dprimary">Ethio Telecom</span> <br/>
-            Instantly.
+            The Science of <br/>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-primary-dense">Human Potential.</span> <br/>
+            Decoded.
           </h1>
           <p class="text-slate-400 text-xl max-w-xl leading-relaxed font-medium">
-            The professional gateway for developers to reach millions. 
-            Send transactional SMS, OTPs, and notifications with 
-            <span class="text-secondary font-bold">zero latency</span>.
+            Access the leading behavioral analytics platform. 
+            Benchmark talent and drive growth with 
+            <span class="text-secondary font-bold">verified data</span>.
           </p>
         </div>
       </div>
@@ -29,13 +29,13 @@
       <div class="relative z-10 grid grid-cols-2 gap-8">
         <div class="flex flex-col gap-2">
           <div class="h-1 w-12 bg-secondary rounded-full"></div>
-          <h3 class="text-white font-bold uppercase tracking-widest text-xs">Direct Carrier Access</h3>
-          <p class="text-slate-500 text-sm">Official Ethio Telecom node integration.</p>
+          <h3 class="text-white font-bold uppercase tracking-widest text-xs">Scientific Accuracy</h3>
+          <p class="text-slate-500 text-sm">Validated psychometric frameworks.</p>
         </div>
         <div class="flex flex-col gap-2">
           <div class="h-1 w-12 bg-primary rounded-full"></div>
-          <h3 class="text-white font-bold uppercase tracking-widest text-xs">Developer Sandbox</h3>
-          <p class="text-slate-500 text-sm">Test your API calls in a safe environment.</p>
+          <h3 class="text-white font-bold uppercase tracking-widest text-xs">Real-time Analytics</h3>
+          <p class="text-slate-500 text-sm">Instant candidate progress tracking.</p>
         </div>
       </div>
     </div>
@@ -45,33 +45,33 @@
       
       <div class="w-full max-w-md">
         <div class="lg:hidden flex flex-col items-center mb-10 text-center">
-          <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-4">
-             <i class="fas fa-paper-plane text-slate-900"></i>
+          <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-4 text-white">
+             <i class="fas fa-user-check"></i>
           </div>
-          <h2 class="text-3xl font-black text-slate-900 tracking-tighter uppercase">Alpha Integrator</h2>
+          <h2 class="text-3xl font-black text-slate-900 tracking-tighter uppercase">Alpha Psych</h2>
         </div>
 
         <div class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 p-10 md:p-12 border border-slate-100 relative overflow-hidden">
-          <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-dprimary to-secondary"></div>
+          <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-primary via-primary-dense to-secondary"></div>
 
           <div class="mb-10">
-            <h2 class="text-3xl font-black text-slate-900">Sign In</h2>
+            <h2 class="text-3xl font-black text-slate-900">Portal Access</h2>
             <div class="flex items-center gap-2 mt-2">
               <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-              <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Gateway Status: Operational</p>
+              <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">Assessment Engine: Online</p>
             </div>
           </div>
 
           <form @submit.prevent="login" class="space-y-6">
             <div class="space-y-2">
-              <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Developer Email</label>
+              <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 ml-1">Professional Email</label>
               <div class="relative group">
-                <i class="fas fa-at absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors"></i>
+                <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors"></i>
                 <input
                   type="email"
                   v-model="form.email"
                   required
-                  placeholder="dev@company.et"
+                  placeholder="name@organization.com"
                   class="w-full pl-12 pr-4 py-4 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:ring-0 focus:border-primary outline-none transition-all text-sm font-bold text-slate-800"
                 />
               </div>
@@ -79,11 +79,11 @@
 
             <div class="space-y-2">
               <div class="flex justify-between items-end px-1">
-                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Access Token</label>
-                <a @click="$emit('close')" href="/forgot-password" class="text-[10px] font-black uppercase text-secondary hover:underline transition-colors">Forgot?</a>
+                <label class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">Security Key</label>
+                <a @click="$emit('close')" href="/forgot-password" class="text-[10px] font-black uppercase text-secondary hover:underline transition-colors">Reset?</a>
               </div>
               <div class="relative group">
-                <i class="fas fa-key absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors"></i>
+                <i class="fas fa-shield-alt absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors"></i>
                 <input
                   :type="showPassword ? 'text' : 'password'"
                   v-model="form.password"
@@ -110,34 +110,33 @@
               :disabled="loading"
             >
               <template v-if="!loading">
-                Sign in <i class="fas fa-chevron-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
+                Enter Portal <i class="fas fa-chevron-right text-[10px] group-hover:translate-x-1 transition-transform"></i>
               </template>
               <template v-else>
                 <div class="w-4 h-4 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                Verifying Credentials...
+                Authenticating Session...
               </template>
             </button>
           </form>
 
           <div class="mt-12 text-center pt-6 border-t border-slate-50">
-        <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">
-  Need System Access? 
-  <router-link :to="{ path: '/pricing'}" class="text-primary hover:text-dprimary ml-1 transition-colors">
-    Create Partner Account
-  </router-link>
-</p>
+            <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">
+              Institutional Access? 
+              <router-link :to="{ path: '/pricing'}" class="text-primary hover:text-primary-dense ml-1 transition-colors">
+                Register Organization
+              </router-link>
+            </p>
           </div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 import Toast from "../../../components/Toast.vue";
 
 export default {
-  name: "LoginIntegrator",
+  name: "LoginAlphaPsych",
   components: { Toast },
   data() {
     return {
@@ -153,21 +152,19 @@ export default {
       this.loading = true;
       try {
         const response = await this.$apiPost("/auth/login", this.form);
-        console.log("response login",response.data.user);
-        localStorage.setItem("refresh", response.data.token);
-        localStorage.setItem("access",response.data.token);
-        // localStorage.setItem("permissions", JSON.stringify(permissions));
-        // localStorage.setItem("groups", JSON.stringify(groups));
-        localStorage.setItem("userId", response.data.user.id);
-        localStorage.setItem("email", response.data.user.email);
-        localStorage.setItem("name", response.data.user.username);
-        this.$refs.toast?.showSuccessToastMessage("Secure Connection Established.");
+        localStorage.setItem("refresh", response.refreshToken);
+        localStorage.setItem("access", response.accessToken);
+        localStorage.setItem("userId", response.id);
+        localStorage.setItem("email", response.email);
+        localStorage.setItem("name", response.email);
+        
+        this.$refs.toast?.showSuccessToastMessage("Secure Session Initialized.");
     
         setTimeout(() => {
           this.$router.push({ path: "/dashboard/first-dash" });
         }, 1200);
       } catch (err) {
-        this.error = err.response?.data?.detail || err.response?.data?.message || "Authentication Failed. Please check your credentials.";
+        this.error = err.response?.data?.detail || err.response?.data?.message || "Invalid Session Credentials.";
       } finally {
         this.loading = false;
       }
@@ -177,7 +174,15 @@ export default {
 </script>
 
 <style scoped>
-/* Keyframes for the error shake */
+/* Industry Standard Professional Palette */
+.bg-primary { background-color: #4F46E5; } /* Indigo */
+.text-primary { color: #4F46E5; }
+.bg-primary-dense { background-color: #3730A3; } /* Deep Indigo */
+.text-primary-dense { color: #3730A3; }
+.bg-secondary { background-color: #FF6B00; } /* Amber Action */
+.text-secondary { color: #FF6B00; }
+.border-primary { border-color: #4F46E5; }
+
 .error-shake-enter-active {
   animation: shake 0.5s cubic-bezier(.36,.07,.19,.97) both;
 }
@@ -188,13 +193,4 @@ export default {
   30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
   40%, 60% { transform: translate3d(4px, 0, 0); }
 }
-
-/* Background blur/mesh helper */
-.bg-primary { background-color: #27dd73; }
-.text-primary { color: #27dd73; }
-.bg-dprimary { background-color: #1ce670; }
-.text-dprimary { color: #1ce670; }
-.bg-secondary { background-color: #FF6B00; }
-.text-secondary { color: #FF6B00; }
-.border-primary { border-color: #27dd73; }
 </style>

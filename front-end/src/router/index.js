@@ -26,14 +26,6 @@ import dashboard from '../views/closed/dashboard.vue'
 
 import RoleView from '../views/closed/Roles/RoleView.vue'
 import PermissionView from '../views/closed/Permissions/PermissionView.vue'
-import TeamView from '../views/closed/Teams/TeamView.vue'
-import TagesView from '../views/closed/Tages/TageView.vue'
-import GroupContactsView from '../views/closed/Contactgroups/ContactGroupView.vue'
-import ContactsView from '../views/closed/Contacts/ContactsView.vue'
-import TemplatesView from '../views/closed/Templates/TemplateView.vue'
-import TokensView from '../views/closed/Tokens/TokenView.vue'
-import MessagesView from '../views/closed/Messages/MessageView.vue'
-import IdentifierView from '../views/closed/Identifiers/IdentifierView.vue'
 
 
 
@@ -153,73 +145,147 @@ const routes = [
       { requiresGuest: true },
       children: [
       {
-        path: "schedules",
-        name: "Schedules-view",
-        component: () => import('../views/closed/Schedules/SchedulesView.vue'),
+        path: "score",
+        name: "Progress-view",
+        component: () => import('../closed/Progresses/score/ProgressView.vue'),
       },
       {
-        path: "schedules/add",
-        name: "Schedules-add",
-        component: () => import('../views/closed/Schedules/AddSchedules.vue'),
+        path: "score/add",
+        name: "Progress-add",
+        component: () => import('../closed/Progresses/score/AddProgress.vue'),
       },
       {
-        path: "schedules/edit/:id",
-        name: "Schedules-edit",
-        component: () => import('../views/closed/Schedules/EditSchedules.vue'),
+        path: "score/edit/:id",
+        name: "Progress-edit",
+        component: () => import('../closed/Progresses/score/EditProgress.vue'),
         props: true,
       },
       {
-        path: "schedules/detail/:id",
-        name: "Schedules-detail",
-        component: () => import('../views/closed/Schedules/SchedulesDetail.vue'),
-        props: true,
-      },
-
-      {
-        path: "sendernames",
-        name: "SendeNames-view",
-        component: () => import('../views/closed/SenderNames/SendeNamesView.vue'),
-      },
-      {
-        path: "sendernames/add",
-        name: "SendeNames-add",
-        component: () => import('../views/closed/SenderNames/AddSendeNames.vue'),
-      },
-      {
-        path: "sendernames/edit/:id",
-        name: "SendeNames-edit",
-        component: () => import('../views/closed/SenderNames/EditSendeNames.vue'),
-        props: true,
-      },
-      {
-        path: "sendernames/detail/:id",
-        name: "SendeNames-detail",
-        component: () => import('../views/closed/SenderNames/SendeNamesDetail.vue'),
+        path: "score/detail/:id",
+        name: "Progress-detail",
+        component: () => import('../closed/Progresses/score/ProgressDetail.vue'),
         props: true,
       },
 
       {
-        path: "contactfields",
-        name: "ContactFields-view",
-        component: () => import('../views/closed/ContactFields/ContactFieldsView.vue'),
+        path: "score",
+        name: "Result-view",
+        component: () => import('../closed/Results/score/ResultView.vue'),
       },
       {
-        path: "contactfields/add",
-        name: "ContactFields-add",
-        component: () => import('../views/closed/ContactFields/AddContactFields.vue'),
+        path: "score/add",
+        name: "Result-add",
+        component: () => import('../closed/Results/score/AddResult.vue'),
       },
       {
-        path: "contactfields/edit/:id",
-        name: "ContactFields-edit",
-        component: () => import('../views/closed/ContactFields/EditContactFields.vue'),
+        path: "score/edit/:id",
+        name: "Result-edit",
+        component: () => import('../closed/Results/score/EditResult.vue'),
         props: true,
       },
       {
-        path: "contactfields/detail/:id",
-        name: "ContactFields-detail",
-        component: () => import('../views/closed/ContactFields/ContactFieldsDetail.vue'),
+        path: "score/detail/:id",
+        name: "Result-detail",
+        component: () => import('../closed/Results/score/ResultDetail.vue'),
         props: true,
       },
+
+      {
+        path: "answer_text",
+        name: "Answer-view",
+        component: () => import('../closed/Answers/answer_text/AnswerView.vue'),
+      },
+      {
+        path: "answer_text/add",
+        name: "Answer-add",
+        component: () => import('../closed/Answers/answer_text/AddAnswer.vue'),
+      },
+      {
+        path: "answer_text/edit/:id",
+        name: "Answer-edit",
+        component: () => import('../closed/Answers/answer_text/EditAnswer.vue'),
+        props: true,
+      },
+      {
+        path: "answer_text/detail/:id",
+        name: "Answer-detail",
+        component: () => import('../closed/Answers/answer_text/AnswerDetail.vue'),
+        props: true,
+      },
+
+      {
+        path: "question_text",
+        name: "Question-view",
+        component: () => import('../closed/Questions/question_text/QuestionView.vue'),
+      },
+      {
+        path: "question_text/add",
+        name: "Question-add",
+        component: () => import('../closed/Questions/question_text/AddQuestion.vue'),
+      },
+      {
+        path: "question_text/edit/:id",
+        name: "Question-edit",
+        component: () => import('../closed/Questions/question_text/EditQuestion.vue'),
+        props: true,
+      },
+      {
+        path: "question_text/detail/:id",
+        name: "Question-detail",
+        component: () => import('../closed/Questions/question_text/QuestionDetail.vue'),
+        props: true,
+      },
+
+      {
+        path: "title",
+        name: "Test-view",
+        component: () => import('../closed/Tests/title/TestView.vue'),
+      },
+      {
+        path: "title/add",
+        name: "Test-add",
+        component: () => import('../closed/Tests/title/AddTest.vue'),
+      },
+      {
+        path: "title/edit/:id",
+        name: "Test-edit",
+        component: () => import('../closed/Tests/title/EditTest.vue'),
+        props: true,
+      },
+      {
+        path: "title/detail/:id",
+        name: "Test-detail",
+        component: () => import('../closed/Tests/title/TestDetail.vue'),
+        props: true,
+      },
+
+      {
+        path: "name",
+        name: "Organization-view",
+        component: () => import('../closed/Organizations/name/OrganizationView.vue'),
+      },
+      {
+        path: "name/add",
+        name: "Organization-add",
+        component: () => import('../closed/Organizations/name/AddOrganization.vue'),
+      },
+      {
+        path: "name/edit/:id",
+        name: "Organization-edit",
+        component: () => import('../closed/Organizations/name/EditOrganization.vue'),
+        props: true,
+      },
+      {
+        path: "name/detail/:id",
+        name: "Organization-detail",
+        component: () => import('../closed/Organizations/name/OrganizationDetail.vue'),
+        props: true,
+      },
+
+    
+
+     
+   
 
       {
         path: "users",
@@ -258,48 +324,9 @@ const routes = [
         path: "permission-view", name: "Permission-view",
         component: PermissionView,
       },
-        {
-        path: "team-view", name: "Team-view",
-        component: TeamView,
-      },
+       
 
-       {
-        path: "team-view", name: "Team-view",
-        component: TeamView,
-      },
-
-        {
-        path: "tags-view", name: "Tage-view",
-        component: TagesView,
-      },
-
-        {
-        path: "Contactsgroup-view", name: "ContactGroup-view",
-        component: GroupContactsView,
-      },
-        {
-        path: "contacts-view", name: "Contacts-view",
-        component: ContactsView,
-      },
-
-       {
-        path: "template-view", name: "Template-view",
-        component: TemplatesView,
-      },
-
-         {
-        path: "token-view", name: "Token-view",
-        component: TokensView,
-      },
-         {
-        path: "message-view", name: "Message-view",
-        component: MessagesView,
-      },
-     {
-        path: "identifier-view", name: "Identifier-view",
-        component: IdentifierView,
-      },
-    
+         
     ]
   },
   { path: "/forgot-password", name: "forgotPassword", component: ForgotPassword },

@@ -9,19 +9,19 @@
       <div class="md:col-span-2 space-y-6">
         <div class="flex items-center space-x-3">
            <div class="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
-             <i class="fas fa-layer-group text-primary text-lg"></i>
+             <i class="fas fa-brain text-primary text-lg"></i>
            </div>
-           <span class="text-2xl font-black tracking-tighter uppercase">Alpha Message</span>
+           <span class="text-2xl font-black tracking-tighter uppercase">Alpha Psychometrics</span>
         </div>
         
         <p class="text-white/70 text-sm leading-relaxed max-w-sm font-medium">
-          Ethiopia's leading SMS aggregator and gateway provider. We empower software companies and enterprises with reliable bulk SMS, USSD, and OTP delivery through direct Ethio Telecom integration.
+          The premier behavioral analytics platform in East Africa. We bridge the gap between human potential and data-driven insights for educational institutions and corporate enterprises.
         </p>
 
         <div class="flex space-x-5 mt-6">
-          <a v-for="icon in socials" :key="icon.name" href="#" 
+          <a v-for="social in socials" :key="social.name" href="#" 
              class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-secondary hover:scale-110 transition-all duration-300 group">
-            <i :class="[icon.class, 'text-lg group-hover:text-white transition-colors']"></i>
+            <i :class="[social.class, 'text-lg group-hover:text-white transition-colors']"></i>
           </a>
         </div>
       </div>
@@ -41,13 +41,13 @@
 
     <div class="mt-20 border-t border-white/10 pt-8 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
       <div class="text-xs font-bold text-white/40 uppercase tracking-widest">
-        © {{ new Date().getFullYear() }} Alpha Message Gateway. A Product of Alpha Tech.
+        © {{ new Date().getFullYear() }} Alpha Psychometrics. A Division of Alpha Tech.
       </div>
       
       <div class="flex gap-8 mt-6 md:mt-0 text-[11px] font-black uppercase tracking-widest">
-        <a href="#" class="text-white/40 hover:text-secondary transition-colors">SLA Agreement</a>
+        <a href="#" class="text-white/40 hover:text-secondary transition-colors">Data Ethics</a>
         <a href="#" class="text-white/40 hover:text-secondary transition-colors">Privacy Policy</a>
-        <a href="#" class="text-white/40 hover:text-secondary transition-colors">Compliance</a>
+        <a href="#" class="text-white/40 hover:text-secondary transition-colors">Research Citations</a>
       </div>
     </div>
   </footer>
@@ -57,36 +57,36 @@
 const socials = [
   { name: 'LinkedIn', class: 'fab fa-linkedin-in' },
   { name: 'Twitter', class: 'fab fa-twitter' },
-  { name: 'Telegram', class: 'fab fa-telegram-plane' }, // Telegram is popular in Ethiopia
+  { name: 'Telegram', class: 'fab fa-telegram-plane' },
   { name: 'Facebook', class: 'fab fa-facebook-f' }
 ];
 
 const navGroups = [
   {
-    title: 'Gateway',
+    title: 'Platform',
     links: [
-      { name: 'Bulk SMS', url: '#' },
-      { name: 'OTP Service', url: '#' },
-      { name: 'USSD Gateway', url: '#' },
-      { name: 'Short Code Request', url: '#' }
+      { name: 'Student Aptitude', url: '#' },
+      { name: 'Corporate Profiles', url: '#' },
+      { name: 'Interactive Engine', url: '#' },
+      { name: 'Report Analytics', url: '#' }
     ]
   },
   {
-    title: 'Developers',
+    title: 'Resources',
     links: [
-      { name: 'REST API Docs', url: '#' },
-      { name: 'SMPP Connection', url: '#' },
-      { name: 'SDKs', url: '#' },
+      { name: 'Methodology', url: '#' },
+      { name: 'Sample Reports', url: '#' },
+      { name: 'API Docs', url: '#' },
       { name: 'System Status', url: '#' }
     ]
   },
   {
-    title: 'Support',
+    title: 'Organization',
     links: [
-      { name: 'Help Center', url: '#' },
-      { name: 'Ethio Telecom Regs', url: '#' },
+      { name: 'Our Science', url: '#' },
       { name: 'Pricing Plans', url: '#' },
-      { name: 'Contact Sales', url: '#' }
+      { name: 'Consult Expert', url: '#' },
+      { name: 'Security Whitepaper', url: '#' }
     ]
   }
 ];

@@ -175,10 +175,10 @@ export default {
       try {
         const response = await this.$apiGet('/permissions', params);
         // Direct assignment using your standard API structure
-        this.items = response.data.data || []; 
-        this.count = response.data.count || 0;
-        this.nextPage = response.data.next;
-        this.previousPage = response.data.previous;
+        this.items = response.data || []; 
+        this.count = response.count || 0;
+        this.nextPage = response.next;
+        this.previousPage = response.previous;
       } catch(e) { 
         console.error("Fetch Error:", e); 
       } finally { 

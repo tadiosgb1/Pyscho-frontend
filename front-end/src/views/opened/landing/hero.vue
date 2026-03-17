@@ -20,36 +20,37 @@
           <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
           <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
         </span>
-        <span class="text-[10px] font-black text-white/90 uppercase tracking-[0.4em]">Official Ethio Telecom SMS Partner</span>
+        <span class="text-[10px] font-black text-white/90 uppercase tracking-[0.4em]">Advanced Behavioral Analytics Platform</span>
       </div>
 
-      <h1 class="text-primary text-6xl md:text-9xl font-[1000] mb-8 tracking-tighter leading-[0.85] animate-hero-reveal">
-        SCALE YOUR <br/>
+      <h1 class="text-primary text-6xl md:text-9xl font-[1000] mb-8 tracking-tighter leading-[0.85] animate-hero-reveal uppercase">
+        Unlock Your <br/>
         <span class="relative inline-block text-transparent bg-clip-text bg-gradient-to-br from-secondary via-white to-primary bg-[size:200%_auto] animate-text-shine italic">
-          BULK SMS     
+          Cognitive 
         </span>
-        <br/> OUTREACH
+        <br/> Edge
       </h1>
 
       <p class="text-lg md:text-xl text-white/50 mb-14 max-w-2xl mx-auto font-medium leading-relaxed tracking-wide animate-fade-in-up-delay">
-        The premier SMS aggregator in Ethiopia. Engineered for 
-        <span class="text-white">low-latency OTPs</span>, high-volume marketing, and 
-        <span class="text-white">real-time transactional alerts</span>.
+        The complete psychometric suite for modern talent. Engineered for 
+        <span class="text-white">deep personality mapping</span>, student aptitude, and 
+        <span class="text-white">organizational performance analysis</span>.
       </p>
 
       <div class="flex flex-col sm:flex-row justify-center gap-6 animate-fade-in-up-deep">
         <button 
-          @click="scrollTo('plans')" 
+          @click="scrollTo('onboard')" 
           class="group relative px-12 py-5 bg-secondary rounded-2xl font-black uppercase tracking-[0.2em] text-slate-900 transition-all duration-500 hover:shadow-[0_0_40px_rgba(255,222,89,0.4)] hover:-translate-y-1 overflow-hidden"
         >
-          <span class="relative z-10 italic">Start Sending Now</span>
+          <span class="relative z-10 italic">Start Assessment</span>
           <div class="absolute inset-0 bg-white translate-y-full group-hover:translate-y-0 transition-transform duration-500 opacity-20"></div>
         </button>
 
         <button 
+          @click="scrollTo('features')"
           class="px-12 py-5 bg-white/5 border border-white/10 rounded-2xl text-white font-black uppercase tracking-[0.2em] backdrop-blur-xl hover:bg-white/10 transition-all duration-300 border-b-4 border-b-white/5 active:border-b-0"
         >
-          View API Schema
+          For Organizations
         </button>
       </div>
 
@@ -73,7 +74,7 @@ export default {
 </script>
 
 <style scoped>
-/* Advanced Text Shining Animation */
+/* All Original Animations Preserved Exactly */
 .animate-text-shine {
   animation: textShine 4s linear infinite;
 }
@@ -82,7 +83,6 @@ export default {
   to { background-position: 200% center; }
 }
 
-/* Hero Entrance Animations */
 .animate-hero-reveal {
   animation: heroReveal 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
@@ -118,7 +118,6 @@ export default {
   50% { transform: translateY(-30px); }
 }
 
-/* Font weight 1000 for extreme boldness */
 .font-\[1000\] {
   font-weight: 950;
 }

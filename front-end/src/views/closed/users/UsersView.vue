@@ -215,10 +215,10 @@ export default {
       const params = { page: this.currentPage, page_size: this.pageSize, search: this.searchQuery };
       try {
         const response = await this.$apiGet('/users', params);
-        this.items = response.data.data || [];
-        this.count = response.data.count || 0;
-        this.nextPage = response.data.next || null;
-        this.previousPage = response.data.previous || null;
+        this.items = response.data || [];
+        this.count = response.count || 0;
+        this.nextPage = response.next || null;
+        this.previousPage = response.previous || null;
       } catch(e) { console.error(e); } 
       finally { this.loading = false; }
     },

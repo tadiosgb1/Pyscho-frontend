@@ -88,58 +88,145 @@
     <delete-confirm-modal :visible="deleteModalVisible" @confirm="confirmDelete" @cancel="deleteModalVisible=false" />
   </div>
 </template>
-
 <script>
 import AddRole from "./AddRole.vue";
 import EditRole from "./EditRole.vue";
-import AssignPermissionModal from "./AssignPermissionModal.vue"; // Component below
+import AssignPermissionModal from "./AssignPermissionModal.vue";
 import Loading from "@/components/Loading.vue";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal.vue";
 
 export default {
-  components: { AddRole, EditRole, AssignPermissionModal, Loading, DeleteConfirmModal },
+  components: {
+    AddRole,
+    EditRole,
+    AssignPermissionModal,
+    Loading,
+    DeleteConfirmModal
+  },
+
   data() {
     return {
       items: [],
       selectedItem: null,
       loading: false,
+
+      // modals
       showModal: false,
       editMode: false,
       showPermissionModal: false,
       showPermissionView: false,
+      deleteModalVisible: false,
+
+      // delete
+      deleteId: null,
+
+      // permissions
       assignedPermissions: [],
       loadingPerms: false,
+
+      // pagination
       currentPage: 1,
       pageSize: 10,
-      count: 0
+      count: 0,
+
+      // search
+      searchQuery: ""
     };
   },
+
   methods: {
-    // FETCH (GET) logic for existing permissions
+    // =========================
+    // FETCH ROLES
+    // =========================
+    async fetchItems(page = 1) {
+      this.loading = true;
+      try {
+        const res = await this.$apiGet("/roles", {
+          page,
+          page_size: this.pageSize,
+          search: this.searchQuery
+        });
+
+        this.items = res.data || [];
+        this.count = res.count || 0;
+        this.currentPage = page;
+
+      } catch (e) {
+        console.error("Fetch roles error:", e);
+      } finally {
+        this.loading = false;
+      }
+    },
+
+    // =========================
+    // ADD ROLE
+    // =========================
+    openAddModal() {
+      this.editMode = false;
+      this.selectedItem = null;
+      this.showModal = true;
+    },
+
+    // =========================
+    // EDIT ROLE
+    // =========================
+    editItem(item) {
+      this.editMode = true;
+      this.selectedItem = item;
+      this.showModal = true;
+    },
+
+    // =========================
+    // DELETE ROLE
+    // =========================
+    openDeleteModal(id) {
+      this.deleteId = id;
+      this.deleteModalVisible = true;
+    },
+
+    async confirmDelete() {
+      try {
+        await this.$apiDelete(`/roles/${this.deleteId}`);
+
+        this.deleteModalVisible = false;
+        this.deleteId = null;
+
+        this.fetchItems(this.currentPage);
+
+      } catch (e) {
+        console.error("Delete error:", e);
+      }
+    },
+
+    // =========================
+    // VIEW PERMISSIONS
+    // =========================
     async fetchRolePermissions(role) {
       this.selectedItem = role;
       this.showPermissionView = true;
       this.loadingPerms = true;
+
       try {
         const res = await this.$apiGet(`/role-permissions/${role.id}`);
-        this.assignedPermissions = res.data.permissions || res.data;
-      } catch (e) { console.error(e); } 
-      finally { this.loadingPerms = false; }
+        this.assignedPermissions = res.data?.permissions || res.data || [];
+      } catch (e) {
+        console.error("Permission fetch error:", e);
+      } finally {
+        this.loadingPerms = false;
+      }
     },
+
+    // =========================
+    // ASSIGN PERMISSION
+    // =========================
     openPermissionModal(role) {
       this.selectedItem = role;
       this.showPermissionModal = true;
-    },
-    // ... rest of your original fetchItems, openAddModal, confirmDelete logic ...
-    async fetchItems(page = 1) {
-      this.loading = true;
-      try {
-        const res = await this.$apiGet('/roles', { page, page_size: this.pageSize, search: this.searchQuery });
-        this.items = res.data.data || [];
-        this.count = res.data.count || 0;
-      } finally { this.loading = false; }
     }
   },
-  mounted() { this.fetchItems(); }
+
+  mounted() {
+    this.fetchItems();
+  }
 };
 </script>

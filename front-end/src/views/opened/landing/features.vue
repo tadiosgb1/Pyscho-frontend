@@ -10,14 +10,14 @@
       <div class="max-w-4xl mb-24">
         <div class="flex items-center gap-4 mb-6">
           <span class="h-[1px] w-12 bg-primary"></span>
-          <span class="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Infrastructure 2.0</span>
+          <span class="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Alpha Psychometrics 1.0</span>
         </div>
         <h2 class="text-5xl md:text-7xl font-black text-slate-900 mb-8 tracking-tighter leading-none">
-          The Backbone of <br/>
-          <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">Ethiopian Digital Trade.</span>
+          Scientific Insights for <br/>
+          <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">Human Development.</span>
         </h2>
         <p class="text-slate-500 text-xl font-medium leading-relaxed max-w-2xl border-l-4 border-slate-100 pl-8">
-          Alpha Message doesn't just send texts; we provide the critical uptime needed for the nation's banking, logistics, and government services.
+          Alpha provides the core engine for modern evaluations, transforming raw test data into actionable behavioral intelligence for schools and corporations.
         </p>
       </div>
 
@@ -51,7 +51,7 @@
             </div>
 
             <div class="flex items-center gap-3 text-[10px] font-black text-slate-300 uppercase tracking-[0.2em] group-hover:text-primary transition-all">
-              <span>Explore Protocol</span>
+              <span>View Module</span>
               <div class="h-px w-0 bg-primary group-hover:w-8 transition-all duration-500"></div>
               <i class="fas fa-arrow-right opacity-0 group-hover:opacity-100 -translate-x-2 group-hover:translate-x-0 transition-all"></i>
             </div>
@@ -86,47 +86,47 @@ export default {
     return {
       features: [
         {
-          title: "SMPP v3.4 Direct",
-          icon: "fas fa-microchip",
-          description: "Carrier-grade direct binds to Ethio Telecom SMSC for ultra-low latency requirements.",
-          points: ["Direct Binds", "Binary SMS", "Payload Encryption"]
+          title: "Adaptive Engine",
+          icon: "fas fa-brain",
+          description: "Smart question-branching that adjusts difficulty based on real-time participant responses.",
+          points: ["31 Story Points", "Logic Branching", "Timed Sections"]
         },
         {
-          title: "Adaptive OTP Flow",
-          icon: "fas fa-shield-halved",
-          description: "Smart routing that detects network congestion and auto-switches to priority tunnels.",
-          points: ["Sub-5s Delivery", "Fraud Guard", "Rate Limiting"]
+          title: "Deep Analysis",
+          icon: "fas fa-chart-line",
+          description: "Proprietary scoring algorithms that convert data into 16-factor behavioral profiles.",
+          points: ["21 Story Points", "Trait Mapping", "Visual Reports"]
         },
         {
-          title: "Interactive USSD",
-          icon: "fas fa-diagram-project",
-          description: "Power offline digital banking with high-concurrency session management for *800# codes.",
-          points: ["XML/JSON Menus", "Session Persistence", "Menu Mapping"]
+          title: "Multi-Tenant Admin",
+          icon: "fas fa-users-gear",
+          description: "Separate management silos for individual test-takers and large-scale organizational clients.",
+          points: ["18 Story Points", "Bulk Invitations", "Role Controls"]
         },
         {
-          title: "Universal Unicode",
-          icon: "fas fa-language",
-          description: "Full-spectrum support for Ethiopic scripts ensuring zero character corruption in Amharic.",
-          points: ["UCS-2 Encoding", "Auto-Segmentation", "Amharic Ready"]
+          title: "Progress Tracker",
+          icon: "fas fa-timeline",
+          description: "Historical data visualization to monitor student or employee growth over long durations.",
+          points: ["13 Story Points", "Growth Curves", "Benchmarking"]
         },
         {
-          title: "Web-Scale Webhooks",
-          icon: "fas fa-satellite-dish",
-          description: "Instant delivery notification push to your server with automatic retry on 5xx errors.",
-          points: ["Real-time DLR", "Idempotency", "Retry Logic"]
+          title: "Payment Vault",
+          icon: "fas fa-vault",
+          description: "Secure Cybersource integration for individual testing credits and organizational billing.",
+          points: ["Non-Functional", "PCI Compliant", "Instant Credits"]
         },
         {
-          title: "Granular Controls",
-          icon: "fas fa-fingerprint",
-          description: "RBAC (Role-Based Access Control) for enterprise teams managing multiple sub-accounts.",
-          points: ["API Scoping", "Usage Quotas", "Audit Logs"]
+          title: "Secure Proctoring",
+          icon: "fas fa-user-shield",
+          description: "Advanced non-functional security layers to prevent test manipulation and ensure data integrity.",
+          points: ["26 Story Points", "IP Tracking", "Session Lock"]
         }
       ],
       stats: [
-        { label: "Network Uptime", value: "99.98%" },
-        { label: "Burst Capacity", value: "5k/sec" },
-        { label: "Connected Devs", value: "1.2k" },
-        { label: "Monthly Data", value: "250M+" }
+        { label: "Accuracy Rate", value: "98.4%" },
+        { label: "Concurrent Tests", value: "2k/sec" },
+        { label: "Test Templates", value: "150+" },
+        { label: "Reports Generated", value: "1M+" }
       ]
     };
   }
@@ -137,14 +137,10 @@ export default {
 .gap-1px {
   gap: 1px;
 }
-
-/* Custom scroll reveal simulation */
 .group:hover .relative.z-10 {
   transform: translateY(-5px);
   transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-/* Tabular numbers for clean stat counting */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
