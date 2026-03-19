@@ -9,10 +9,18 @@
 
       <form @submit.prevent="submitForm" class="space-y-4">
         
+
+          <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Answer</label>
+          <input v-model="form.answer_text" type="text" required class="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:max-w-xs focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition duration-150" />
+        </div>
+
         <div>
           <label class="block mb-1 text-sm font-medium text-gray-700">User_id</label>
           <input v-model="form.user_id" type="text" required class="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:max-w-xs focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition duration-150" />
         </div>
+
+
         <div>
           <label class="block mb-1 text-sm font-medium text-gray-700">Question_id</label>
           <input v-model="form.question_id" type="text" required class="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:max-w-xs focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition duration-150" />
@@ -37,9 +45,10 @@ export default {
   data() {
     return {
       form: {
-        user_id: this.data?.user_id || '',
-question_id: this.data?.question_id || '',
-submited_at: this.data?.submited_at || ''
+         answer_text: this.data?.answer_text || '',
+         user_id: this.data?.user_id || '',
+         question_id: this.data?.question_id || '',
+         submited_at: this.data?.submited_at || ''
       }
     };
   },

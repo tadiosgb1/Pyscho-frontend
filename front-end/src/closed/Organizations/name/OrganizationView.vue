@@ -35,6 +35,7 @@
           <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
             <tr>
               <th class="px-6 py-3 text-left">#</th>
+              <th class="px-6 py-3 text-left">Name</th>
               <th class="px-6 py-3 text-left">Address</th><th class="px-6 py-3 text-left">Contact_email</th><th class="px-6 py-3 text-left">Phone</th>
               <th class="px-6 py-3 text-center">Actions</th>
             </tr>
@@ -42,6 +43,7 @@
           <tbody class="bg-white divide-y divide-gray-200">
             <tr v-for="(item, index) in items" :key="item.id" class="hover:bg-green-50 transition duration-150">
               <td class="px-6 py-4">{{ index + 1 }}</td>
+               <td class="px-6 py-4 whitespace-nowrap">{{ item.name }}</td>
               <td class="px-6 py-4 whitespace-nowrap">{{ item.address }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.contact_email }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.phone }}</td>
               <td class="px-6 py-4 text-center space-x-3">
                 <button @click="viewDetails(item.id)" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
@@ -69,7 +71,10 @@
           </div>
         </div>
         <div class="grid grid-cols-2 gap-y-1 text-sm text-gray-700">
-          
+           <div class="col-span-2">
+              <span class="font-medium text-gray-600">Name:</span>
+              {{ item.name }}
+            </div>
             <div class="col-span-2">
               <span class="font-medium text-gray-600">Address:</span>
               {{ item.address }}

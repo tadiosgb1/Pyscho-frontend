@@ -8,7 +8,10 @@
       </div>
 
       <form @submit.prevent="submitForm" class="space-y-4">
-        
+          <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Name</label>
+          <input v-model="form.name" type="text" required class="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:max-w-xs focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition duration-150" />
+        </div>
         <div>
           <label class="block mb-1 text-sm font-medium text-gray-700">Address</label>
           <input v-model="form.address" type="text" required class="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:max-w-xs focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition duration-150" />
@@ -37,6 +40,7 @@ export default {
   data() {
     return {
       form: {
+          name: this.data?.name || '',
         address: this.data?.address || '',
 contact_email: this.data?.contact_email || '',
 phone: this.data?.phone || ''

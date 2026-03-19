@@ -12,6 +12,7 @@
     <!-- Detail Card -->
     <div class="bg-white overflow-hidden rounded-md border border-gray-200 p-4 hidden md:block space-y-2">
       <div><strong>ID:</strong> {{ item.id }}</div>
+      <div><strong>Answe:</strong> {{ item.answer_text }}</div>
       <div><strong>User_id:</strong> {{ item.user_id }}</div><div><strong>Question_id:</strong> {{ item.question_id }}</div><div><strong>Submited_at:</strong> {{ item.submited_at }}</div>
     </div>
 

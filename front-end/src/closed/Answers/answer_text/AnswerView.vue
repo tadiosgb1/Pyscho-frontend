@@ -35,6 +35,7 @@
           <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
             <tr>
               <th class="px-6 py-3 text-left">#</th>
+              <th class="px-6 py-3 text-left">Answer</th>
               <th class="px-6 py-3 text-left">User_id</th><th class="px-6 py-3 text-left">Question_id</th><th class="px-6 py-3 text-left">Submited_at</th>
               <th class="px-6 py-3 text-center">Actions</th>
             </tr>
@@ -42,7 +43,10 @@
           <tbody class="bg-white divide-y divide-gray-200">
             <tr v-for="(item, index) in items" :key="item.id" class="hover:bg-green-50 transition duration-150">
               <td class="px-6 py-4">{{ index + 1 }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">{{ item.user_id }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.question_id }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.submited_at }}</td>
+                 <td class="px-6 py-4 whitespace-nowrap">{{ item.answer_text }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">{{ item.user_id }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">{{ item.question_id }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">{{ item.submited_at }}</td>
               <td class="px-6 py-4 text-center space-x-3">
                 <button @click="viewDetails(item.id)" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
                 <button @click="editItem(item)" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
@@ -69,7 +73,10 @@
           </div>
         </div>
         <div class="grid grid-cols-2 gap-y-1 text-sm text-gray-700">
-          
+           <div class="col-span-2">
+              <span class="font-medium text-gray-600">Answer :</span>
+              {{ item.answer_text }}
+            </div>
             <div class="col-span-2">
               <span class="font-medium text-gray-600">User_id:</span>
               {{ item.user_id }}

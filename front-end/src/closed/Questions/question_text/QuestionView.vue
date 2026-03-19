@@ -1,124 +1,146 @@
-
 <template>
   <div class="p-6 bg-gray-50 min-h-screen text-sm text-gray-800 relative">
+    
     <!-- Loading -->
     <Loading :visible="loading" message="Loading Question..." />
 
-    <!-- Page Header -->
+    <!-- Header -->
     <div class="flex items-center justify-between mb-6 border-b pb-4 border-gray-200">
-      <h1 class="text-lg font-bold text-gray-800">Question</h1>
-      <button @click="openAddModal" class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg font-medium shadow-md flex items-center space-x-1 text-sm">
-        <svg class="h-4 w-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-        </svg>
-        <span>Add Question</span>
+      <h1 class="text-lg font-bold">Questions</h1>
+      <button @click="openAddModal"
+        class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-lg flex items-center gap-1">
+        ➕ Add Question
       </button>
     </div>
 
-    <!-- Search + Page Size -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-      <input v-model="searchQuery" @input="fetchItems(1)" type="text" placeholder="Search..."
-        class="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:max-w-xs focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition duration-150" />
-      <div class="flex items-center gap-2 text-sm text-gray-600">
-        <label>Show</label>
-        <select v-model="pageSize" @change="fetchItems(1)" class="border border-gray-300 rounded-lg px-2 py-1 text-sm bg-white focus:ring-green-500 focus:border-green-500">
-          <option v-for="size in [5,10,20,50,100]" :key="size" :value="size">{{ size }}</option>
-        </select>
-        <span>entries</span>
-      </div>
+    <!-- Search -->
+    <div class="flex justify-between mb-6">
+      <input v-model="searchQuery" @input="fetchItems(1)"
+        placeholder="Search questions..."
+        class="border px-3 py-2 rounded-lg w-64" />
+
+      <select v-model="pageSize" @change="fetchItems(1)"
+        class="border px-2 py-1 rounded-lg">
+        <option v-for="size in [5,10,20,50]" :key="size">{{ size }}</option>
+      </select>
     </div>
 
-    <!-- Desktop Table -->
-    <div class="bg-white overflow-hidden rounded-xl border border-gray-200 hidden md:block">
-      <div class="overflow-x-auto">
-        <table class="min-w-full text-sm divide-y divide-gray-200">
-          <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
-            <tr>
-              <th class="px-6 py-3 text-left">#</th>
-              <th class="px-6 py-3 text-left">Question_type</th><th class="px-6 py-3 text-left">Options</th><th class="px-6 py-3 text-left">Correct_answer</th><th class="px-6 py-3 text-left">Test_id</th>
-              <th class="px-6 py-3 text-center">Actions</th>
-            </tr>
-          </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <tr v-for="(item, index) in items" :key="item.id" class="hover:bg-green-50 transition duration-150">
-              <td class="px-6 py-4">{{ index + 1 }}</td>
-              <td class="px-6 py-4 whitespace-nowrap">{{ item.question_type }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.options }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.correct_answer }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.test_id }}</td>
-              <td class="px-6 py-4 text-center space-x-3">
-                <button @click="viewDetails(item.id)" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
-                <button @click="editItem(item)" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
-                <button @click="openDeleteModal(item.id)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
-              </td>
-            </tr>
-            <tr v-if="items.length === 0">
-              <td colspan="6" class="text-center py-6 text-gray-400 italic">No data found.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    <!-- TABLE -->
+    <div class="bg-white rounded-xl border hidden md:block">
+      <table class="w-full">
+        <thead class="bg-gray-100 text-xs uppercase">
+          <tr>
+            <th class="p-3 text-left">#</th>
+            <th class="p-3 text-left">Question</th>
+            <th class="p-3 text-left">Options</th>
+            <th class="p-3 text-left">Answer</th>
+            <th class="p-3 text-center">Actions</th>
+          </tr>
+        </thead>
 
-    <!-- Mobile Cards -->
-    <div class="md:hidden space-y-4">
-      <div v-for="(item, index) in items" :key="item.id" class="bg-white border border-gray-200 rounded-xl shadow p-4">
-        <div class="flex justify-between mb-3">
-          <h2 class="font-bold text-gray-800">Question #{{ index + 1 }}</h2>
-          <div class="flex gap-3 text-sm">
-            <button @click="viewDetails(item.id)" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
-            <button @click="editItem(item)" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
-            <button @click="openDeleteModal(item.id)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
-          </div>
-        </div>
-        <div class="grid grid-cols-2 gap-y-1 text-sm text-gray-700">
-          
-            <div class="col-span-2">
-              <span class="font-medium text-gray-600">Question_type:</span>
-              {{ item.question_type }}
-            </div>
-            <div class="col-span-2">
-              <span class="font-medium text-gray-600">Options:</span>
-              {{ item.options }}
-            </div>
-            <div class="col-span-2">
-              <span class="font-medium text-gray-600">Correct_answer:</span>
+        <tbody>
+          <tr v-for="(item, index) in items" :key="item.id" class="border-t hover:bg-gray-50">
+            
+            <td class="p-3">{{ index + 1 }}</td>
+
+            <!-- QUESTION -->
+            <td class="p-3 font-medium">
+              {{ item.question_text }}
+            </td>
+
+            <!-- OPTIONS -->
+            <td class="p-3">
+              <ul class="list-disc ml-4">
+                <li v-for="(opt, i) in parseOptions(item.options)" 
+                    :key="i"
+                    :class="opt === item.correct_answer ? 'text-green-600 font-semibold' : ''">
+                  {{ opt }}
+                </li>
+              </ul>
+            </td>
+
+            <!-- ANSWER -->
+            <td class="p-3 text-green-600 font-bold">
               {{ item.correct_answer }}
-            </div>
-            <div class="col-span-2">
-              <span class="font-medium text-gray-600">Test_id:</span>
-              {{ item.test_id }}
-            </div>
+            </td>
+
+            <!-- ACTIONS -->
+            <td class="p-3 text-center space-x-2">
+              <button @click="viewDetails(item.id)">👁</button>
+              <button @click="editItem(item)">✏️</button>
+              <button @click="openDeleteModal(item.id)">🗑</button>
+            </td>
+
+          </tr>
+
+          <tr v-if="items.length === 0">
+            <td colspan="5" class="text-center p-4 text-gray-400">
+              No questions found
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- MOBILE VIEW -->
+    <div class="md:hidden space-y-4">
+      <div v-for="(item, index) in items" :key="item.id"
+        class="bg-white p-4 rounded-lg shadow">
+
+        <h2 class="font-bold mb-2">Q{{ index + 1 }}: {{ item.question }}</h2>
+
+        <ul class="ml-4 list-disc mb-2">
+          <li v-for="(opt, i) in parseOptions(item.options)" 
+              :key="i"
+              :class="opt === item.correct_answer ? 'text-green-600 font-semibold' : ''">
+            {{ opt }}
+          </li>
+        </ul>
+
+        <p class="text-green-600 font-bold">Answer: {{ item.correct_answer }}</p>
+
+        <div class="flex gap-3 mt-2">
+          <button @click="viewDetails(item.id)">👁</button>
+          <button @click="editItem(item)">✏️</button>
+          <button @click="openDeleteModal(item.id)">🗑</button>
         </div>
       </div>
-      <p v-if="items.length === 0" class="text-center text-gray-400 py-6 italic">No data found.</p>
     </div>
 
-    <!-- Pagination -->
-    <div class="flex items-center justify-between mt-6 text-sm text-gray-600">
+    <!-- PAGINATION -->
+    <div class="flex justify-between mt-6">
       <span>
-        Showing {{ (currentPage - 1) * pageSize + 1 }} 
-        to {{ Math.min(currentPage * pageSize, count) }} 
-        of {{ count }} total entries
+        Showing {{ (currentPage - 1) * pageSize + 1 }}
+        to {{ Math.min(currentPage * pageSize, count) }}
+        of {{ count }}
       </span>
-      <div class="flex items-center gap-2">
-        <button @click="fetchItems(currentPage - 1)" :disabled="!previousPage"
-          class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150">← Previous</button>
-        <span class="px-3 py-1 bg-green-600 text-white rounded-lg font-medium">{{ currentPage }}</span>
-        <button @click="fetchItems(currentPage + 1)" :disabled="!nextPage"
-          class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150">Next →</button>
+
+      <div class="flex gap-2">
+        <button @click="fetchItems(currentPage - 1)" :disabled="!previousPage">Prev</button>
+        <span>{{ currentPage }}</span>
+        <button @click="fetchItems(currentPage + 1)" :disabled="!nextPage">Next</button>
       </div>
     </div>
 
-    <!-- Add/Edit Modal -->
-    <add-question v-if="showModal && !editMode" :data="selectedItem" @close="showModal=false" @saved="fetchItems"/>
-    <edit-question v-if="showModal && editMode" :data="selectedItem" @close="showModal=false" @saved="fetchItems"/>
+    <!-- MODALS -->
+    <add-question v-if="showModal && !editMode"
+      :data="selectedItem"
+      @close="showModal=false"
+      @saved="fetchItems" />
 
-    <!-- Delete Confirmation Modal -->
-    <delete-confirm-modal 
+    <edit-question v-if="showModal && editMode"
+      :data="selectedItem"
+      @close="showModal=false"
+      @saved="fetchItems" />
+
+    <delete-confirm-modal
       :visible="deleteModalVisible"
       title="Delete Question"
-      message="Are you sure you want to delete this Question?"
+      message="Are you sure?"
       @confirm="confirmDelete"
       @cancel="deleteModalVisible=false"
     />
+
   </div>
 </template>
 
@@ -153,38 +175,67 @@ export default {
     async fetchItems(page = 1) {
       this.loading = true;
       this.currentPage = page;
-      const params = { page: this.currentPage, page_size: this.pageSize, search: this.searchQuery };
+
       try {
-        const response = await this.$apiGet('/question', params);
-        this.items = response.data;
-        this.count = response.count || 0;
-        this.nextPage = response.next || null;
-        this.previousPage = response.previous || null;
-      } catch(e) { console.error(e); }
-      finally { this.loading = false; }
+        const res = await this.$apiGet('/question', {
+          page,
+          page_size: this.pageSize,
+          search: this.searchQuery
+        });
+
+        this.items = res.data;
+        this.count = res.count || 0;
+        this.nextPage = res.next;
+        this.previousPage = res.previous;
+
+      } catch (e) {
+        console.error(e);
+      } finally {
+        this.loading = false;
+      }
     },
 
-    openAddModal() { this.editMode = false; this.selectedItem = null; this.showModal = true; },
-    editItem(item) { this.editMode = true; this.selectedItem = item; this.showModal = true; },
-    
-    // Navigate using static route name
-    viewDetails(id) { 
+    // FIX OPTIONS FORMAT
+    parseOptions(options) {
+      try {
+        return typeof options === 'string'
+          ? JSON.parse(options)
+          : options;
+      } catch {
+        return [];
+      }
+    },
+
+    openAddModal() {
+      this.editMode = false;
+      this.selectedItem = null;
+      this.showModal = true;
+    },
+
+    editItem(item) {
+      this.editMode = true;
+      this.selectedItem = item;
+      this.showModal = true;
+    },
+
+    viewDetails(id) {
       this.$router.push({ name: 'Question-detail', params: { id } });
     },
 
-    openDeleteModal(id) { this.deleteId = id; this.deleteModalVisible = true; },
+    openDeleteModal(id) {
+      this.deleteId = id;
+      this.deleteModalVisible = true;
+    },
 
-    // Delete with toast
     async confirmDelete() {
-      const res = await this.$apiDelete('/question', this.deleteId);
-      if(res) {
-        this.$root.$refs.toast.showToast('Question deleted successfully', 'success');
-      }
+      await this.$apiDelete('/question', this.deleteId);
       this.deleteModalVisible = false;
       this.fetchItems(this.currentPage);
     },
   },
 
-  mounted() { this.fetchItems(); }
+  mounted() {
+    this.fetchItems();
+  }
 };
 </script>

@@ -35,6 +35,7 @@
           <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
             <tr>
               <th class="px-6 py-3 text-left">#</th>
+               <th class="px-6 py-3 text-left">Score</th>
               <th class="px-6 py-3 text-left">Interpretation</th><th class="px-6 py-3 text-left">Recommendations</th><th class="px-6 py-3 text-left">User_id</th><th class="px-6 py-3 text-left">Test_id</th><th class="px-6 py-3 text-left">Completed_at</th>
               <th class="px-6 py-3 text-center">Actions</th>
             </tr>
@@ -42,6 +43,7 @@
           <tbody class="bg-white divide-y divide-gray-200">
             <tr v-for="(item, index) in items" :key="item.id" class="hover:bg-green-50 transition duration-150">
               <td class="px-6 py-4">{{ index + 1 }}</td>
+               <td class="px-6 py-4 whitespace-nowrap">{{ item.score }}</td>
               <td class="px-6 py-4 whitespace-nowrap">{{ item.interpretation }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.recommendations }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.user_id }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.test_id }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.completed_at }}</td>
               <td class="px-6 py-4 text-center space-x-3">
                 <button @click="viewDetails(item.id)" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
@@ -69,7 +71,10 @@
           </div>
         </div>
         <div class="grid grid-cols-2 gap-y-1 text-sm text-gray-700">
-          
+           <div class="col-span-2">
+              <span class="font-medium text-gray-600">Score:</span>
+              {{ item.score }}
+            </div>
             <div class="col-span-2">
               <span class="font-medium text-gray-600">Interpretation:</span>
               {{ item.interpretation }}

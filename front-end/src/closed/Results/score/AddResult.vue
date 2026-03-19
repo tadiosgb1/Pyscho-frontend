@@ -8,7 +8,10 @@
       </div>
 
       <form @submit.prevent="submitForm" class="space-y-4">
-        
+           <div>
+          <label class="block mb-1 text-sm font-medium text-gray-700">Score</label>
+          <input v-model="form.score" type="text" required class="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:max-w-xs focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition duration-150" />
+        </div>
         <div>
           <label class="block mb-1 text-sm font-medium text-gray-700">Interpretation</label>
           <input v-model="form.interpretation" type="text" required class="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:max-w-xs focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition duration-150" />
@@ -45,6 +48,7 @@ export default {
   data() {
     return {
       form: {
+         score: this.data?.score || '',
         interpretation: this.data?.interpretation || '',
 recommendations: this.data?.recommendations || '',
 user_id: this.data?.user_id || '',
