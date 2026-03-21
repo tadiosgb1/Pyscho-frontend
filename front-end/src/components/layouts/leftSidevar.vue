@@ -66,12 +66,8 @@ export default {
       is_superuser: false,
       menuItems: [
 
- 
+   
 
-
-
-
-    
 
 
       {
@@ -107,6 +103,17 @@ export default {
           icon: "fas fa-folder",
           color: "#22c55e"
         },
+  
+
+ {
+      name: "Groups",
+      route: "Group-view",
+      icon: "fas fa-folder",
+      color: "#22c55e"
+    },
+
+ 
+
     {
       name: "Tests",
       route: "Test-view",
@@ -120,12 +127,37 @@ export default {
       icon: "fas fa-folder",
       color: "#22c55e"
     },
+
+     {
+      name: "Categories",
+      route: "Category-view",
+      icon: "fas fa-folder",
+      color: "#22c55e"
+    },
     {
       name: "Questions",
       route: "Question-view",
       icon: "fas fa-folder",
       color: "#22c55e"
     },
+
+    
+    {
+      name: "Triats",
+      route: "Triat-view",
+      icon: "fas fa-folder",
+      color: "#22c55e"
+    },
+
+          
+    {
+      name: "Options",
+      route: "Option-view",
+      icon: "fas fa-folder",
+      color: "#22c55e"
+    },
+
+      
 
     {
       name: "Results",

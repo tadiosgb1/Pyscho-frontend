@@ -24,9 +24,9 @@
             </div>
             <div class="flex flex-col">
               <h1 class="text-lg font-black text-dprimary leading-none tracking-tight group-hover:text-primary transition-colors">
-                SMS 
+                GYZ 
               </h1>
-              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Alpha SMS </span>
+              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Alpha GYZ </span>
             </div>
           </div>
         </div>

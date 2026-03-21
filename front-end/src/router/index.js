@@ -16,7 +16,7 @@ import Login from '../views/opened/auth/login.vue'
 import ResetPassword from '../views/opened/auth/ResetPassword.vue'
 import ForgotPasssword from '../views/opened/auth/forgotPassword.vue'
 import ActivateEmailMessage from '../views/opened/landing/activateEmailMessage.vue'
-import Registration from '../views/opened/auth/login.vue'
+import Registration from '../views/opened/auth/registration.vue'
 import ForgotPassword from '../views/opened/auth/forgotPassword.vue';
 import Reset from '../views/opened/auth/reset.vue';
 import AccessDenied from "../views/opened/auth/accessDenied.vue";
@@ -145,6 +145,98 @@ const routes = [
       { requiresGuest: true },
       children: [
       {
+        path: "groups",
+        name: "Group-view",
+        component: () => import('../views/closed/Groups/GroupView.vue'),
+      },
+      {
+        path: "groups/add",
+        name: "Group-add",
+        component: () => import('../views/closed/Groups/AddGroup.vue'),
+      },
+      {
+        path: "groups/edit/:id",
+        name: "Group-edit",
+        component: () => import('../views/closed/Groups/EditGroup.vue'),
+        props: true,
+      },
+      {
+        path: "groups/detail/:id",
+        name: "Group-detail",
+        component: () => import('../views/closed/Groups/GroupDetail.vue'),
+        props: true,
+      },
+
+      {
+        path: "triats",
+        name: "Triat-view",
+        component: () => import('../views/closed/Triats/TriatView.vue'),
+      },
+      {
+        path: "triats/add",
+        name: "Triat-add",
+        component: () => import('../views/closed/Triats/AddTriat.vue'),
+      },
+      {
+        path: "triats/edit/:id",
+        name: "Triat-edit",
+        component: () => import('../views/closed/Triats/EditTriat.vue'),
+        props: true,
+      },
+      {
+        path: "triats/detail/:id",
+        name: "Triat-detail",
+        component: () => import('../views/closed/Triats/TriatDetail.vue'),
+        props: true,
+      },
+
+      {
+        path: "options",
+        name: "Option-view",
+        component: () => import('../views/closed/Options/OptionView.vue'),
+      },
+      {
+        path: "options/add",
+        name: "Option-add",
+        component: () => import('../views/closed/Options/AddOption.vue'),
+      },
+      {
+        path: "options/edit/:id",
+        name: "Option-edit",
+        component: () => import('../views/closed/Options/EditOption.vue'),
+        props: true,
+      },
+      {
+        path: "options/detail/:id",
+        name: "Option-detail",
+        component: () => import('../views/closed/Options/OptionDetail.vue'),
+        props: true,
+      },
+
+      {
+        path: "categories",
+        name: "Category-view",
+        component: () => import('../views/closed/Categories/CategoryView.vue'),
+      },
+      {
+        path: "categories/add",
+        name: "Category-add",
+        component: () => import('../views/closed/Categories/AddCategory.vue'),
+      },
+      {
+        path: "categories/edit/:id",
+        name: "Category-edit",
+        component: () => import('../views/closed/Categories/EditCategory.vue'),
+        props: true,
+      },
+      {
+        path: "categories/detail/:id",
+        name: "Category-detail",
+        component: () => import('../views/closed/Categories/CategoryDetail.vue'),
+        props: true,
+      },
+
+      {
         path: "score",
         name: "Progress-view",
         component: () => import('../closed/Progresses/score/ProgressView.vue'),
@@ -168,12 +260,12 @@ const routes = [
       },
 
       {
-        path: "score",
+        path: "result-view",
         name: "Result-view",
         component: () => import('../closed/Results/score/ResultView.vue'),
       },
       {
-        path: "score/add",
+        path: "result-add",
         name: "Result-add",
         component: () => import('../closed/Results/score/AddResult.vue'),
       },
@@ -191,7 +283,7 @@ const routes = [
       },
 
       {
-        path: "answer_text",
+        path: "answer_view",
         name: "Answer-view",
         component: () => import('../closed/Answers/answer_text/AnswerView.vue'),
       },
@@ -214,7 +306,7 @@ const routes = [
       },
 
       {
-        path: "question_text",
+        path: "question-view",
         name: "Question-view",
         component: () => import('../closed/Questions/question_text/QuestionView.vue'),
       },
@@ -237,7 +329,7 @@ const routes = [
       },
 
       {
-        path: "title",
+        path: "title-view",
         name: "Test-view",
         component: () => import('../closed/Tests/title/TestView.vue'),
       },

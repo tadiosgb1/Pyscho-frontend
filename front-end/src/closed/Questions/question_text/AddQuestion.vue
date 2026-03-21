@@ -1,10 +1,10 @@
 <template>
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-    <div class="bg-white rounded-xl shadow-2xl w-full max-w-lg p-6 text-sm">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl p-6 text-sm">
 
       <!-- Header -->
       <div class="flex justify-between items-center mb-4 border-b pb-2">
-        <h2 class="text-lg font-semibold">Add Question</h2>
+        <h2 class="text-lg font-semibold text-gray-800">Add Question</h2>
         <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600">&times;</button>
       </div>
 
@@ -17,24 +17,72 @@
             class="w-full border rounded-lg px-3 py-2"></textarea>
         </div>
 
-        <!-- TYPE -->
+        <!-- Category -->
         <div>
-          <label class="block mb-1 font-medium">Question Type</label>
-          <select v-model="form.question_type" required
+          <label class="block mb-1 font-medium">Category</label>
+          <select v-model="form.category_id" @change="onCategoryChange" required
             class="w-full border rounded-lg px-3 py-2">
-            <option disabled value="">Select Type</option>
-            <option value="MCQ">MCQ</option>
-            <option value="LIKERT">LIKERT</option>
-            <option value="Open">Open</option>
+            <option disabled value="">Select Category</option>
+            <option v-for="cat in categories" :key="cat.id" :value="cat.id">
+              {{ cat.name }}
+            </option>
           </select>
         </div>
 
-        <!-- MCQ -->
-        <div v-if="form.question_type === 'MCQ'">
-          <label class="block mb-1 font-medium">Options</label>
+        <!-- Test -->
+        <div>
+          <label class="block mb-1 font-medium">Test</label>
+          <select v-model="form.test_id" required
+            class="w-full border rounded-lg px-3 py-2">
+            <option disabled value="">Select Test</option>
+            <option v-for="test in tests" :key="test.id" :value="test.id">
+              {{ test.title }}
+            </option>
+          </select>
+        </div>
 
-          <div v-for="(opt, i) in mcqOptions" :key="i" class="flex gap-2 mb-2">
-            <input v-model="mcqOptions[i]" class="w-full border rounded px-2 py-1" />
+        <!-- Type -->
+        <div>
+          <label class="block mb-1 font-medium">Type</label>
+          <select v-model="form.type" required
+            class="w-full border rounded-lg px-3 py-2">
+            <option value="multiple">Multiple Choice</option>
+            <option value="likert">Likert Scale</option>
+            <option value="open">Open</option>
+          </select>
+        </div>
+
+        <!-- ===================== -->
+        <!-- MCQ + LIKERT OPTIONS -->
+        <!-- ===================== -->
+        <div v-if="form.type !== 'open'">
+          <label class="block mb-2 font-medium">Options</label>
+
+          <div v-for="(opt, i) in options" :key="i" class="flex gap-2 mb-2">
+
+            <!-- Text -->
+            <input v-model="opt.text"
+              placeholder="Option Text (e.g. A, Strongly Agree)"
+              class="w-1/3 border rounded px-2 py-1" />
+
+            <!-- Triat -->
+            <select v-model="opt.triat_id"
+              class="w-1/3 border rounded px-2 py-1">
+              <option disabled value="">Select Triat</option>
+              <option v-for="t in triats" :key="t.id" :value="t.id">
+                {{ t.name }}
+              </option>
+            </select>
+
+            <!-- Weight -->
+            <input v-model.number="opt.weight" type="number"
+              placeholder="Weight"
+              class="w-1/6 border rounded px-2 py-1" />
+
+            <!-- Position -->
+            <input v-model.number="opt.position" type="number"
+              class="w-1/6 border rounded px-2 py-1" />
+
             <button type="button" @click="removeOption(i)" class="text-red-500">✖</button>
           </div>
 
@@ -43,49 +91,16 @@
           </button>
         </div>
 
-        <!-- LIKERT -->
-        <div v-if="form.question_type === 'LIKERT'" class="space-y-2">
-          <label class="font-medium">Scale</label>
-
-          <div class="flex gap-2">
-            <input v-model.number="likert.min" type="number" placeholder="Min"
-              class="w-1/2 border rounded px-2 py-1" />
-            <input v-model.number="likert.max" type="number" placeholder="Max"
-              class="w-1/2 border rounded px-2 py-1" />
-          </div>
-
-          <input v-model="likert.labels"
-            placeholder="Labels (comma separated)"
-            class="w-full border rounded px-2 py-1" />
+        <!-- ===================== -->
+        <!-- OPEN QUESTION -->
+        <!-- ===================== -->
+        <div v-if="form.type === 'open'">
+          <label class="block mb-1 font-medium">Weight</label>
+          <input v-model.number="form.weight" type="number"
+            class="w-full border rounded px-3 py-2" />
         </div>
 
-        <!-- OPEN -->
-        <div v-if="form.question_type === 'Open'">
-          <label class="font-medium">Max Characters</label>
-          <input v-model.number="metadata.max_char_limit" type="number"
-            class="w-full border rounded px-2 py-1" />
-        </div>
-
-        <!-- ANSWER -->
-        <div v-if="form.question_type !== 'Open'">
-          <label class="block mb-1 font-medium">Correct Answer</label>
-          <input v-model="form.correct_answer"
-            class="w-full border rounded-lg px-3 py-2" />
-        </div>
-
-        <!-- ✅ TEST DROPDOWN -->
-        <div>
-          <label class="block mb-1 font-medium">Select Test</label>
-          <select v-model="form.test_id" required
-            class="w-full border rounded-lg px-3 py-2">
-            <option disabled value="">Select Test</option>
-            <option v-for="test in tests" :key="test.id" :value="test.id">
-              {{ test.title }} ({{ test.duration }})
-            </option>
-          </select>
-        </div>
-
-        <!-- ACTIONS -->
+        <!-- Actions -->
         <div class="flex justify-end gap-3 pt-2">
           <button type="button" @click="$emit('close')" class="px-4 py-2 border rounded-lg">
             Cancel
@@ -102,88 +117,71 @@
 
 <script>
 export default {
-  props: { data: Object },
-
   data() {
     return {
-      tests: [], // ✅ fetched tests
+      tests: [],
+      categories: [],
+      triats: [],
 
       form: {
         question_text: "",
-        question_type: "",
-        options: null,
-        correct_answer: "",
-        test_id: ""
+        type: "multiple",
+        category_id: "",
+        test_id: "",
+        weight: 0
       },
 
-      mcqOptions: ["", ""],
-
-      likert: {
-        min: 1,
-        max: 5,
-        labels: ""
-      },
-
-      metadata: {}
+      options: [
+        { text: "", triat_id: "", weight: 1, position: 1 },
+        { text: "", triat_id: "", weight: 1, position: 2 }
+      ]
     };
   },
 
   methods: {
     async fetchTests() {
-      try {
-        const params = { page: 1, page_size: 100 };
-        const response = await this.$apiGet('/test', params);
+      const res = await this.$apiGet("/test", { page: 1, page_size: 100 });
+      this.tests = res.data;
+    },
 
-        this.tests = response.data; // ✅ IMPORTANT
-      } catch (e) {
-        console.error(e);
-      }
+    async fetchCategories() {
+      const res = await this.$apiGet("/category", { page: 1, page_size: 100 });
+      this.categories = res.data;
+    },
+
+    onCategoryChange() {
+      const selected = this.categories.find(c => c.id === this.form.category_id);
+      this.triats = selected?.Triats || [];
     },
 
     addOption() {
-      this.mcqOptions.push("");
+      this.options.push({
+        text: "",
+        triat_id: "",
+        weight: 1,
+        position: this.options.length + 1
+      });
     },
 
     removeOption(i) {
-      this.mcqOptions.splice(i, 1);
+      this.options.splice(i, 1);
+      this.options.forEach((o, idx) => o.position = idx + 1);
     },
 
     async submitForm() {
       try {
-        // MCQ
-        if (this.form.question_type === "MCQ") {
-          this.form.options = this.mcqOptions;
-          this.metadata = { weightage: {} };
+        let payload = { ...this.form };
+
+        if (this.form.type !== "open") {
+          payload.options = this.options;
         }
 
-        // LIKERT
-        if (this.form.question_type === "LIKERT") {
-          this.form.options = {
-            min: this.likert.min,
-            max: this.likert.max,
-            labels: this.likert.labels.split(",").map(l => l.trim())
-          };
-          this.metadata = { trait: "Custom" };
-        }
-
-        // OPEN
-        if (this.form.question_type === "Open") {
-          this.form.options = null;
-          this.form.correct_answer = "N/A - Manual Review Required";
-          this.metadata = {
-            max_char_limit: this.metadata.max_char_limit || 500
-          };
-        }
-
-        const payload = {
-          ...this.form,
-          metadata: this.metadata
-        };
+        console.log("FINAL PAYLOAD", payload);
 
         const res = await this.$apiPost("/question", payload);
 
         if (res) {
-          this.$root.$refs.toast.showToast("Added successfully", "success");
+          this.$root.$refs.toast.showToast("Question added successfully", "success");
         }
 
         this.$emit("saved");
@@ -196,7 +194,8 @@ export default {
   },
 
   mounted() {
-    this.fetchTests(); // ✅ load tests when modal opens
+    this.fetchTests();
+    this.fetchCategories();
   }
 };
 </script>

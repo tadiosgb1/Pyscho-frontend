@@ -122,9 +122,11 @@
           <div class="mt-12 text-center pt-6 border-t border-slate-50">
             <p class="text-xs font-bold text-slate-400 uppercase tracking-widest">
               Institutional Access? 
-              <router-link :to="{ path: '/pricing'}" class="text-primary hover:text-primary-dense ml-1 transition-colors">
+
+              <router-link :to="{ path: '/register'}" class="text-primary hover:text-primary-dense ml-1 transition-colors">
                 Register Organization
               </router-link>
+
             </p>
           </div>
         </div>

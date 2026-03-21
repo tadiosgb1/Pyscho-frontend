@@ -18,11 +18,28 @@
         </div>
 
         <form @submit.prevent="submitForm" class="grid grid-cols-1 gap-4">
-          <div class="space-y-1">
-            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Username</label>
+
+            <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">First name</label>
             <div class="relative group">
               <i class="fas fa-at absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-dprimary transition-colors text-xs"></i>
-              <input v-model="form.username" type="text" required placeholder="johndoe"
+              <input v-model="form.first_name" type="text" required placeholder="johndoe"
+                class="w-full pl-11 pr-4 py-3 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:ring-0 focus:border-primary outline-none transition-all text-sm font-bold text-slate-800 placeholder:text-slate-300" />
+            </div>
+          </div>
+            <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Middle ame</label>
+            <div class="relative group">
+              <i class="fas fa-at absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-dprimary transition-colors text-xs"></i>
+              <input v-model="form.middle_name" type="text" required placeholder="johndoe"
+                class="w-full pl-11 pr-4 py-3 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:ring-0 focus:border-primary outline-none transition-all text-sm font-bold text-slate-800 placeholder:text-slate-300" />
+            </div>
+          </div>
+          <div class="space-y-1">
+            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Last Name</label>
+            <div class="relative group">
+              <i class="fas fa-at absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-dprimary transition-colors text-xs"></i>
+              <input v-model="form.last_name" type="text" required placeholder="johndoe"
                 class="w-full pl-11 pr-4 py-3 bg-slate-50 border-2 border-slate-50 rounded-2xl focus:bg-white focus:ring-0 focus:border-primary outline-none transition-all text-sm font-bold text-slate-800 placeholder:text-slate-300" />
             </div>
           </div>
@@ -82,10 +99,13 @@ export default {
     return {
       loading: false,
       form: {
-        username: this.data?.username || '',
+        first_name: this.data?.first_name || '',
+        middle_name: this.data?.middle_name || '',
+        last_name: this.data?.last_name || '',
         email: this.data?.email || '',
         phone: this.data?.phone || '',
-        password: this.data?.password || ''
+        password: this.data?.password || '',
+        created_by:localStorage.getItem("userId"),
       }
     };
   },
