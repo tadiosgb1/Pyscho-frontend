@@ -90,7 +90,7 @@ export default {
     async submitForm() {
       this.loading = true;
       try {
-        const res = await this.$apiPut("/role", this.data.id, this.form);
+        const res = await this.$apiPut("/roles", this.data.id, this.form);
         if (res) {
           this.$root.$refs.toast.showToast('Role updated successfully', 'success');
           this.$emit("saved");

@@ -4,20 +4,18 @@
       <aside
         class="w-72 flex flex-col fixed md:relative z-15 h-full transition-all duration-300 bg-white border-r border-slate-100 custom-scrollbar shadow-sm"
       >
+        <!-- Sidebar Header -->
         <div
           v-if="showTitle"
           class="flex flex-row items-center space-x-4 p-5 font-black text-xl text-white bg-primary sticky top-0 z-20 shadow-lg"
         >
           <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md">
-            <img
-              src="../../assets/img/logo1.jpg"
-              alt="Logo"
-              class="h-7 w-7 rounded-lg"
-            />
+            <img src="../../assets/img/logo1.jpg" alt="Logo" class="h-7 w-7 rounded-lg" />
           </div>
-          <p class="tracking-tighter">Alpha Message</p>
+          <p class="tracking-tighter">Alpha GYZ</p>
         </div>
 
+        <!-- Menu Items -->
         <div class="flex-1 overflow-y-auto custom-scrollbar pt-6">
           <div v-for="(group, gIndex) in groupedMenu" :key="gIndex" class="mb-8 px-4">
             <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-4">
@@ -25,30 +23,34 @@
             </p>
 
             <ul class="space-y-1.5">
-              <li v-for="item in group.items" :key="item.route">
-                <router-link
-                  :to="{ name: item.route }"
-                  class="group flex items-center px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 relative overflow-hidden"
-                  :class="[
-                    $route.name === item.route 
-                      ? 'bg-primary text-white shadow-xl shadow-primary/25' 
-                      : 'text-slate-500 hover:bg-slate-50 hover:text-primary'
-                  ]"
-                >
-                  <i
-                    :class="[
-                      item.icon, 
-                      'w-6 text-lg mr-3 transition-transform duration-300 group-hover:scale-110',
-                      $route.name === item.route ? 'text-white' : 'text-slate-400 group-hover:text-primary'
-                    ]"
-                  ></i>
-                  <span class="whitespace-nowrap tracking-tight">{{ item.name }}</span>
-                  <div 
-                    v-if="$route.name === item.route" 
-                    class="absolute right-0 w-1.5 h-6 bg-white/40 rounded-l-full animate-pulse"
-                  ></div>
-                </router-link>
-              </li>
+             <li 
+  v-for="item in group.items" 
+  :key="item.route" 
+  v-if="!item?.permission || $hasPermission(item?.permission)"
+>
+  <router-link
+    :to="{ name: item.route }"
+    class="group flex items-center px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 relative overflow-hidden"
+    :class="[
+      $route.name === item.route
+        ? 'bg-primary text-white shadow-xl shadow-primary/25'
+        : 'text-slate-500 hover:bg-slate-50 hover:text-primary'
+    ]"
+  >
+    <i
+      :class="[
+        item.icon,
+        'w-6 text-lg mr-3 transition-transform duration-300 group-hover:scale-110',
+        $route.name === item.route ? 'text-white' : 'text-slate-400 group-hover:text-primary'
+      ]"
+    ></i>
+    <span class="whitespace-nowrap tracking-tight">{{ item.name }}</span>
+    <div
+      v-if="$route.name === item.route"
+      class="absolute right-0 w-1.5 h-6 bg-white/40 rounded-l-full animate-pulse"
+    ></div>
+  </router-link>
+</li>
             </ul>
           </div>
           <div class="h-10"></div>
@@ -65,138 +67,41 @@ export default {
       showTitle: true,
       is_superuser: false,
       menuItems: [
-
-   
-
-
-
-      {
-        name: "Dashboard", 
-        route: "first-dash", 
-        icon: "fas fa-chart-line", 
-        color: "#22c55e" },
-          {
-          name: "Users",
-          route: "Users-view",
-          icon: "fas fa-folder",
-          color: "#22c55e"
-        },
-        {
-          name: "Roles",
-          route: "Role-view",
-          icon: "fas fa-folder",
-          color: "#22c55e"
-        },
-
-        {
-          name: "Permissions",
-          route: "Permission-view",
-          icon: "fas fa-folder",
-          color: "#22c55e"
-        },
-      
-   
-
-        {
-          name: "Organizations",
-          route: "Organization-view",
-          icon: "fas fa-folder",
-          color: "#22c55e"
-        },
-  
-
- {
-      name: "Groups",
-      route: "Group-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-
- 
-
-    {
-      name: "Tests",
-      route: "Test-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-
-    {
-      name: "Answers",
-      route: "Answer-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-
-     {
-      name: "Categories",
-      route: "Category-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-    {
-      name: "Questions",
-      route: "Question-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-
-    
-    {
-      name: "Triats",
-      route: "Triat-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-
-          
-    {
-      name: "Options",
-      route: "Option-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-
-      
-
-    {
-      name: "Results",
-      route: "Result-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-  
-     {
-      name: "Progresses",
-      route: "Progress-view",
-      icon: "fas fa-folder",
-      color: "#22c55e"
-    },
-   ],
+        { name: "Dashboard", route: "first-dash", icon: "fas fa-chart-line" },
+        { name: "Users", route: "Users-view", icon: "fas fa-user", permission: "view_user" },
+        { name: "Roles", route: "Role-view", icon: "fas fa-id-badge", permission: "view_role" },
+        { name: "Permissions", route: "Permission-view", icon: "fas fa-key", permission: "view_permission" },
+        { name: "Organizations", route: "Organization-view", icon: "fas fa-building",permission: "view_org" },
+        { name: "Groups", route: "Group-view", icon: "fas fa-users",permission: "view_group" },
+        { name: "Tests", route: "Test-view", icon: "fas fa-file-alt",permission: "view_test" },
+        { name: "Answers", route: "Answer-view", icon: "fas fa-reply",permission: "view_answer" },
+        { name: "Categories", route: "Category-view", icon: "fas fa-folder" ,permission: "view_category"},
+        { name: "Questions", route: "Question-view", icon: "fas fa-question-circle",permission: "view_question" },
+        { name: "Triats", route: "Triat-view", icon: "fas fa-list",permission: "view_triat" },
+        { name: "Options", route: "Option-view", icon: "fas fa-cogs",permission: "view_option" },
+        { name: "Results", route: "Result-view", icon: "fas fa-trophy" ,permission: "view_result"},
+        { name: "Progresses", route: "Progress-view", icon: "fas fa-chart-bar",permission: "view_progress" },
+      ],
     };
   },
-
   computed: {
-    // Filter by permissions
     filteredMenuItems() {
+
       return this.menuItems.filter(item => {
-        if (item.is_superuser && !this.is_superuser) return false;
         if (item.permission) return this.$hasPermission(item.permission);
         return true;
       });
     },
-    // Organize items into sections for the UI
     groupedMenu() {
       const groups = {};
       this.filteredMenuItems.forEach(item => {
-        const cat = item.category || 'General';
+        const cat = item.category || "General";
         if (!groups[cat]) groups[cat] = [];
         groups[cat].push(item);
       });
       return Object.keys(groups).map(key => ({ title: key, items: groups[key] }));
-    }
+    },
   },
-
   mounted() {
     this.is_superuser = localStorage.getItem("is_superuser") === "true";
     this.showTitle = window.innerWidth < 1024;
@@ -205,14 +110,14 @@ export default {
 </script>
 
 <style scoped>
-.slide-enter-active, .slide-leave-active {
+.slide-enter-active,
+.slide-leave-active {
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-
-.slide-enter-from, .slide-leave-to {
+.slide-enter-from,
+.slide-leave-to {
   transform: translateX(-100%);
 }
-
 .custom-scrollbar::-webkit-scrollbar {
   width: 4px;
 }

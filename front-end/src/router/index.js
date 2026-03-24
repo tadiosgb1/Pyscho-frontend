@@ -145,6 +145,29 @@ const routes = [
       { requiresGuest: true },
       children: [
       {
+        path: "permissions",
+        name: "Permission-view",
+        component: () => import('../views/closed/Permissions/PermissionView.vue'),
+      },
+      {
+        path: "permissions/add",
+        name: "Permission-add",
+        component: () => import('../views/closed/Permissions/AddPermission.vue'),
+      },
+      {
+        path: "permissions/edit/:id",
+        name: "Permission-edit",
+        component: () => import('../views/closed/Permissions/EditPermission.vue'),
+        props: true,
+      },
+      {
+        path: "permissions/detail/:id",
+        name: "Permission-detail",
+        component: () => import('../views/closed/Permissions/PermissionDetail.vue'),
+        props: true,
+      },
+
+      {
         path: "groups",
         name: "Group-view",
         component: () => import('../views/closed/Groups/GroupView.vue'),

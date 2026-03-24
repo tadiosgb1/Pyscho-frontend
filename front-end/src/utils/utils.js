@@ -545,13 +545,33 @@ export async function loadPermissions($apiPost) {
 
 
 
+/**
+ * Checks if the current user has a specific permission.
+ * @param {string} permission - The permission code to check
+ * @returns {boolean} - true if the permission exists, false otherwise
+ */
 export function hasPermission(permission) {
-  const userPermissions = JSON.parse(localStorage.getItem("permissions") || "[]");
+  try {
+    const stored = localStorage.getItem("permissions");
+    if (!stored) return false;
 
-  // console.log("userPermissions", userPermissions);
+    let userPermissions = [];
 
-  return userPermissions.includes(permission);
+    // Try parsing JSON first
+    try {
+      userPermissions = JSON.parse(stored);
+    } catch (e) {
+      // Fallback: comma-separated string
+      userPermissions = stored.split(",").map(p => p.trim());
+    }
+
+    return userPermissions.includes(permission);
+  } catch (err) {
+    console.error("Failed to check permission:", err);
+    return false;
+  }
 }
+
 const userCache = {};
 export async function getFullNameById(id) {
   if (!id) return "";

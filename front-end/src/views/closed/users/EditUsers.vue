@@ -96,7 +96,7 @@ export default {
       this.loading = true;
       try {
         // Specifically using apiPut for the Edit logic
-        const res = await this.$apiPatch("/auth/register", this.data.id, this.form);
+        const res = await this.$apiPatch("/users", this.data.id, this.form);
         if (res) {
           this.$root.$refs.toast.showToast('User updated successfully', 'success');
           this.$emit("saved");

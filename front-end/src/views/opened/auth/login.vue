@@ -159,7 +159,8 @@ export default {
         localStorage.setItem("userId", response.id);
         localStorage.setItem("email", response.email);
         localStorage.setItem("name", response.email);
-        
+        localStorage.setItem("roles", response.roles);
+        localStorage.setItem("permissions", response.permissions);
         this.$refs.toast?.showSuccessToastMessage("Secure Session Initialized.");
     
         setTimeout(() => {
