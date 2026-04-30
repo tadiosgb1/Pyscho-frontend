@@ -1,4 +1,3 @@
-
 <template>
   <div class="p-6 bg-gray-50 min-h-screen text-sm text-gray-800">
     <!-- Loading -->
@@ -7,21 +6,28 @@
     <!-- Page Header -->
     <div class="flex items-center justify-between mb-6 border-b pb-4 border-gray-200">
       <h1 class="text-lg font-bold text-gray-800">Role Detail</h1>
+      <button @click="$router.back()" class="text-sm text-gray-500 hover:text-gray-700 flex items-center gap-1">
+        <i class="fas fa-arrow-left text-xs"></i> Back
+      </button>
     </div>
 
     <!-- Detail Card -->
-    <div class="bg-white overflow-hidden rounded-md border border-gray-200 p-4 hidden md:block space-y-2">
-      <div><strong>ID:</strong> {{ item.id }}</div>
-      <div><strong>Name:</strong> {{ item.name }}</div><div><strong>Description:</strong> {{ item.description }}</div>
+    <div class="bg-white rounded-xl border border-gray-200 p-6 space-y-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">ID</p>
+          <p class="text-gray-800 font-medium">{{ item.id || '—' }}</p>
+        </div>
+        <div>
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Name</p>
+          <p class="text-gray-800 font-medium">{{ item.name || '—' }}</p>
+        </div>
+        <div class="sm:col-span-2">
+          <p class="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Description</p>
+          <p class="text-gray-800">{{ item.description || '—' }}</p>
+        </div>
+      </div>
     </div>
-
-    <!-- Mobile View -->
-    <div class="md:hidden bg-white rounded-md border border-gray-200 p-4 space-y-2">
-      <div><strong>ID:</strong> {{ item.id }}</div>
-      <div><strong>Name:</strong> {{ item.name }}</div><div><strong>Description:</strong> {{ item.description }}</div>
-    </div>
-
-    <button @click="$router.back()" class="mt-4 text-blue-600 hover:underline">Back</button>
   </div>
 </template>
 

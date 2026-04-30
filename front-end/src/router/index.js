@@ -373,6 +373,12 @@ const routes = [
         component: () => import('../closed/Tests/title/TestDetail.vue'),
         props: true,
       },
+      {
+        path: "title/take/:id",
+        name: "Test-take",
+        component: () => import('../closed/Tests/title/TakeTest.vue'),
+        props: true,
+      },
 
       {
         path: "name",
@@ -435,9 +441,26 @@ const routes = [
         component: RoleView,
       },
 
-        {
+      {
         path: "permission-view", name: "Permission-view",
         component: PermissionView,
+      },
+
+      // ── Billing ──────────────────────────────────────────────────────────
+      {
+        path: "plans",
+        name: "Plan-view",
+        component: () => import('../views/closed/Plans/PlanView.vue'),
+      },
+      {
+        path: "subscriptions",
+        name: "Subscription-view",
+        component: () => import('../views/closed/Subscriptions/SubscriptionView.vue'),
+      },
+      {
+        path: "invoices",
+        name: "Invoice-view",
+        component: () => import('../views/closed/Invoices/InvoiceView.vue'),
       },
        
 

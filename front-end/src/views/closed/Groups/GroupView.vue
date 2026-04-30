@@ -44,9 +44,11 @@
               <td class="px-6 py-4">{{ index + 1 }}</td>
               <td class="px-6 py-4 whitespace-nowrap">{{ item.name }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.description }}</td><td class="px-6 py-4 whitespace-nowrap">{{ item.organization }}</td>
               <td class="px-6 py-4 text-center space-x-3">
-                <button @click="viewDetails(item.id)" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
-                <button @click="editItem(item)" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
-                <button @click="openDeleteModal(item.id)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
+                <button @click="viewDetails(item.id)" title="View Detail" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
+                <button @click="openMembersModal(item)" title="View Members" class="text-indigo-500 hover:text-indigo-700"><i class="fas fa-users"></i></button>
+                <button @click="openAssignUsersModal(item)" title="Add Users to Group" class="text-amber-500 hover:text-amber-700"><i class="fas fa-user-plus"></i></button>
+                <button @click="editItem(item)" title="Edit" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
+                <button @click="openDeleteModal(item.id)" title="Delete" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
               </td>
             </tr>
             <tr v-if="items.length === 0">
@@ -63,7 +65,9 @@
         <div class="flex justify-between mb-3">
           <h2 class="font-bold text-gray-800">Group #{{ index + 1 }}</h2>
           <div class="flex gap-3 text-sm">
-            <button @click="viewDetails(item.id)" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
+            <button @click="viewDetails(item.id)" title="View Detail" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
+            <button @click="openMembersModal(item)" title="View Members" class="text-indigo-500 hover:text-indigo-700"><i class="fas fa-users"></i></button>
+            <button @click="openAssignUsersModal(item)" title="Add Users" class="text-amber-500 hover:text-amber-700"><i class="fas fa-user-plus"></i></button>
             <button @click="editItem(item)" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
             <button @click="openDeleteModal(item.id)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
           </div>
@@ -107,6 +111,21 @@
     <add-group v-if="showModal && !editMode" :data="selectedItem" @close="showModal=false" @saved="fetchItems"/>
     <edit-group v-if="showModal && editMode" :data="selectedItem" @close="showModal=false" @saved="fetchItems"/>
 
+    <!-- Assign Users to Group Modal -->
+    <assign-users-modal
+      v-if="showAssignModal && selectedItem"
+      :group="selectedItem"
+      @close="showAssignModal = false"
+      @assigned="fetchItems"
+    />
+
+    <!-- View Group Members Modal -->
+    <group-members-modal
+      v-if="showMembersModal && selectedItem"
+      :group="selectedItem"
+      @close="showMembersModal = false"
+    />
+
     <!-- Delete Confirmation Modal -->
     <delete-confirm-modal 
       :visible="deleteModalVisible"
@@ -121,11 +140,13 @@
 <script>
 import AddGroup from "./AddGroup.vue";
 import EditGroup from "./EditGroup.vue";
+import AssignUsersModal from "./AssignUsersModal.vue";
+import GroupMembersModal from "./GroupMembersModal.vue";
 import Loading from "@/components/Loading.vue";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal.vue";
 
 export default {
-  components: { AddGroup, EditGroup, Loading, DeleteConfirmModal },
+  components: { AddGroup, EditGroup, AssignUsersModal, GroupMembersModal, Loading, DeleteConfirmModal },
 
   data() {
     return {
@@ -142,6 +163,8 @@ export default {
       loading: false,
       deleteModalVisible: false,
       deleteId: null,
+      showAssignModal: false,
+      showMembersModal: false,
     };
   },
 
@@ -162,15 +185,16 @@ export default {
 
     openAddModal() { this.editMode = false; this.selectedItem = null; this.showModal = true; },
     editItem(item) { this.editMode = true; this.selectedItem = item; this.showModal = true; },
-    
-    // Navigate using static route name
-    viewDetails(id) { 
+
+    openAssignUsersModal(group) { this.selectedItem = group; this.showAssignModal = true; },
+    openMembersModal(group)     { this.selectedItem = group; this.showMembersModal = true; },
+
+    viewDetails(id) {
       this.$router.push({ name: 'Group-detail', params: { id } });
     },
 
     openDeleteModal(id) { this.deleteId = id; this.deleteModalVisible = true; },
 
-    // Delete with toast
     async confirmDelete() {
       const res = await this.$apiDelete('/group', this.deleteId);
       if(res) {

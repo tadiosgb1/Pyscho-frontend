@@ -1,185 +1,264 @@
 <template>
-  <div class="min-h-screen bg-white font-sans selection:bg-primary/10">
-    <Header />
+  <div class="min-h-screen bg-white font-sans text-gray-800">
+    <Header @open-login="showLogin = true" @open-register="showRegister = true" />
 
-    <main class="pt-20">
-      <div v-if="loading" class="py-40 text-center">
-        <div class="inline-block animate-spin w-12 h-12 border-4 border-primary border-t-transparent rounded-full"></div>
-        <p class="mt-4 font-black uppercase tracking-widest text-slate-400 text-[10px]">Syncing Plans...</p>
+    <!-- Hero -->
+    <section class="bg-slate-900 py-20 text-center">
+      <div class="max-w-3xl mx-auto px-6">
+        <span class="inline-block px-4 py-1.5 mb-4 text-xs font-semibold tracking-widest text-green-400 bg-green-400/10 rounded-full uppercase border border-green-400/20">
+          Transparent Pricing
+        </span>
+        <h1 class="text-4xl sm:text-5xl font-black text-white mb-4">
+          Plans for every organization
+        </h1>
+        <p class="text-slate-400 text-base leading-relaxed">
+          Start free and scale as your team grows. No hidden fees, no surprises.
+        </p>
       </div>
+    </section>
 
-      <section v-else id="plans" class="py-24 bg-slate-50 relative overflow-hidden">
-        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-primary/5 via-transparent to-transparent opacity-50"></div>
+    <!-- Billing toggle -->
+    <div class="flex justify-center py-8 bg-gray-50 border-b border-gray-100">
+      <div class="flex items-center gap-3 bg-white border border-gray-200 rounded-xl p-1 shadow-sm">
+        <button
+          @click="billingCycle = 'monthly'"
+          class="px-5 py-2 rounded-lg text-sm font-semibold transition-all"
+          :class="billingCycle === 'monthly' ? 'bg-green-500 text-white shadow' : 'text-gray-500 hover:text-gray-700'"
+        >
+          Monthly
+        </button>
+        <button
+          @click="billingCycle = 'yearly'"
+          class="px-5 py-2 rounded-lg text-sm font-semibold transition-all flex items-center gap-2"
+          :class="billingCycle === 'yearly' ? 'bg-green-500 text-white shadow' : 'text-gray-500 hover:text-gray-700'"
+        >
+          Yearly
+          <span class="text-[10px] font-bold px-1.5 py-0.5 rounded bg-amber-100 text-amber-700">Save 20%</span>
+        </button>
+      </div>
+    </div>
 
-        <div class="max-w-7xl mx-auto px-6 relative z-10">
-          <div class="max-w-3xl mx-auto text-center mb-20">
-            <span class="inline-block px-4 py-1.5 mb-4 text-[10px] font-black tracking-[0.3em] text-primary bg-primary/10 rounded-full uppercase">
-              Subscription Tiers
-            </span>
-            <h2 class="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight">
-              Scale Your <span class="text-primary italic">Messaging.</span>
-            </h2>
-            <p class="text-slate-500 font-medium tracking-tight">Select a plan that fits your business volume and technical requirements.</p>
-          </div>
+    <!-- Loading -->
+    <div v-if="loading" class="flex justify-center py-24">
+      <i class="fas fa-spinner animate-spin text-3xl text-green-500"></i>
+    </div>
 
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 items-start mb-24">
-            <div v-for="(plan, index) in items" :key="plan.id"
-              class="group relative bg-white border border-slate-200 rounded-[2.5rem] p-10 transition-all duration-500 hover:shadow-2xl hover:border-primary/20 hover:-translate-y-2"
+    <!-- Plans Grid -->
+    <section v-else class="py-16 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          <div
+            v-for="plan in filteredPlans"
+            :key="plan.id"
+            class="relative bg-white rounded-2xl border-2 p-7 flex flex-col transition-all hover:shadow-xl"
+            :class="plan.slug === 'professional' || plan.slug === 'professional_yearly'
+              ? 'border-green-500 shadow-lg shadow-green-500/10'
+              : 'border-gray-100'"
+          >
+            <!-- Popular badge -->
+            <div
+              v-if="plan.slug === 'professional' || plan.slug === 'professional_yearly'"
+              class="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 bg-green-500 text-white text-[10px] font-bold rounded-full uppercase tracking-wide whitespace-nowrap"
             >
-              <div v-if="index === 0" class="absolute -top-5 left-1/2 -translate-x-1/2 bg-slate-900 text-primary px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-lg">
-                Active Tier
-              </div>
+              Most Popular
+            </div>
 
-              <div class="mb-8">
-                <div class="flex justify-between items-start">
-                  <h3 class="text-xl font-black text-slate-900 mb-2 uppercase tracking-tighter">{{ plan.plan_name }}</h3>
-                  <i class="fas fa-layer-group text-slate-200 text-2xl"></i>
-                </div>
-                <p class="text-slate-400 text-[10px] font-black uppercase tracking-widest">Daily Limit: {{ plan.max_daily_sends }} SMS</p>
-              </div>
+            <!-- Plan name + description -->
+            <div class="mb-5">
+              <h3 class="text-lg font-black text-gray-900">{{ plan.name }}</h3>
+              <p class="text-xs text-gray-400 mt-1.5 leading-relaxed">{{ plan.description }}</p>
+            </div>
 
-              <div class="mb-10 flex items-baseline gap-1">
-                <span class="text-sm font-black text-slate-400 uppercase">ETB</span>
-                <span class="text-5xl font-black text-slate-900 tracking-tighter">
-                  {{ getPrice(index) }}
+            <!-- Price -->
+            <div class="mb-6 pb-6 border-b border-gray-100">
+              <div v-if="plan.price_cents === 0">
+                <span class="text-4xl font-black text-gray-900">Free</span>
+                <p class="text-xs text-gray-400 mt-1">Forever</p>
+              </div>
+              <div v-else>
+                <span class="text-4xl font-black text-gray-900">
+                  ${{ (plan.price_cents / 100).toFixed(0) }}
                 </span>
-                <span class="text-[10px] font-bold text-slate-400 uppercase">/msg</span>
+                <span class="text-sm text-gray-400 ml-1">/ {{ plan.billing_cycle }}</span>
+                <p v-if="plan.billing_cycle === 'yearly'" class="text-xs text-green-600 font-medium mt-1">
+                  ${{ ((plan.price_cents / 100) / 12).toFixed(0) }}/mo billed annually
+                </p>
               </div>
+            </div>
 
-              <div class="h-px w-full bg-slate-100 mb-8"></div>
-
-              <ul class="space-y-4 mb-10">
-                <li class="flex items-center gap-3 text-xs font-bold text-slate-600">
-                  <i class="fas fa-check-circle text-primary text-sm"></i>
-                  {{ plan.sender_names }} Sender Names
+            <!-- Limits -->
+            <div class="mb-5">
+              <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Included</p>
+              <ul class="space-y-2.5 text-sm text-gray-600">
+                <li class="flex items-center gap-2.5">
+                  <i class="fas fa-users text-green-500 w-4 text-center text-xs"></i>
+                  {{ plan.max_users === -1 ? 'Unlimited users' : plan.max_users + ' users' }}
                 </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-slate-600">
-                  <i class="fas fa-check-circle text-primary text-sm"></i>
-                  {{ plan.import_limit }} Contact Imports
+                <li class="flex items-center gap-2.5">
+                  <i class="fas fa-file-alt text-green-500 w-4 text-center text-xs"></i>
+                  {{ plan.max_tests === -1 ? 'Unlimited tests' : plan.max_tests + ' tests' }}
                 </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-slate-600">
-                  <i class="fas fa-check-circle text-primary text-sm"></i>
-                  {{ plan.keywords }} Automated Keywords
+                <li class="flex items-center gap-2.5">
+                  <i class="fas fa-layer-group text-green-500 w-4 text-center text-xs"></i>
+                  {{ plan.max_groups === -1 ? 'Unlimited groups' : plan.max_groups + ' groups' }}
                 </li>
-                <li class="flex items-center gap-3 text-xs font-bold text-slate-600">
-                  <i class="fas fa-check-circle text-primary text-sm"></i>
-                  OTP: {{ plan.max_otp }}
-                </li>
-                <li v-if="plan.import_throttled" class="flex items-center gap-3 text-[10px] font-black uppercase text-amber-600 bg-amber-50 p-2 rounded-lg">
-                  <i class="fas fa-bolt"></i>
-                  Throttled Processing Enabled
+                <li class="flex items-center gap-2.5">
+                  <i class="fas fa-clipboard-check text-green-500 w-4 text-center text-xs"></i>
+                  {{ plan.max_test_assignments === -1 ? 'Unlimited assignments' : plan.max_test_assignments + ' assignments' }}
                 </li>
               </ul>
+            </div>
 
-              <button 
-                class="w-full py-5 rounded-2xl font-black text-xs uppercase tracking-[0.2em] transition-all hover:scale-105 active:scale-95 shadow-lg bg-slate-900 text-white hover:bg-primary"
-              >
-                Select Plan
-              </button>
+            <!-- Feature flags -->
+            <div class="mb-6 flex-1">
+              <p class="text-[10px] font-semibold text-gray-400 uppercase tracking-wide mb-3">Features</p>
+              <ul class="space-y-2 text-sm">
+                <li class="flex items-center gap-2.5" :class="plan.has_analytics ? 'text-gray-700' : 'text-gray-300'">
+                  <i :class="['fas w-4 text-center text-xs', plan.has_analytics ? 'fa-check text-green-500' : 'fa-times text-gray-200']"></i>
+                  Analytics
+                </li>
+                <li class="flex items-center gap-2.5" :class="plan.has_export ? 'text-gray-700' : 'text-gray-300'">
+                  <i :class="['fas w-4 text-center text-xs', plan.has_export ? 'fa-check text-green-500' : 'fa-times text-gray-200']"></i>
+                  Export Reports
+                </li>
+                <li class="flex items-center gap-2.5" :class="plan.has_api_access ? 'text-gray-700' : 'text-gray-300'">
+                  <i :class="['fas w-4 text-center text-xs', plan.has_api_access ? 'fa-check text-green-500' : 'fa-times text-gray-200']"></i>
+                  API Access
+                </li>
+                <li class="flex items-center gap-2.5" :class="plan.has_custom_branding ? 'text-gray-700' : 'text-gray-300'">
+                  <i :class="['fas w-4 text-center text-xs', plan.has_custom_branding ? 'fa-check text-green-500' : 'fa-times text-gray-200']"></i>
+                  Custom Branding
+                </li>
+                <li class="flex items-center gap-2.5" :class="plan.has_priority_support ? 'text-gray-700' : 'text-gray-300'">
+                  <i :class="['fas w-4 text-center text-xs', plan.has_priority_support ? 'fa-check text-green-500' : 'fa-times text-gray-200']"></i>
+                  Priority Support
+                </li>
+              </ul>
+            </div>
+
+            <!-- CTA -->
+            <button
+              @click="$emit('open-register')"
+              class="block w-full text-center py-3 rounded-xl text-sm font-semibold transition-all"
+              :class="plan.slug === 'professional' || plan.slug === 'professional_yearly'
+                ? 'bg-green-500 hover:bg-green-600 text-white shadow-md shadow-green-500/20'
+                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'"
+            >
+              {{ plan.price_cents === 0 ? 'Get Started Free' : 'Start ' + plan.name }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Enterprise CTA -->
+        <div class="bg-slate-900 rounded-2xl p-8 md:p-12 flex flex-col md:flex-row items-center justify-between gap-6">
+          <div>
+            <h3 class="text-xl font-black text-white mb-2">Need a custom Enterprise plan?</h3>
+            <p class="text-slate-400 text-sm">Unlimited everything, dedicated support, custom integrations, and SLA guarantees.</p>
+          </div>
+          <button @click="showRegister = true"
+            class="flex-shrink-0 px-8 py-3.5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all text-sm whitespace-nowrap">
+            Contact Sales
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="py-20 bg-white">
+      <div class="max-w-3xl mx-auto px-6">
+        <h2 class="text-2xl font-black text-gray-900 text-center mb-12">Frequently Asked Questions</h2>
+        <div class="space-y-4">
+          <div v-for="faq in faqs" :key="faq.q" class="border border-gray-100 rounded-xl overflow-hidden">
+            <button
+              @click="faq.open = !faq.open"
+              class="w-full flex items-center justify-between px-6 py-4 text-left text-sm font-semibold text-gray-800 hover:bg-gray-50 transition"
+            >
+              {{ faq.q }}
+              <i class="fas text-gray-400 text-xs transition-transform"
+                :class="faq.open ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+            </button>
+            <div v-if="faq.open" class="px-6 pb-4 text-sm text-gray-500 leading-relaxed">
+              {{ faq.a }}
             </div>
           </div>
         </div>
-      </section>
-
-      <section class="py-32 bg-white">
-        <div class="max-w-4xl mx-auto px-6">
-          <div class="bg-slate-900 rounded-[3.5rem] p-8 md:p-16 text-white shadow-2xl relative overflow-hidden border border-white/5">
-            <div class="relative z-10">
-              <div class="mb-16">
-                <div class="flex justify-between items-end mb-6">
-                  <span class="text-[10px] font-black uppercase tracking-widest text-slate-500">Estimated Monthly Usage</span>
-                  <span class="text-3xl font-black text-white italic">{{ estimatedVolume.toLocaleString() }} <span class="text-xs not-italic text-slate-500 uppercase">SMS</span></span>
-                </div>
-                <input 
-                  type="range" 
-                  v-model.number="estimatedVolume" 
-                  min="1000" 
-                  max="500000" 
-                  step="1000" 
-                  class="w-full h-1.5 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-primary"
-                >
-              </div>
-              
-              <div class="grid md:grid-cols-2 gap-12 border-t border-white/5 pt-12">
-                <div>
-                  <span class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Estimated Monthly Cost</span>
-                  <div class="text-4xl font-black text-white">
-                    <span class="text-lg text-primary mr-1">ETB</span>{{ calculateTotal }}
-                  </div>
-                </div>
-                <div class="md:text-right">
-                  <span class="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-2">Current Rate</span>
-                  <div class="text-4xl font-black text-primary">
-                    0.35<span class="text-xs text-slate-500 uppercase ml-2">/sms</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-    </main>
+      </div>
+    </section>
 
     <Footer />
+
+    <!-- Auth Modals -->
+    <login-modal
+      v-if="showLogin"
+      @close="showLogin = false"
+      @switch-to-register="showLogin = false; showRegister = true"
+    />
+    <register-modal
+      v-if="showRegister"
+      @close="showRegister = false"
+      @switch-to-login="showRegister = false; showLogin = true"
+    />
   </div>
 </template>
 
 <script>
-import Header from './header.vue'
-import Footer from './footer.vue'
+import Header from './header.vue';
+import Footer from './footer.vue';
+import LoginModal from '@/components/AuthModal.vue';
+import RegisterModal from '@/components/RegisterModal.vue';
 
 export default {
   name: 'PricingPage',
-  components: { Header, Footer },
+  components: { Header, Footer, LoginModal, RegisterModal },
+
   data() {
     return {
-      items: [],
+      plans: [],
       loading: false,
-      estimatedVolume: 10000,
-      baseRate: 0.35
-    }
+      billingCycle: 'monthly',
+      showLogin: false,
+      showRegister: false,
+
+      faqs: [
+        { q: 'Can I change my plan later?',           a: 'Yes. You can upgrade or downgrade at any time. Changes take effect at the start of the next billing period.', open: false },
+        { q: 'Is there a free trial?',                a: 'The Free plan is free forever with no credit card required. Paid plans include a 14-day trial.', open: false },
+        { q: 'What happens when I exceed my limits?', a: 'You will be notified and prompted to upgrade. No data is lost — you just cannot create new items until you upgrade.', open: false },
+        { q: 'Can I cancel anytime?',                 a: 'Yes. Cancel anytime from your dashboard. You keep access until the end of your billing period.', open: false },
+        { q: 'Do you offer discounts for NGOs?',      a: 'Yes. Contact us for special pricing for non-profits, educational institutions, and research organizations.', open: false },
+      ],
+    };
   },
+
   computed: {
-    calculateTotal() {
-      const total = this.estimatedVolume * this.baseRate;
-      return total.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
+    filteredPlans() {
+      if (this.billingCycle === 'yearly') {
+        // Show yearly variants where available, otherwise show monthly
+        return this.plans.filter(p =>
+          p.billing_cycle === 'yearly' ||
+          (p.billing_cycle === 'monthly' && !this.plans.find(y => y.slug === p.slug + '_yearly'))
+        );
+      }
+      // Monthly: exclude yearly variants
+      return this.plans.filter(p => p.billing_cycle !== 'yearly');
+    },
   },
+
   methods: {
     async fetchPlans() {
       this.loading = true;
       try {
-        // Adjust the endpoint to your specific API structure
-        const response = await this.$apiGet('/plans');
-        // Based on the provided server response: response.data.data.data
-        this.items = response.data.data || [];
-      } catch (error) {
-        console.error("Error fetching plans:", error);
+        const res = await this.$apiGet('/plans');
+        this.plans = res.data || [];
+      } catch (e) {
+        console.error('Fetch plans error:', e);
       } finally {
         this.loading = false;
       }
     },
-    getPrice(index) {
-      // Logic for price display if not in API response
-      const prices = ["0.35", "0.28", "0.22"];
-      return prices[index] || "0.30";
-    }
   },
+
   mounted() {
     this.fetchPlans();
-  }
-}
+  },
+};
 </script>
-
-<style scoped>
-input[type=range]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  height: 24px;
-  width: 24px;
-  border-radius: 50%;
-  background: #facc15; /* Primary color */
-  box-shadow: 0 0 15px rgba(0,0,0,0.4);
-  cursor: pointer;
-  margin-top: -10px;
-}
-</style>

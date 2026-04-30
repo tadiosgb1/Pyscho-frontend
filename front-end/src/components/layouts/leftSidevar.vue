@@ -1,60 +1,193 @@
 <template>
   <div>
     <transition name="slide">
-      <aside
-        class="w-72 flex flex-col fixed md:relative z-15 h-full transition-all duration-300 bg-white border-r border-slate-100 custom-scrollbar shadow-sm"
-      >
-        <!-- Sidebar Header -->
-        <div
-          v-if="showTitle"
-          class="flex flex-row items-center space-x-4 p-5 font-black text-xl text-white bg-primary sticky top-0 z-20 shadow-lg"
-        >
-          <div class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-md">
-            <img src="../../assets/img/logo1.jpg" alt="Logo" class="h-7 w-7 rounded-lg" />
-          </div>
-          <p class="tracking-tighter">Alpha GYZ</p>
-        </div>
+      <aside class="w-64 flex flex-col fixed md:relative z-15 h-full bg-white border-r border-gray-200 shadow-sm">
 
-        <!-- Menu Items -->
-        <div class="flex-1 overflow-y-auto custom-scrollbar pt-6">
-          <div v-for="(group, gIndex) in groupedMenu" :key="gIndex" class="mb-8 px-4">
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400 mb-4 px-4">
-              {{ group.title }}
-            </p>
-
-            <ul class="space-y-1.5">
-             <li 
-  v-for="item in group.items" 
-  :key="item.route" 
-  v-if="!item?.permission || $hasPermission(item?.permission)"
->
-  <router-link
-    :to="{ name: item.route }"
-    class="group flex items-center px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-200 relative overflow-hidden"
-    :class="[
-      $route.name === item.route
-        ? 'bg-primary text-white shadow-xl shadow-primary/25'
-        : 'text-slate-500 hover:bg-slate-50 hover:text-primary'
-    ]"
-  >
-    <i
-      :class="[
-        item.icon,
-        'w-6 text-lg mr-3 transition-transform duration-300 group-hover:scale-110',
-        $route.name === item.route ? 'text-white' : 'text-slate-400 group-hover:text-primary'
-      ]"
-    ></i>
-    <span class="whitespace-nowrap tracking-tight">{{ item.name }}</span>
-    <div
-      v-if="$route.name === item.route"
-      class="absolute right-0 w-1.5 h-6 bg-white/40 rounded-l-full animate-pulse"
-    ></div>
-  </router-link>
-</li>
-            </ul>
+        <!-- Logo -->
+        <!-- <div class="flex items-center gap-3 px-5 py-4 border-b border-gray-200">
+          <div class="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0">
+            <img src="../../assets/img/logo1.jpg" alt="Logo" class="w-full h-full object-cover" />
           </div>
-          <div class="h-10"></div>
-        </div>
+          <span class="text-sm font-bold text-gray-800 tracking-tight">Alpha GYZ</span>
+        </div> -->
+
+        <!-- Nav -->
+        <nav class="flex-1 overflow-y-auto py-4 custom-scrollbar">
+
+          <!-- Dashboard — always visible -->
+          <div class="px-3 mb-2">
+            <router-link
+              :to="{ name: 'first-dash' }"
+              class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors"
+              :class="$route.name === 'first-dash' ? 'bg-green-50 text-green-700' : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'"
+            >
+              <i class="fas fa-chart-line w-4 text-center"
+                :class="$route.name === 'first-dash' ? 'text-green-600' : 'text-gray-400'"></i>
+              Dashboard
+            </router-link>
+          </div>
+
+          <!-- Assessment -->
+          <div v-if="hasVisibleItems(assessmentItems)" class="px-3 mb-2">
+            <button
+              @click="toggleGroup('assessment')"
+              class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              :class="{ 'bg-gray-50 text-gray-900': isGroupActive('assessment') }"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fas fa-clipboard-list w-4 text-center text-gray-400"></i>
+                Assessment
+              </div>
+              <i class="fas fa-chevron-right text-xs text-gray-300 transition-transform duration-200"
+                :class="{ 'rotate-90': openGroups.assessment }"></i>
+            </button>
+            <div v-show="openGroups.assessment" class="mt-1 ml-4 pl-3 border-l border-gray-100 space-y-0.5">
+              <template v-for="item in assessmentItems" :key="item.route">
+                <router-link
+                  v-if="!item.permission || $hasPermission(item.permission)"
+                  :to="{ name: item.route }"
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
+                  :class="$route.name === item.route
+                    ? 'bg-green-50 text-green-700 font-medium'
+                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+                >
+                  <i :class="[item.icon, 'w-4 text-center text-xs',
+                    $route.name === item.route ? 'text-green-600' : 'text-gray-400']"></i>
+                  {{ item.name }}
+                </router-link>
+              </template>
+            </div>
+          </div>
+
+          <!-- Results & Progress -->
+          <div v-if="hasVisibleItems(resultsItems)" class="px-3 mb-2">
+            <button
+              @click="toggleGroup('results')"
+              class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              :class="{ 'bg-gray-50 text-gray-900': isGroupActive('results') }"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fas fa-chart-bar w-4 text-center text-gray-400"></i>
+                Results & Progress
+              </div>
+              <i class="fas fa-chevron-right text-xs text-gray-300 transition-transform duration-200"
+                :class="{ 'rotate-90': openGroups.results }"></i>
+            </button>
+            <div v-show="openGroups.results" class="mt-1 ml-4 pl-3 border-l border-gray-100 space-y-0.5">
+              <template v-for="item in resultsItems" :key="item.route">
+                <router-link
+                  v-if="!item.permission || $hasPermission(item.permission)"
+                  :to="{ name: item.route }"
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
+                  :class="$route.name === item.route
+                    ? 'bg-green-50 text-green-700 font-medium'
+                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+                >
+                  <i :class="[item.icon, 'w-4 text-center text-xs',
+                    $route.name === item.route ? 'text-green-600' : 'text-gray-400']"></i>
+                  {{ item.name }}
+                </router-link>
+              </template>
+            </div>
+          </div>
+
+          <!-- Organization -->
+          <div v-if="hasVisibleItems(organizationItems)" class="px-3 mb-2">
+            <button
+              @click="toggleGroup('organization')"
+              class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              :class="{ 'bg-gray-50 text-gray-900': isGroupActive('organization') }"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fas fa-building w-4 text-center text-gray-400"></i>
+                Organization
+              </div>
+              <i class="fas fa-chevron-right text-xs text-gray-300 transition-transform duration-200"
+                :class="{ 'rotate-90': openGroups.organization }"></i>
+            </button>
+            <div v-show="openGroups.organization" class="mt-1 ml-4 pl-3 border-l border-gray-100 space-y-0.5">
+              <template v-for="item in organizationItems" :key="item.route">
+                <router-link
+                  v-if="!item.permission || $hasPermission(item.permission)"
+                  :to="{ name: item.route }"
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
+                  :class="$route.name === item.route
+                    ? 'bg-green-50 text-green-700 font-medium'
+                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+                >
+                  <i :class="[item.icon, 'w-4 text-center text-xs',
+                    $route.name === item.route ? 'text-green-600' : 'text-gray-400']"></i>
+                  {{ item.name }}
+                </router-link>
+              </template>
+            </div>
+          </div>
+
+          <!-- Access Control -->
+          <div v-if="hasVisibleItems(accessItems)" class="px-3 mb-2">
+            <button
+              @click="toggleGroup('access')"
+              class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              :class="{ 'bg-gray-50 text-gray-900': isGroupActive('access') }"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fas fa-shield-alt w-4 text-center text-gray-400"></i>
+                Access Control
+              </div>
+              <i class="fas fa-chevron-right text-xs text-gray-300 transition-transform duration-200"
+                :class="{ 'rotate-90': openGroups.access }"></i>
+            </button>
+            <div v-show="openGroups.access" class="mt-1 ml-4 pl-3 border-l border-gray-100 space-y-0.5">
+              <template v-for="item in accessItems" :key="item.route">
+                <router-link
+                  v-if="!item.permission || $hasPermission(item.permission)"
+                  :to="{ name: item.route }"
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
+                  :class="$route.name === item.route
+                    ? 'bg-green-50 text-green-700 font-medium'
+                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+                >
+                  <i :class="[item.icon, 'w-4 text-center text-xs',
+                    $route.name === item.route ? 'text-green-600' : 'text-gray-400']"></i>
+                  {{ item.name }}
+                </router-link>
+              </template>
+            </div>
+          </div>
+
+          <!-- Billing -->
+          <div v-if="hasVisibleItems(billingItems)" class="px-3 mb-2">
+            <button
+              @click="toggleGroup('billing')"
+              class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
+              :class="{ 'bg-gray-50 text-gray-900': isGroupActive('billing') }"
+            >
+              <div class="flex items-center gap-3">
+                <i class="fas fa-credit-card w-4 text-center text-gray-400"></i>
+                Billing
+              </div>
+              <i class="fas fa-chevron-right text-xs text-gray-300 transition-transform duration-200"
+                :class="{ 'rotate-90': openGroups.billing }"></i>
+            </button>
+            <div v-show="openGroups.billing" class="mt-1 ml-4 pl-3 border-l border-gray-100 space-y-0.5">
+              <template v-for="item in billingItems" :key="item.route">
+                <router-link
+                  v-if="!item.permission || $hasPermission(item.permission)"
+                  :to="{ name: item.route }"
+                  class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
+                  :class="$route.name === item.route
+                    ? 'bg-green-50 text-green-700 font-medium'
+                    : 'text-gray-500 hover:bg-gray-50 hover:text-gray-800'"
+                >
+                  <i :class="[item.icon, 'w-4 text-center text-xs',
+                    $route.name === item.route ? 'text-green-600' : 'text-gray-400']"></i>
+                  {{ item.name }}
+                </router-link>
+              </template>
+            </div>
+          </div>
+
+        </nav>
       </aside>
     </transition>
   </div>
@@ -64,47 +197,88 @@
 export default {
   data() {
     return {
-      showTitle: true,
-      is_superuser: false,
-      menuItems: [
-        { name: "Dashboard", route: "first-dash", icon: "fas fa-chart-line" },
-        { name: "Users", route: "Users-view", icon: "fas fa-user", permission: "view_user" },
-        { name: "Roles", route: "Role-view", icon: "fas fa-id-badge", permission: "view_role" },
-        { name: "Permissions", route: "Permission-view", icon: "fas fa-key", permission: "view_permission" },
-        { name: "Organizations", route: "Organization-view", icon: "fas fa-building",permission: "view_org" },
-        { name: "Groups", route: "Group-view", icon: "fas fa-users",permission: "view_group" },
-        { name: "Tests", route: "Test-view", icon: "fas fa-file-alt",permission: "view_test" },
-        { name: "Answers", route: "Answer-view", icon: "fas fa-reply",permission: "view_answer" },
-        { name: "Categories", route: "Category-view", icon: "fas fa-folder" ,permission: "view_category"},
-        { name: "Questions", route: "Question-view", icon: "fas fa-question-circle",permission: "view_question" },
-        { name: "Triats", route: "Triat-view", icon: "fas fa-list",permission: "view_triat" },
-        { name: "Options", route: "Option-view", icon: "fas fa-cogs",permission: "view_option" },
-        { name: "Results", route: "Result-view", icon: "fas fa-trophy" ,permission: "view_result"},
-        { name: "Progresses", route: "Progress-view", icon: "fas fa-chart-bar",permission: "view_progress" },
+      openGroups: {
+        assessment:   false,
+        results:      false,
+        organization: false,
+        access:       false,
+        billing:      false,
+      },
+
+      // Each item has a `permission` code that maps to the seeded permissions
+      assessmentItems: [
+        { name: 'Tests',      route: 'Test-view',     icon: 'fas fa-file-alt',       permission: 'test.view' },
+        { name: 'Questions',  route: 'Question-view', icon: 'fas fa-question-circle', permission: 'question.view' },
+        { name: 'Categories', route: 'Category-view', icon: 'fas fa-folder',          permission: 'category.view' },
+      ],
+
+      resultsItems: [
+        { name: 'Results',    route: 'Result-view',   icon: 'fas fa-trophy',          permission: 'result.view' },
+        { name: 'Progresses', route: 'Progress-view', icon: 'fas fa-chart-bar',       permission: 'progress.view' },
+        { name: 'Answers',    route: 'Answer-view',   icon: 'fas fa-reply',           permission: 'answer.view' },
+      ],
+
+      organizationItems: [
+        { name: 'Organizations', route: 'Organization-view', icon: 'fas fa-building', permission: 'organization.view' },
+      ],
+
+      accessItems: [
+        { name: 'Users',       route: 'Users-view',      icon: 'fas fa-user',          permission: '' },
+        { name: 'Roles',       route: 'Role-view',       icon: 'fas fa-id-badge',      permission: '' },
+        { name: 'Permissions', route: 'Permission-view', icon: 'fas fa-key',           permission: '' },
+      ],
+
+      billingItems: [
+        { name: 'Plans',         route: 'Plan-view',         icon: 'fas fa-tags',         permission: '' },
+        { name: 'Subscriptions', route: 'Subscription-view', icon: 'fas fa-credit-card',  permission: '' },
+        { name: 'Invoices',      route: 'Invoice-view',      icon: 'fas fa-file-invoice', permission: '' },
       ],
     };
   },
-  computed: {
-    filteredMenuItems() {
 
-      return this.menuItems.filter(item => {
-        if (item.permission) return this.$hasPermission(item.permission);
-        return true;
-      });
-    },
-    groupedMenu() {
-      const groups = {};
-      this.filteredMenuItems.forEach(item => {
-        const cat = item.category || "General";
-        if (!groups[cat]) groups[cat] = [];
-        groups[cat].push(item);
-      });
-      return Object.keys(groups).map(key => ({ title: key, items: groups[key] }));
+  computed: {
+    allGroupItems() {
+      return {
+        assessment:   this.assessmentItems.map(i => i.route),
+        results:      this.resultsItems.map(i => i.route),
+        organization: this.organizationItems.map(i => i.route),
+        access:       this.accessItems.map(i => i.route),
+        billing:      this.billingItems.map(i => i.route),
+      };
     },
   },
+
+  watch: {
+    $route(to) {
+      this.openActiveGroup(to.name);
+    },
+  },
+
+  methods: {
+    toggleGroup(group) {
+      this.openGroups[group] = !this.openGroups[group];
+    },
+
+    isGroupActive(group) {
+      return this.allGroupItems[group]?.includes(this.$route.name);
+    },
+
+    openActiveGroup(routeName) {
+      for (const group in this.allGroupItems) {
+        if (this.allGroupItems[group].includes(routeName)) {
+          this.openGroups[group] = true;
+        }
+      }
+    },
+
+    // Returns true if at least one item in the group is visible (has permission)
+    hasVisibleItems(items) {
+      return items.some(item => !item.permission || this.$hasPermission(item.permission));
+    },
+  },
+
   mounted() {
-    this.is_superuser = localStorage.getItem("is_superuser") === "true";
-    this.showTitle = window.innerWidth < 1024;
+    this.openActiveGroup(this.$route.name);
   },
 };
 </script>
@@ -112,7 +286,7 @@ export default {
 <style scoped>
 .slide-enter-active,
 .slide-leave-active {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s ease;
 }
 .slide-enter-from,
 .slide-leave-to {
@@ -122,7 +296,7 @@ export default {
   width: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #f1f5f9;
+  background: #e5e7eb;
   border-radius: 10px;
 }
 </style>

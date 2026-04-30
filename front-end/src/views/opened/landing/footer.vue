@@ -1,107 +1,116 @@
 <template>
-  <footer class="relative bg-primary text-white pt-20 pb-10 px-6 overflow-hidden">
-    
-    <div class="absolute top-0 left-0 w-full h-1 bg-white/10"></div>
-    <div class="absolute -bottom-24 -right-24 w-96 h-96 bg-secondary/10 rounded-full blur-3xl"></div>
+  <footer class="bg-slate-900 text-white pt-16 pb-8 px-6">
 
-    <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-5 gap-12 relative z-10">
-      
-      <div class="md:col-span-2 space-y-6">
-        <div class="flex items-center space-x-3">
-           <div class="h-10 w-10 bg-white rounded-xl flex items-center justify-center shadow-lg">
-             <i class="fas fa-brain text-primary text-lg"></i>
-           </div>
-           <span class="text-2xl font-black tracking-tighter uppercase">Alpha Psychometrics</span>
-        </div>
-        
-        <p class="text-white/70 text-sm leading-relaxed max-w-sm font-medium">
-          The premier behavioral analytics platform in East Africa. We bridge the gap between human potential and data-driven insights for educational institutions and corporate enterprises.
-        </p>
+    <div class="max-w-7xl mx-auto">
 
-        <div class="flex space-x-5 mt-6">
-          <a v-for="social in socials" :key="social.name" href="#" 
-             class="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center hover:bg-secondary hover:scale-110 transition-all duration-300 group">
-            <i :class="[social.class, 'text-lg group-hover:text-white transition-colors']"></i>
-          </a>
-        </div>
-      </div>
+      <!-- Top section -->
+      <div class="grid grid-cols-1 md:grid-cols-5 gap-12 pb-12 border-b border-white/10">
 
-      <div v-for="group in navGroups" :key="group.title">
-        <h3 class="text-xs font-black uppercase tracking-[0.2em] text-white/50 mb-6">{{ group.title }}</h3>
-        <ul class="space-y-4">
-          <li v-for="link in group.links" :key="link.name">
-            <a :href="link.url" class="text-sm text-white/80 hover:text-secondary hover:translate-x-1 inline-block transition-all duration-200">
-              {{ link.name }}
+        <!-- Brand column -->
+        <div class="md:col-span-2 space-y-5">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-green-500 rounded-xl flex items-center justify-center shadow-lg">
+              <i class="fas fa-brain text-white text-base"></i>
+            </div>
+            <div>
+              <span class="text-lg font-black text-white tracking-tight">
+                Alpha<span class="text-green-400">Psych</span>
+              </span>
+              <p class="text-[10px] text-white/40 uppercase tracking-widest leading-none mt-0.5">
+                Psychometric Solutions
+              </p>
+            </div>
+          </div>
+
+          <p class="text-white/50 text-sm leading-relaxed max-w-sm">
+            The premier behavioral analytics platform for organizations, educators, and researchers. Assess, understand, and develop human potential with validated psychometric tools.
+          </p>
+
+          <!-- Social links -->
+          <div class="flex gap-3">
+            <a v-for="social in socials" :key="social.name" href="#"
+              class="w-9 h-9 rounded-xl bg-white/5 hover:bg-green-500 flex items-center justify-center transition-all duration-200 group">
+              <i :class="[social.icon, 'text-sm text-white/50 group-hover:text-white transition-colors']"></i>
             </a>
-          </li>
-        </ul>
+          </div>
+        </div>
+
+        <!-- Nav columns -->
+        <div v-for="group in navGroups" :key="group.title">
+          <h3 class="text-[10px] font-bold uppercase tracking-[0.2em] text-white/30 mb-5">{{ group.title }}</h3>
+          <ul class="space-y-3">
+            <li v-for="link in group.links" :key="link.name">
+              <router-link v-if="link.route" :to="link.route"
+                class="text-sm text-white/60 hover:text-green-400 transition-colors">
+                {{ link.name }}
+              </router-link>
+              <a v-else href="#"
+                class="text-sm text-white/60 hover:text-green-400 transition-colors">
+                {{ link.name }}
+              </a>
+            </li>
+          </ul>
+        </div>
+
       </div>
 
-    </div>
+      <!-- Bottom bar -->
+      <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+        <p class="text-xs text-white/30">
+          © {{ new Date().getFullYear() }} Alpha Psychometrics. All rights reserved.
+        </p>
+        <div class="flex gap-6">
+          <a href="#" class="text-xs text-white/30 hover:text-white/60 transition-colors">Privacy Policy</a>
+          <a href="#" class="text-xs text-white/30 hover:text-white/60 transition-colors">Terms of Service</a>
+          <a href="#" class="text-xs text-white/30 hover:text-white/60 transition-colors">Data Ethics</a>
+        </div>
+      </div>
 
-    <div class="mt-20 border-t border-white/10 pt-8 max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between">
-      <div class="text-xs font-bold text-white/40 uppercase tracking-widest">
-        © {{ new Date().getFullYear() }} Alpha Psychometrics. A Division of Alpha Tech.
-      </div>
-      
-      <div class="flex gap-8 mt-6 md:mt-0 text-[11px] font-black uppercase tracking-widest">
-        <a href="#" class="text-white/40 hover:text-secondary transition-colors">Data Ethics</a>
-        <a href="#" class="text-white/40 hover:text-secondary transition-colors">Privacy Policy</a>
-        <a href="#" class="text-white/40 hover:text-secondary transition-colors">Research Citations</a>
-      </div>
     </div>
   </footer>
 </template>
 
-<script setup>
-const socials = [
-  { name: 'LinkedIn', class: 'fab fa-linkedin-in' },
-  { name: 'Twitter', class: 'fab fa-twitter' },
-  { name: 'Telegram', class: 'fab fa-telegram-plane' },
-  { name: 'Facebook', class: 'fab fa-facebook-f' }
-];
-
-const navGroups = [
-  {
-    title: 'Platform',
-    links: [
-      { name: 'Student Aptitude', url: '#' },
-      { name: 'Corporate Profiles', url: '#' },
-      { name: 'Interactive Engine', url: '#' },
-      { name: 'Report Analytics', url: '#' }
-    ]
+<script>
+export default {
+  name: 'SiteFooter',
+  data() {
+    return {
+      socials: [
+        { name: 'LinkedIn', icon: 'fab fa-linkedin-in' },
+        { name: 'Twitter',  icon: 'fab fa-twitter' },
+        { name: 'Telegram', icon: 'fab fa-telegram-plane' },
+        { name: 'Facebook', icon: 'fab fa-facebook-f' },
+      ],
+      navGroups: [
+        {
+          title: 'Platform',
+          links: [
+            { name: 'Assessments',   route: null },
+            { name: 'Analytics',     route: null },
+            { name: 'Group Testing', route: null },
+            { name: 'API Access',    route: null },
+          ],
+        },
+        {
+          title: 'Resources',
+          links: [
+            { name: 'Documentation', route: null },
+            { name: 'Sample Reports', route: null },
+            { name: 'Methodology',   route: null },
+            { name: 'System Status', route: null },
+          ],
+        },
+        {
+          title: 'Company',
+          links: [
+            { name: 'Pricing',       route: '/pricing' },
+            { name: 'About Us',      route: null },
+            { name: 'Contact',       route: null },
+            { name: 'Security',      route: null },
+          ],
+        },
+      ],
+    };
   },
-  {
-    title: 'Resources',
-    links: [
-      { name: 'Methodology', url: '#' },
-      { name: 'Sample Reports', url: '#' },
-      { name: 'API Docs', url: '#' },
-      { name: 'System Status', url: '#' }
-    ]
-  },
-  {
-    title: 'Organization',
-    links: [
-      { name: 'Our Science', url: '#' },
-      { name: 'Pricing Plans', url: '#' },
-      { name: 'Consult Expert', url: '#' },
-      { name: 'Security Whitepaper', url: '#' }
-    ]
-  }
-];
+};
 </script>
-
-<style scoped>
-footer::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-  opacity: 0.03;
-  pointer-events: none;
-}
-</style>

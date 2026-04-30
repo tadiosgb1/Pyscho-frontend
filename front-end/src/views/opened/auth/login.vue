@@ -159,8 +159,11 @@ export default {
         localStorage.setItem("userId", response.id);
         localStorage.setItem("email", response.email);
         localStorage.setItem("name", response.email);
-        localStorage.setItem("roles", response.roles);
-        localStorage.setItem("permissions", response.permissions);
+        // Store role names as a JSON array e.g. ["admin"]
+        const roleNames = (response.roles || []).map(r => r.name || r);
+        localStorage.setItem("roles", JSON.stringify(roleNames));
+        // Store permissions as JSON array of codes
+        localStorage.setItem("permissions", JSON.stringify(response.permissions || []));
         this.$refs.toast?.showSuccessToastMessage("Secure Session Initialized.");
     
         setTimeout(() => {

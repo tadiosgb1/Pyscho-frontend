@@ -1,62 +1,96 @@
 <template>
-  <div v-if="user" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-[110] p-4">
-    <div class="bg-white rounded-[2.5rem] shadow-2xl w-full max-w-md overflow-hidden animate-pop-in border border-slate-100">
-      
-      <div class="h-2 w-full bg-gradient-to-r from-amber-400 to-primary"></div>
+  <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+    <div class="bg-white rounded-xl shadow-2xl w-full max-w-sm p-6 text-sm">
 
-      <div class="p-8">
-        <!-- Header -->
-        <div class="flex justify-between items-start mb-6">
-          <div>
-            <h2 class="text-2xl font-black text-slate-900 leading-none">Assign Roles</h2>
-            <p class="text-[10px] font-black uppercase tracking-[0.2em] text-amber-500 mt-2 flex items-center gap-2">
-              <i class="fas fa-shield-alt"></i> Access Control Mapping
-            </p>
+      <!-- Header -->
+      <div class="flex justify-between items-center mb-4 border-b pb-2">
+        <div>
+          <h2 class="text-lg font-semibold text-gray-800">Assign Roles</h2>
+          <p class="text-xs text-gray-500 mt-0.5">
+            {{ user.first_name }} {{ user.last_name }}
+          </p>
+        </div>
+        <button @click="$emit('close')" class="text-gray-400 hover:text-gray-600">&times;</button>
+      </div>
+
+      <form @submit.prevent="submitRoles" class="space-y-4">
+        <div>
+          <!-- Label + Check All / Uncheck All -->
+          <div class="flex items-center justify-between mb-2">
+            <label class="text-sm font-medium text-gray-700">Select Roles</label>
+            <div class="flex gap-2">
+              <button
+                type="button"
+                @click="selectedRoleIds = roles.map(r => r.id)"
+                class="text-xs text-green-600 hover:text-green-800 font-medium"
+              >
+                Check All
+              </button>
+              <span class="text-gray-300">|</span>
+              <button
+                type="button"
+                @click="selectedRoleIds = []"
+                class="text-xs text-red-500 hover:text-red-700 font-medium"
+              >
+                Uncheck All
+              </button>
+            </div>
           </div>
-          <button @click="$emit('close')" class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:text-primary hover:bg-green-50 transition-all">
-            <i class="fas fa-times text-xs"></i>
+
+          <!-- Role list -->
+          <div class="max-h-64 overflow-y-auto border border-gray-200 rounded-lg divide-y divide-gray-100">
+            <div v-if="loadingRoles" class="py-6 text-center text-gray-400">
+              <i class="fas fa-spinner animate-spin"></i>
+            </div>
+            <template v-else>
+              <label
+                v-for="role in roles"
+                :key="role.id"
+                class="flex items-center gap-3 px-4 py-2.5 hover:bg-gray-50 cursor-pointer"
+                :class="selectedRoleIds.includes(role.id) ? 'bg-amber-50' : ''"
+              >
+                <input
+                  type="checkbox"
+                  :value="role.id"
+                  v-model="selectedRoleIds"
+                  class="w-4 h-4 accent-amber-500"
+                />
+                <div class="flex-1 min-w-0">
+                  <p class="text-sm text-gray-700 font-medium capitalize">{{ role.name }}</p>
+                  <p class="text-xs text-gray-400">{{ role.description || '' }}</p>
+                </div>
+                <span v-if="selectedRoleIds.includes(role.id)" class="text-xs text-amber-600 flex-shrink-0">
+                  <i class="fas fa-check-circle"></i>
+                </span>
+              </label>
+              <p v-if="roles.length === 0" class="text-center py-4 text-gray-400 italic text-xs">
+                No roles available.
+              </p>
+            </template>
+          </div>
+          <p class="text-xs text-gray-500 mt-2">{{ selectedRoleIds.length }} role(s) selected</p>
+        </div>
+
+        <!-- Actions -->
+        <div class="flex justify-end gap-3 pt-2">
+          <button
+            type="button"
+            @click="$emit('close')"
+            class="px-4 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            :disabled="loading"
+            class="px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg disabled:opacity-50 flex items-center gap-2"
+          >
+            <i v-if="loading" class="fas fa-spinner animate-spin text-xs"></i>
+            {{ loading ? 'Saving...' : 'Save' }}
           </button>
         </div>
+      </form>
 
-        <!-- User Info -->
-        <div class="mb-8 p-4 bg-slate-50 rounded-2xl flex items-center gap-4 border border-slate-100">
-          <div class="w-12 h-12 rounded-xl bg-slate-900 text-primary flex items-center justify-center font-black">
-            {{ user.username }}
-          </div>
-          <div>
-            <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Target User</p>
-            <p class="text-sm font-black text-slate-700 uppercase tracking-tighter">{{ user.username }}</p>
-          </div>
-        </div>
-
-        <!-- Roles Form -->
-        <form @submit.prevent="submitRoles" class="space-y-6">
-          <div class="space-y-2">
-            <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Select Security Roles</label>
-
-            <div v-if="loadingRoles" class="py-6 text-center">
-              <i class="fas fa-spinner animate-spin text-amber-500 text-lg"></i>
-            </div>
-
-            <div v-else class="max-h-60 overflow-y-auto border border-slate-100 rounded-2xl p-3 space-y-2 bg-slate-50">
-              <div v-for="role in roles" :key="role.id" class="flex items-center gap-3">
-                <input type="checkbox" :id="'role-'+role.id" :value="role.id" v-model="selectedRoleIds" class="w-4 h-4 accent-amber-500" />
-                <label :for="'role-'+role.id" class="text-[12px] font-bold text-slate-700">{{ role.name }}</label>
-              </div>
-              <div v-if="roles.length === 0" class="text-red-400 text-[10px] font-bold mt-2 text-center">No roles found in registry.</div>
-            </div>
-          </div>
-
-          <!-- Buttons -->
-          <div class="flex gap-3 pt-4">
-            <button type="button" @click="$emit('close')" class="flex-1 px-6 py-4 rounded-2xl font-black text-[10px] uppercase tracking-widest text-slate-400 hover:bg-slate-50 transition-colors">Cancel</button>
-            <button type="submit" :disabled="loading || selectedRoleIds.length === 0" class="flex-[2] bg-slate-900 hover:bg-amber-500 text-white py-4 rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] transition-all shadow-lg shadow-amber-500/10 active:scale-95 flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed">
-              <template v-if="!loading">Update Roles <i class="fas fa-key text-[8px] group-hover:rotate-12 transition-transform"></i></template>
-              <template v-else><div class="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin"></div></template>
-            </button>
-          </div>
-        </form>
-      </div>
     </div>
   </div>
 </template>
@@ -64,59 +98,53 @@
 <script>
 export default {
   props: {
-    user: { type: Object, required: true }
+    user: { type: Object, required: true },
   },
+
   data() {
     return {
       roles: [],
       selectedRoleIds: [],
       loading: false,
-      loadingRoles: false
+      loadingRoles: false,
     };
   },
+
   methods: {
     async fetchRoles() {
       this.loadingRoles = true;
       try {
-        const response = await this.$apiGet('/roles', { page_size: 100 });
-        this.roles = response.data || [];
-        // Initialize selected roles if user already has some
-        if (this.user.roles) {
-          this.selectedRoleIds = this.user.roles.map(r => r.id);
-        }
+        const res = await this.$apiGet('/roles', { page_size: 100 });
+        this.roles = res.data || [];
+
+        // Pre-check already-assigned roles from the user object
+        const assigned = this.user.Roles || this.user.roles || [];
+        this.selectedRoleIds = assigned.map(r => r.id);
       } catch (e) {
-        console.error("Error fetching roles:", e);
+        console.error('Fetch roles error:', e);
       } finally {
         this.loadingRoles = false;
       }
     },
+
     async submitRoles() {
-      if (!this.user || this.selectedRoleIds.length === 0) return;
       this.loading = true;
       try {
-        const payload = { roleIds: this.selectedRoleIds };
-        await this.$apiPut(`/users/${this.user.id}/roles`,'', payload);
+        await this.$apiPut(`/users/${this.user.id}/roles`, '', { roleIds: this.selectedRoleIds });
         this.$root.$refs.toast.showToast('Roles updated successfully', 'success');
         this.$emit('assigned');
         this.$emit('close');
       } catch (e) {
-        console.error("Error updating roles:", e);
+        console.error('Update roles error:', e);
         this.$root.$refs.toast.showToast('Failed to update roles', 'error');
       } finally {
         this.loading = false;
       }
-    }
+    },
   },
+
   mounted() {
     this.fetchRoles();
-  }
+  },
 };
 </script>
-
-<style scoped>
-@keyframes popIn {
-  from { opacity: 0; transform: scale(0.95) translateY(10px); }
-  to { opacity: 1; transform: scale(1) translateY(0); }
-}
-.animate-pop-in { animation: popIn 0.3s ease-out; }
-</style>
