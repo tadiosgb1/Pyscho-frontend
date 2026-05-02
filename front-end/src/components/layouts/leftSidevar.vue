@@ -207,14 +207,14 @@ export default {
 
       // Each item has a `permission` code that maps to the seeded permissions
       assessmentItems: [
-        { name: 'Tests',      route: 'Test-view',     icon: 'fas fa-file-alt',       permission: 'test.view' },
+        { name: 'Tests',      route: 'Test-view',     icon: 'fas fa-file-alt',       permission: '' },
         { name: 'Questions',  route: 'Question-view', icon: 'fas fa-question-circle', permission: 'question.view' },
         { name: 'Categories', route: 'Category-view', icon: 'fas fa-folder',          permission: 'category.view' },
       ],
 
       resultsItems: [
-        { name: 'Results',    route: 'Result-view',   icon: 'fas fa-trophy',          permission: 'result.view' },
-        { name: 'Progresses', route: 'Progress-view', icon: 'fas fa-chart-bar',       permission: 'progress.view' },
+        { name: 'Results',    route: 'Result-view',   icon: 'fas fa-trophy',          permission: '' },
+        { name: 'Progresses', route: 'Progress-view', icon: 'fas fa-chart-bar',       permission: '' },
         { name: 'Answers',    route: 'Answer-view',   icon: 'fas fa-reply',           permission: 'answer.view' },
       ],
 
