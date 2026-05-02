@@ -96,11 +96,10 @@ const routes = [
   },
 
 
-    {
+  {
     path: "/about", name: "/about",
     component: About,
-    meta:
-      { requiresGuest: true }
+    meta: { requiresGuest: true }
   },
 
 

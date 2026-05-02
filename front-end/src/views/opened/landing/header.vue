@@ -125,6 +125,7 @@ export default {
       navLinks: [
         { name: 'Home',     path: '/' },
         { name: 'Features', path: '/#features' },
+        { name: 'About',    path: '/about' },
         { name: 'Pricing',  path: '/pricing' },
       ],
     };
