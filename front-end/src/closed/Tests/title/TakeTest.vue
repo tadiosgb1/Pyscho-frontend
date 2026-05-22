@@ -9,6 +9,27 @@
       </div>
     </div>
 
+    <!-- ===================== ALREADY COMPLETED ===================== -->
+    <div v-else-if="alreadyCompleted" class="flex items-center justify-center min-h-screen p-6">
+      <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-10 max-w-md w-full text-center">
+        <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <i class="fas fa-check-double text-blue-500 text-3xl"></i>
+        </div>
+        <h2 class="text-xl font-bold text-gray-800 mb-2">Test Already Completed</h2>
+        <p class="text-gray-500 mb-6">You have already completed this test. Each test can only be taken once.</p>
+        <div class="flex gap-3">
+          <button @click="$router.push({ name: 'Test-view' })"
+            class="flex-1 bg-gray-500 hover:bg-gray-600 text-white px-6 py-2.5 rounded-lg font-medium transition">
+            Back to Tests
+          </button>
+          <button @click="$router.push({ name: 'Result-view' })"
+            class="flex-1 bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium transition">
+            View Results
+          </button>
+        </div>
+      </div>
+    </div>
+
     <!-- ===================== SUBMITTED ===================== -->
     <div v-else-if="submitted" class="flex items-center justify-center min-h-screen p-6">
       <div class="bg-white rounded-2xl border border-gray-200 shadow-lg p-10 max-w-md w-full text-center">
@@ -16,7 +37,7 @@
           <i class="fas fa-check-circle text-green-500 text-3xl"></i>
         </div>
         <h2 class="text-xl font-bold text-gray-800 mb-2">Test Submitted!</h2>
-        <p class="text-gray-500 mb-2">You answered <strong>{{ answeredCount }}</strong> of <strong>questions.length</strong> questions.</p>
+        <p class="text-gray-500 mb-2">You answered <strong>{{ answeredCount }}</strong> of <strong>{{ questions.length }}</strong> questions.</p>
         <p class="text-gray-500 mb-6">Your responses have been recorded successfully.</p>
         <button @click="$router.push({ name: 'Test-view' })"
           class="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium transition">
@@ -261,6 +282,7 @@ export default {
       submitted: false,
       submitting: false,
       showConfirmModal: false,
+      alreadyCompleted: false,
 
       currentIndex: 0,
       answers: {},       // { questionId: optionId }
@@ -312,13 +334,38 @@ export default {
   },
 
   methods: {
+    async checkIfCompleted() {
+      const userId = parseInt(localStorage.getItem('userId'));
+      const testId = this.$route.params.id;
+      
+      try {
+        const res = await this.$apiGet('/result', {
+          page: 1,
+          page_size: 1000,
+        });
+        
+        const userResults = (res.data || []).filter(result => 
+          result.user_id === userId && result.test_id === parseInt(testId)
+        );
+        
+        if (userResults.length > 0) {
+          this.alreadyCompleted = true;
+          return true;
+        }
+        
+        return false;
+      } catch (e) {
+        console.error('Check completion error:', e);
+        return false;
+      }
+    },
+
     async fetchTest() {
       const id = this.$route.params.id;
       try {
         const res = await this.$apiGetById('/test', id);
         this.test = res || {};
 
-        // Parse duration (e.g. "30" minutes or "30min")
         const raw = parseInt(this.test.duration) || 30;
         this.totalSeconds = raw * 60;
         this.remainingSeconds = this.totalSeconds;
@@ -373,7 +420,6 @@ export default {
       } else {
         this.flagged.add(id);
       }
-      // trigger reactivity
       this.flagged = new Set(this.flagged);
     },
 
@@ -406,8 +452,8 @@ export default {
       const now = new Date().toISOString();
 
       try {
-        // Build answer payloads
         const payloads = [];
+        let accumulatedScore = 0;
 
         this.questions.forEach(q => {
           if (q.type === 'open') {
@@ -420,6 +466,7 @@ export default {
                 submited_at: now,
               });
             }
+            // Open questions add 0 to score initially per instructions
           } else {
             const optionId = this.answers[q.id];
             if (optionId != null) {
@@ -429,19 +476,42 @@ export default {
                 option_id:   optionId,
                 submited_at: now,
               });
+
+              // Look up option model weight value within this question instance
+              const matchedOption = (q.Options || []).find(o => o.id === optionId);
+              if (matchedOption && matchedOption.weight !== undefined) {
+                accumulatedScore += Number(matchedOption.weight);
+              }
             }
           }
         });
 
-        // Submit all answers
+        // Submit all answers to database
         await Promise.all(payloads.map(p => this.$apiPost('/answer', p)));
+
+        // Ensure calculatedScore drops clean integers
+        const finalCalculatedScore = Math.round(accumulatedScore);
 
         // Save progress record
         await this.$apiPost('/progress', {
           user_id:  userId,
           test_id:  this.test.id,
-          score:    0, // scoring can be computed server-side later
+          score:    finalCalculatedScore,
           taken_at: now,
+        });
+
+        // Create result record with interpretation and recommendations
+        const interpretation = this.generateInterpretation(finalCalculatedScore);
+        const recommendations = this.generateRecommendations(finalCalculatedScore);
+
+        await this.$apiPost('/result', {
+          user_id:         userId,
+          test_id:         this.test.id,
+          score:           finalCalculatedScore,
+          interpretation:  interpretation,
+          recommendations: recommendations,
+          status:          'pending',
+          completed_at:    now,
         });
 
         this.stopTimer();
@@ -457,11 +527,43 @@ export default {
       }
     },
 
+    generateInterpretation(score) {
+      if (score >= 90) {
+        return 'Excellent Performance - You demonstrated exceptional understanding and mastery of the assessment content.';
+      } else if (score >= 80) {
+        return 'Very Good Performance - You showed strong comprehension and performed well above average.';
+      } else if (score >= 70) {
+        return 'Good Performance - You demonstrated solid understanding with room for minor improvements.';
+      } else if (score >= 60) {
+        return 'Satisfactory Performance - You met the basic requirements but could benefit from additional review.';
+      } else if (score >= 50) {
+        return 'Below Average Performance - Consider reviewing the material and seeking additional support.';
+      } else {
+        return 'Needs Improvement - Significant gaps identified. Additional training and support recommended.';
+      }
+    },
+
+    generateRecommendations(score) {
+      if (score >= 90) {
+        return 'Continue your excellent work. Consider taking on leadership roles or mentoring others. You may be ready for advanced assessments or specialized training programs.';
+      } else if (score >= 80) {
+        return 'You are performing very well. Focus on maintaining consistency and exploring advanced topics in areas of interest. Consider sharing your knowledge with peers.';
+      } else if (score >= 70) {
+        return 'Good job overall. Review questions you found challenging and strengthen those areas. Practice regularly to improve retention and application of concepts.';
+      } else if (score >= 60) {
+        return 'You have a foundation to build on. Dedicate time to reviewing core concepts and practice more frequently. Consider seeking guidance from mentors or additional resources.';
+      } else if (score >= 50) {
+        return 'Focus on fundamental concepts and seek additional support. Regular practice sessions and structured learning materials will help improve your performance significantly.';
+      } else {
+        return 'Immediate intervention recommended. Work closely with instructors or mentors to identify knowledge gaps. Consider a structured review program and additional practice assessments.';
+      }
+    },
+
     startTimer() {
       this.timerInterval = setInterval(() => {
         if (this.remainingSeconds <= 0) {
           this.stopTimer();
-          this.submitTest(); // auto-submit on timeout
+          this.submitTest();
           return;
         }
         this.remainingSeconds--;
@@ -478,9 +580,13 @@ export default {
 
   async mounted() {
     this.loading = true;
-    await Promise.all([this.fetchTest(), this.fetchQuestions()]);
+    const completed = await this.checkIfCompleted();
+    
+    if (!completed) {
+      await Promise.all([this.fetchTest(), this.fetchQuestions()]);
+      this.startTimer();
+    }
     this.loading = false;
-    this.startTimer();
   },
 
   beforeUnmount() {

@@ -104,9 +104,9 @@ export default {
           title: 'Company',
           links: [
             { name: 'Pricing',       route: '/pricing' },
-            { name: 'About Us',      route: null },
-            { name: 'Contact',       route: null },
-            { name: 'Security',      route: null },
+            { name: 'About Us',      route: '/about' },
+            { name: 'News & Events', route: '/news-events' },
+            { name: 'Contact',       route: '/contact' },
           ],
         },
       ],

@@ -572,6 +572,33 @@ export function hasPermission(permission) {
   }
 }
 
+/**
+ * Checks if the current user has a specific role.
+ * @param {string} role - The role name to check (e.g., 'admin', 'organization', 'tester')
+ * @returns {boolean} - true if the role exists, false otherwise
+ */
+export function hasRole(role) {
+  try {
+    const stored = localStorage.getItem("roles");
+    if (!stored) return false;
+
+    let userRoles = [];
+
+    // Try parsing JSON first
+    try {
+      userRoles = JSON.parse(stored);
+    } catch (e) {
+      // Fallback: comma-separated string
+      userRoles = stored.split(",").map(r => r.trim());
+    }
+
+    return userRoles.includes(role);
+  } catch (err) {
+    console.error("Failed to check role:", err);
+    return false;
+  }
+}
+
 const userCache = {};
 export async function getFullNameById(id) {
   if (!id) return "";

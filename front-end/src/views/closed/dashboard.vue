@@ -16,18 +16,16 @@
           <div class="flex items-center space-x-3 group cursor-pointer">
             <div class="relative">
               <img
-                src="../../assets/img/logo1.jpg"
+                src="../../assets/img/gyz.PNG"
                 alt="Logo"
                 class="h-9 w-9 rounded-xl object-cover ring-2 ring-slate-100 group-hover:ring-primary/30 transition-all shadow-sm"
               />
-              <div class="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
-            </div>
+           </div>
             <div class="flex flex-col">
               <h1 class="text-lg font-black text-dprimary leading-none tracking-tight group-hover:text-primary transition-colors">
                 GYZ 
               </h1>
-              <span class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em]">Alpha GYZ </span>
-            </div>
+ </div>
           </div>
         </div>
 
@@ -110,7 +108,7 @@
                 class="absolute right-0 top-full mt-3 w-52 bg-white shadow-2xl shadow-slate-200 z-50 rounded-[1.5rem] border border-slate-100 overflow-hidden"
               >
                 <div class="p-2">
-                  <a @click="openProfile" href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-50 transition-colors text-slate-600 group/item">
+                  <a @click="goToProfile" href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-50 transition-colors text-slate-600 group/item">
                     <div class="w-8 h-8 rounded-lg bg-secondary/10 flex items-center justify-center text-secondary group-hover/item:bg-secondary group-hover/item:text-white transition-all">
                       <i class="fas fa-user-circle text-xs"></i>
                     </div>
@@ -180,12 +178,6 @@
         </div>
       </main>
     </div>
-
-    <Profile
-      :visible="showProfileModal"
-      @close="closeProfile"
-      @updated="onProfileUpdated"
-    />
   </div>
 </template>
 
@@ -207,14 +199,12 @@
 </style>
 <script>
 import Sidebar from "@/components/layouts/leftSidevar.vue";
-import Profile from "./Profile.vue";
 
 export default {
   name: "AppLayout",
-  components: { Sidebar, Profile },
+  components: { Sidebar },
   data() {
     return {
-      showProfileModal: false,
       notifications: [],
       name: localStorage.getItem("name"),
       showSidebar: false,
@@ -243,18 +233,9 @@ export default {
     window.removeEventListener("resize", this.handleResize);
   },
   methods: {
-    openProfile() {
+    goToProfile() {
       this.isProfileDropdownOpen = false;
-      this.showProfileModal = true;
-    },
-    closeProfile() {
-      this.showProfileModal = false;
-    },
-    onProfileUpdated(updatedUser) {
-      if (updatedUser?.name) {
-        this.name = updatedUser.name;
-        localStorage.setItem("name", updatedUser.name);
-      }
+      this.$router.push({ name: "Profile" });
     },
     goToNotification(id) {
       this.$router.push({ name: "notificationDetail", params: { id } });

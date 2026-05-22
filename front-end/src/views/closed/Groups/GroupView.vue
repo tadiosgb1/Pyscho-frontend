@@ -47,6 +47,8 @@
                 <button @click="viewDetails(item.id)" title="View Detail" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
                 <button @click="openMembersModal(item)" title="View Members" class="text-indigo-500 hover:text-indigo-700"><i class="fas fa-users"></i></button>
                 <button @click="openAssignUsersModal(item)" title="Add Users to Group" class="text-amber-500 hover:text-amber-700"><i class="fas fa-user-plus"></i></button>
+                <button @click="openAssignTestModal(item)" title="Assign Test" class="text-purple-500 hover:text-purple-700"><i class="fas fa-clipboard-check"></i></button>
+                <button @click="openViewTestsModal(item)" title="View Assigned Tests" class="text-cyan-500 hover:text-cyan-700"><i class="fas fa-list-alt"></i></button>
                 <button @click="editItem(item)" title="Edit" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
                 <button @click="openDeleteModal(item.id)" title="Delete" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
               </td>
@@ -68,6 +70,8 @@
             <button @click="viewDetails(item.id)" title="View Detail" class="text-green-500 hover:text-green-700"><i class="fas fa-eye"></i></button>
             <button @click="openMembersModal(item)" title="View Members" class="text-indigo-500 hover:text-indigo-700"><i class="fas fa-users"></i></button>
             <button @click="openAssignUsersModal(item)" title="Add Users" class="text-amber-500 hover:text-amber-700"><i class="fas fa-user-plus"></i></button>
+            <button @click="openAssignTestModal(item)" title="Assign Test" class="text-purple-500 hover:text-purple-700"><i class="fas fa-clipboard-check"></i></button>
+            <button @click="openViewTestsModal(item)" title="View Tests" class="text-cyan-500 hover:text-cyan-700"><i class="fas fa-list-alt"></i></button>
             <button @click="editItem(item)" class="text-blue-500 hover:text-blue-700"><i class="fas fa-edit"></i></button>
             <button @click="openDeleteModal(item.id)" class="text-red-500 hover:text-red-700"><i class="fas fa-trash"></i></button>
           </div>
@@ -126,6 +130,25 @@
       @close="showMembersModal = false"
     />
 
+    <!-- Assign Test to Group Modal -->
+    <assign-test-modal
+      v-if="showAssignTestModal && selectedItem"
+      target-type="group"
+      :target-id="selectedItem.id"
+      :target-name="selectedItem.name"
+      @close="showAssignTestModal = false"
+      @assigned="showAssignTestModal = false"
+    />
+
+    <!-- View Tests Assigned to Group Modal -->
+    <view-assigned-tests-modal
+      v-if="showViewTestsModal && selectedItem"
+      target-type="group"
+      :target-id="selectedItem.id"
+      :target-name="selectedItem.name"
+      @close="showViewTestsModal = false"
+    />
+
     <!-- Delete Confirmation Modal -->
     <delete-confirm-modal 
       :visible="deleteModalVisible"
@@ -142,11 +165,22 @@ import AddGroup from "./AddGroup.vue";
 import EditGroup from "./EditGroup.vue";
 import AssignUsersModal from "./AssignUsersModal.vue";
 import GroupMembersModal from "./GroupMembersModal.vue";
+import AssignTestModal from "@/components/AssignTestModal.vue";
+import ViewAssignedTestsModal from "@/components/ViewAssignedTestsModal.vue";
 import Loading from "@/components/Loading.vue";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal.vue";
 
 export default {
-  components: { AddGroup, EditGroup, AssignUsersModal, GroupMembersModal, Loading, DeleteConfirmModal },
+  components: { 
+    AddGroup, 
+    EditGroup, 
+    AssignUsersModal, 
+    GroupMembersModal, 
+    AssignTestModal, 
+    ViewAssignedTestsModal, 
+    Loading, 
+    DeleteConfirmModal 
+  },
 
   data() {
     return {
@@ -165,6 +199,8 @@ export default {
       deleteId: null,
       showAssignModal: false,
       showMembersModal: false,
+      showAssignTestModal: false,
+      showViewTestsModal: false,
     };
   },
 
@@ -188,6 +224,16 @@ export default {
 
     openAssignUsersModal(group) { this.selectedItem = group; this.showAssignModal = true; },
     openMembersModal(group)     { this.selectedItem = group; this.showMembersModal = true; },
+
+    openAssignTestModal(group) {
+      this.selectedItem = group;
+      this.showAssignTestModal = true;
+    },
+
+    openViewTestsModal(group) {
+      this.selectedItem = group;
+      this.showViewTestsModal = true;
+    },
 
     viewDetails(id) {
       this.$router.push({ name: 'Group-detail', params: { id } });

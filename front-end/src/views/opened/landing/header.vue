@@ -123,9 +123,12 @@ export default {
       showLogin: false,
       showRegister: false,
       navLinks: [
-        { name: 'Home',     path: '/' },
-        { name: 'Features', path: '/#features' },
-        { name: 'Pricing',  path: '/pricing' },
+        { name: 'Home',            path: '/' },
+        { name: 'Features',        path: '/#features' },
+        { name: 'About',           path: '/about' },
+        { name: 'News & Events',   path: '/news-events' },
+        { name: 'Pricing',         path: '/pricing' },
+        { name: 'Contact',         path: '/contact' },
       ],
     };
   },

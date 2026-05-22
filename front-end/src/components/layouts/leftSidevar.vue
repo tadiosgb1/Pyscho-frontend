@@ -68,7 +68,7 @@
             >
               <div class="flex items-center gap-3">
                 <i class="fas fa-chart-bar w-4 text-center text-gray-400"></i>
-                Results & Progress
+                Results 
               </div>
               <i class="fas fa-chevron-right text-xs text-gray-300 transition-transform duration-200"
                 :class="{ 'rotate-90': openGroups.results }"></i>
@@ -108,7 +108,7 @@
             <div v-show="openGroups.organization" class="mt-1 ml-4 pl-3 border-l border-gray-100 space-y-0.5">
               <template v-for="item in organizationItems" :key="item.route">
                 <router-link
-                  v-if="!item.permission || $hasPermission(item.permission)"
+                  v-if="(!item.permission || $hasPermission(item.permission)) && (!item.roles || item.roles.length === 0 || item.roles.some(role => $hasRole(role)))"
                   :to="{ name: item.route }"
                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
                   :class="$route.name === item.route
@@ -140,7 +140,7 @@
             <div v-show="openGroups.access" class="mt-1 ml-4 pl-3 border-l border-gray-100 space-y-0.5">
               <template v-for="item in accessItems" :key="item.route">
                 <router-link
-                  v-if="!item.permission || $hasPermission(item.permission)"
+                  v-if="(!item.permission || $hasPermission(item.permission)) && (!item.roles || item.roles.length === 0 || item.roles.some(role => $hasRole(role)))"
                   :to="{ name: item.route }"
                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
                   :class="$route.name === item.route
@@ -155,24 +155,24 @@
             </div>
           </div>
 
-          <!-- Billing -->
-          <div v-if="hasVisibleItems(billingItems)" class="px-3 mb-2">
+          <!-- Finance -->
+          <div v-if="hasVisibleItems(financeItems)" class="px-3 mb-2">
             <button
-              @click="toggleGroup('billing')"
+              @click="toggleGroup('finance')"
               class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors"
-              :class="{ 'bg-gray-50 text-gray-900': isGroupActive('billing') }"
+              :class="{ 'bg-gray-50 text-gray-900': isGroupActive('finance') }"
             >
               <div class="flex items-center gap-3">
                 <i class="fas fa-credit-card w-4 text-center text-gray-400"></i>
-                Billing
+                Finance
               </div>
               <i class="fas fa-chevron-right text-xs text-gray-300 transition-transform duration-200"
-                :class="{ 'rotate-90': openGroups.billing }"></i>
+                :class="{ 'rotate-90': openGroups.finance }"></i>
             </button>
-            <div v-show="openGroups.billing" class="mt-1 ml-4 pl-3 border-l border-gray-100 space-y-0.5">
-              <template v-for="item in billingItems" :key="item.route">
+            <div v-show="openGroups.finance" class="mt-1 ml-4 pl-3 border-l border-gray-100 space-y-0.5">
+              <template v-for="item in financeItems" :key="item.route">
                 <router-link
-                  v-if="!item.permission || $hasPermission(item.permission)"
+                  v-if="(!item.permission || $hasPermission(item.permission)) && (!item.roles || item.roles.length === 0 || item.roles.some(role => $hasRole(role)))"
                   :to="{ name: item.route }"
                   class="flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors"
                   :class="$route.name === item.route
@@ -202,7 +202,7 @@ export default {
         results:      false,
         organization: false,
         access:       false,
-        billing:      false,
+        finance:      false,
       },
 
       // Each item has a `permission` code that maps to the seeded permissions
@@ -214,24 +214,25 @@ export default {
 
       resultsItems: [
         { name: 'Results',    route: 'Result-view',   icon: 'fas fa-trophy',          permission: '' },
-        { name: 'Progresses', route: 'Progress-view', icon: 'fas fa-chart-bar',       permission: '' },
-        { name: 'Answers',    route: 'Answer-view',   icon: 'fas fa-reply',           permission: 'answer.view' },
+        //{ name: 'Progresses', route: 'Progress-view', icon: 'fas fa-chart-bar',       permission: '' },
+       // { name: 'Answers',    route: 'Answer-view',   icon: 'fas fa-reply',           permission: 'answer.view' },
       ],
 
       organizationItems: [
-        { name: 'Organizations', route: 'Organization-view', icon: 'fas fa-building', permission: 'organization.view' },
+        { name: 'Organizations', route: 'Organization-view', icon: 'fas fa-building', permission: 'organization.view', roles: [] },
+        { name: 'Groups',        route: 'Group-view',        icon: 'fas fa-users',    permission: '', roles: ['admin', 'organization'] }, // Only admin & organization
       ],
 
       accessItems: [
-        { name: 'Users',       route: 'Users-view',      icon: 'fas fa-user',          permission: '' },
-        { name: 'Roles',       route: 'Role-view',       icon: 'fas fa-id-badge',      permission: '' },
-        { name: 'Permissions', route: 'Permission-view', icon: 'fas fa-key',           permission: '' },
+        { name: 'Users',       route: 'Users-view',      icon: 'fas fa-user',          permission: '', roles: ['admin', 'organization'] }, // Admin & Organization only
+        { name: 'Roles',       route: 'Role-view',       icon: 'fas fa-id-badge',      permission: '', roles: ['admin'] }, // Only admin
+        { name: 'Permissions', route: 'Permission-view', icon: 'fas fa-key',           permission: '', roles: ['admin'] }, // Only admin
       ],
 
-      billingItems: [
-        { name: 'Plans',         route: 'Plan-view',         icon: 'fas fa-tags',         permission: '' },
-        { name: 'Subscriptions', route: 'Subscription-view', icon: 'fas fa-credit-card',  permission: '' },
-        { name: 'Invoices',      route: 'Invoice-view',      icon: 'fas fa-file-invoice', permission: '' },
+      financeItems: [
+        { name: 'Plans',         route: 'Plan-view',         icon: 'fas fa-tags',         permission: '', roles: ['admin'] }, // Only admin
+        { name: 'Subscriptions', route: 'Subscription-view', icon: 'fas fa-credit-card',  permission: '', roles: ['admin'] }, // Only admin
+        { name: 'Payments',      route: 'Invoice-view',      icon: 'fas fa-file-invoice', permission: '', roles: [] }, // All roles (filtered by backend)
       ],
     };
   },
@@ -243,7 +244,7 @@ export default {
         results:      this.resultsItems.map(i => i.route),
         organization: this.organizationItems.map(i => i.route),
         access:       this.accessItems.map(i => i.route),
-        billing:      this.billingItems.map(i => i.route),
+        finance:      this.financeItems.map(i => i.route),
       };
     },
   },
@@ -271,9 +272,13 @@ export default {
       }
     },
 
-    // Returns true if at least one item in the group is visible (has permission)
+    // Returns true if at least one item in the group is visible (has permission and role)
     hasVisibleItems(items) {
-      return items.some(item => !item.permission || this.$hasPermission(item.permission));
+      return items.some(item => {
+        const hasPermissionCheck = !item.permission || this.$hasPermission(item.permission);
+        const hasRoleCheck = !item.roles || item.roles.length === 0 || item.roles.some(role => this.$hasRole(role));
+        return hasPermissionCheck && hasRoleCheck;
+      });
     },
   },
 

@@ -5,7 +5,7 @@ import {
   apiPatch, apiDelete, isStrongPassword, validateField,
   gregorianToEthiopian, getPdfBlobUrl, base64ToFile,
   processFilesToAdd, triggerFileInput, handleFileInput, toggleDragState, removeAttachment,
-  handleAnyFileInput, convertImageToBase64, getFullNameById, getZones, getProperties, getManagers, hasPermission,getTenants,getCoworkingSpaces,getWorkspaceRentals,getWorkspacePayments
+  handleAnyFileInput, convertImageToBase64, getFullNameById, getZones, getProperties, getManagers, hasPermission, hasRole,getTenants,getCoworkingSpaces,getWorkspaceRentals,getWorkspacePayments
 } from "../utils/utils"; // Adjust the path to match your project structure
 export default {
 
@@ -90,6 +90,7 @@ export default {
       $getProperties: getProperties,
       $getManagers: getManagers,
       $hasPermission: hasPermission,
+      $hasRole: hasRole,
       $getTenants:getTenants,
       $getCoworkingSpaces:getCoworkingSpaces,
       $getWorkspaceRentals:getWorkspaceRentals,

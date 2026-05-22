@@ -113,15 +113,31 @@
                           <th class="px-4 py-2 text-left">Value</th>
                           <th class="px-4 py-2 text-left">Weight</th>
                           <th class="px-4 py-2 text-left">Position</th>
+                           <th class="px-4 py-2 text-left">Indicator Letter</th>
+                          
                           <th class="px-4 py-2 text-center">Actions</th>
                         </tr>
                       </thead>
                       <tbody class="divide-y divide-purple-50">
                         <tr v-for="opt in questionOptions" :key="opt.id" class="hover:bg-purple-50">
-                          <td class="px-4 py-2 font-medium">{{ opt.text }}</td>
+                          <td class="px-4 py-2 font-medium">
+  <!-- If the content type is an image, display the actual image -->
+  <div v-if="opt.content_type === 'image'" class="my-1">
+    <img 
+      :src="opt.text" 
+      alt="Option Image" 
+      class="max-h-16 w-auto rounded border border-purple-100 object-cover shadow-sm hover:scale-105 transition-transform duration-200 cursor-zoom-in"
+    />
+  </div>
+  
+  <!-- Otherwise, display it as normal text -->
+  <span v-else>{{ opt.text }}</span>
+</td>
                           <td class="px-4 py-2 text-gray-500">{{ opt.value ?? '—' }}</td>
                           <td class="px-4 py-2 text-gray-500">{{ opt.weight ?? '—' }}</td>
+
                           <td class="px-4 py-2 text-gray-500">{{ opt.position ?? '—' }}</td>
+                          <td class="px-4 py-2 text-gray-500">{{ opt.indication_letter ?? '—' }}</td>
                           <td class="px-4 py-2 text-center space-x-2">
                             <button @click="editOption(opt)" class="text-blue-400 hover:text-blue-600">
                               <i class="fas fa-edit"></i>
@@ -167,8 +183,22 @@
         <div v-if="expandedQuestion === item.id" class="mt-3 space-y-1">
           <div v-if="loadingOptions" class="text-center text-gray-400"><i class="fas fa-spinner animate-spin"></i></div>
           <div v-for="opt in questionOptions" :key="opt.id" class="flex justify-between items-center bg-purple-50 rounded px-3 py-1.5">
-            <span class="text-xs">{{ opt.text }} <span class="text-gray-400">(w: {{ opt.weight }})</span></span>
-            <div class="flex gap-2">
+          <span class="text-xs">
+  <!-- If it's an image, render the thumbnail -->
+  <span v-if="opt.content_type === 'image'" class="inline-block align-middle my-1">
+    <img 
+      :src="opt.text" 
+      alt="Option Image" 
+      class="max-h-12 w-auto rounded border border-purple-100 object-cover shadow-sm"
+    />
+  </span>
+  
+  <!-- Otherwise, just display the plain text -->
+  <span v-else>{{ opt.text }}</span>
+
+  <!-- The weight badge stays visible for both types -->
+  <span class="text-gray-400 ml-1">(w: {{ opt.weight }})</span>
+</span> <div class="flex gap-2">
               <button @click="editOption(opt)" class="text-blue-400"><i class="fas fa-edit text-xs"></i></button>
               <button @click="deleteOption(opt.id)" class="text-red-400"><i class="fas fa-trash text-xs"></i></button>
             </div>
@@ -197,8 +227,13 @@
 
     <!-- Question Add/Edit Modals -->
     <add-question v-if="showModal && !editMode" @close="showModal = false" @saved="fetchItems" />
-    <edit-question v-if="showModal && editMode" :data="selectedItem" @close="showModal = false" @saved="fetchItems" />
-
+    <edit-question 
+  v-if="showModal && editMode" 
+  :question-id="selectedItem.id"
+  :categories="categories"
+  @close="showModal = false" 
+  @saved="fetchItems" 
+/>
     <!-- Option Add/Edit Modals -->
     <add-option-modal
       v-if="showOptionModal && !optionEditMode"
@@ -206,12 +241,13 @@
       @close="showOptionModal = false"
       @saved="onOptionSaved"
     />
-    <edit-option-modal
-      v-if="showOptionModal && optionEditMode"
-      :data="selectedOption"
-      @close="showOptionModal = false"
-      @saved="onOptionSaved"
-    />
+   <edit-option-modal
+  v-if="showOptionModal && optionEditMode"
+  :data="selectedOption"
+  :questionId="selectedOption.question_id" 
+  @close="showOptionModal = false"
+  @saved="onOptionSaved"
+/>
 
     <!-- Delete Confirmation Modal -->
     <delete-confirm-modal

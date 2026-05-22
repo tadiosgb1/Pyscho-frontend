@@ -106,6 +106,7 @@ export default {
         localStorage.setItem('refresh',     response.refreshToken);
         localStorage.setItem('access',      response.accessToken);
         localStorage.setItem('userId',      response.id);
+        localStorage.setItem('organizationId', response.organization_id || '');
         localStorage.setItem('email',       response.email);
         localStorage.setItem('name',        response.email);
         const roleNames = (response.roles || []).map(r => r.name || r);

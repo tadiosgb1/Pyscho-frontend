@@ -65,16 +65,6 @@
               </div>
 
               <div class="space-y-2">
-                <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Inquiry Purpose</label>
-                <select v-model="form.subject" class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-slate-800">
-                  <option value="student">Student Aptitude Testing</option>
-                  <option value="corporate">Corporate Behavioral Audit</option>
-                  <option value="bespoke">Bespoke Test Development</option>
-                  <option value="demo">Platform Demo Request</option>
-                </select>
-              </div>
-
-              <div class="space-y-2">
                 <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Evaluation Details</label>
                 <textarea v-model="form.message" rows="4" placeholder="How many participants are you looking to evaluate?" 
                   class="w-full bg-slate-50 border-none rounded-2xl px-6 py-4 outline-none focus:ring-2 focus:ring-primary/20 transition-all font-bold text-slate-800 resize-none placeholder:text-slate-300"></textarea>

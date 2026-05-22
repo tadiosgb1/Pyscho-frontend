@@ -6,7 +6,7 @@
     <!-- Modal -->
     <div class="relative w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col">
 
-      <!-- Green top bar -->
+      <!-- Top bar -->
       <div class="h-1.5 w-full bg-gradient-to-r from-green-400 to-green-600 flex-shrink-0"></div>
 
       <!-- Close -->
@@ -23,7 +23,7 @@
           <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center">
             <i class="fas fa-brain text-green-400 text-sm"></i>
           </div>
-          <span class="font-black text-slate-900 text-lg tracking-tight">Alpha<span class="text-green-500">Psych</span></span>
+          <span class="font-black text-slate-900 text-lg tracking-tight">Alphaaaa<span class="text-green-500">Psych</span></span>
         </div>
 
         <h2 class="text-2xl font-black text-slate-900 mb-1">Create Account</h2>
@@ -32,7 +32,7 @@
         <!-- Account type toggle -->
         <div class="flex bg-gray-100 rounded-xl p-1 mb-6">
           <button
-            @click="accountType = 'individual'"
+            @click="switchToIndividual"
             class="flex-1 py-2.5 rounded-lg text-sm font-semibold transition-all"
             :class="accountType === 'individual' ? 'bg-white shadow text-slate-900' : 'text-gray-500 hover:text-gray-700'"
           >
@@ -47,144 +47,197 @@
           </button>
         </div>
 
-        <form @submit.prevent="register" class="space-y-4">
-
-          <!-- ── PERSONAL INFO (both types) ── -->
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">First Name</label>
-              <input v-model="form.first_name" type="text" required
-                class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition" />
+        <!-- ══════════════════════════════════════════════════
+             ORGANIZATION — Step 1: No plan selected yet
+        ══════════════════════════════════════════════════ -->
+        <template v-if="accountType === 'organization' && !selectedPlan">
+          <div class="border border-amber-100 bg-amber-50 rounded-2xl p-6 flex flex-col items-center text-center gap-4">
+            <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+              <i class="fas fa-tags text-amber-500 text-lg"></i>
             </div>
             <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Last Name</label>
-              <input v-model="form.last_name" type="text" required
-                class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition" />
-            </div>
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Email</label>
-            <input v-model="form.email" type="email" required
-              class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Phone</label>
-            <input v-model="form.phone" type="text" placeholder="+251 911 000 000"
-              class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition" />
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Password</label>
-              <input v-model="form.password" type="password" required
-                class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition" />
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Confirm</label>
-              <input v-model="form.confirm_password" type="password" required
-                class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition" />
-            </div>
-          </div>
-
-          <!-- ── ORGANIZATION FIELDS ── -->
-          <template v-if="accountType === 'organization'">
-            <div class="border-t border-gray-100 pt-4 mt-2">
-              <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-4">Organization Details</p>
-
-              <div class="space-y-3">
-                <div>
-                  <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Organization Name</label>
-                  <input v-model="form.org_name" type="text" required
-                    class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition" />
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Official Email</label>
-                    <input v-model="form.org_email" type="email"
-                      class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition" />
-                  </div>
-                  <div>
-                    <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Type</label>
-                    <select v-model="form.org_type"
-                      class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition bg-white">
-                      <option>Company</option>
-                      <option>University</option>
-                      <option>School</option>
-                      <option>NGO</option>
-                      <option>Research</option>
-                    </select>
-                  </div>
-                </div>
-
-                <div>
-                  <label class="block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide">Address</label>
-                  <input v-model="form.address" type="text"
-                    class="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-500 transition" />
-                </div>
-              </div>
-            </div>
-
-            <!-- ── PLAN SELECTION (required for org) ── -->
-            <div class="border-t border-gray-100 pt-4">
-              <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
-                Choose a Plan <span class="text-red-400">*</span>
+              <p class="text-sm font-black text-slate-900 mb-1">Select a Plan First</p>
+              <p class="text-xs text-slate-500 leading-relaxed">
+                Organization accounts require a subscription plan. Browse our plans and click
+                <strong>"Get Started"</strong> on any plan to continue registration.
               </p>
+            </div>
+            <router-link
+              to="/pricing"
+              @click="$emit('close')"
+              class="inline-flex items-center gap-2 px-6 py-3 bg-green-500 hover:bg-green-600 text-white font-bold rounded-xl transition-all text-xs shadow-lg shadow-green-500/20"
+            >
+              View Plans &amp; Pricing
+              <i class="fas fa-arrow-right text-[10px]"></i>
+            </router-link>
+            <button @click="accountType = 'individual'" class="text-xs text-gray-400 hover:text-gray-600 underline">
+              Register as Individual instead
+            </button>
+          </div>
+        </template>
 
-              <div v-if="loadingPlans" class="text-center py-4 text-gray-400">
-                <i class="fas fa-spinner animate-spin"></i>
+        <!-- ══════════════════════════════════════════════════
+             ORGANIZATION — Step 2: Plan selected, show form
+        ══════════════════════════════════════════════════ -->
+        <template v-if="accountType === 'organization' && selectedPlan">
+          <form @submit.prevent="register" class="space-y-5">
+            <!-- Selected plan banner -->
+            <div class="flex items-center justify-between gap-3 p-3.5 bg-green-50 border border-green-200 rounded-xl">
+              <div class="flex items-center gap-3">
+                <div class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center shrink-0">
+                  <i class="fas fa-check text-white text-xs"></i>
+                </div>
+                <div>
+                  <p class="text-[10px] font-black uppercase tracking-widest text-green-600 leading-none">Selected Plan</p>
+                  <p class="text-sm font-black text-slate-900 leading-tight mt-0.5">
+                    {{ selectedPlan.name }}
+                    <span class="font-normal text-slate-400 text-xs ml-1">
+                      {{ selectedPlan.price_cents === 0 ? '— Free' : '— $' + (selectedPlan.price_cents / 100).toFixed(0) + '/mo' }}
+                    </span>
+                  </p>
+                </div>
+              </div>
+              <button type="button" @click="selectedPlan = null"
+                class="text-xs text-green-600 hover:text-green-800 font-bold underline shrink-0">
+                Change
+              </button>
+            </div>
+
+            <!-- ── Admin user ── -->
+            <div class="border border-gray-100 rounded-2xl p-5 space-y-4">
+              <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Administrator</p>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="field-label">First Name</label>
+                  <input v-model="form.first_name" type="text" required class="field-input" placeholder="John" />
+                </div>
+                <div>
+                  <label class="field-label">Last Name</label>
+                  <input v-model="form.last_name" type="text" required class="field-input" placeholder="Doe" />
+                </div>
               </div>
 
-              <div v-else class="space-y-2">
-                <label
-                  v-for="plan in plans"
-                  :key="plan.id"
-                  class="flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all"
-                  :class="selectedPlanId === plan.id
-                    ? 'border-green-500 bg-green-50'
-                    : 'border-gray-100 hover:border-gray-200'"
-                >
-                  <input type="radio" :value="plan.id" v-model="selectedPlanId" class="w-4 h-4 accent-green-500" />
-                  <div class="flex-1 min-w-0">
-                    <div class="flex items-center justify-between">
-                      <p class="text-sm font-semibold text-gray-800">{{ plan.name }}</p>
-                      <span class="text-sm font-bold text-gray-700">
-                        {{ plan.price_cents === 0 ? 'Free' : '$' + (plan.price_cents / 100).toFixed(0) + '/mo' }}
-                      </span>
-                    </div>
-                    <p class="text-xs text-gray-400 truncate">
-                      {{ plan.max_users === -1 ? '∞' : plan.max_users }} users ·
-                      {{ plan.max_tests === -1 ? '∞' : plan.max_tests }} tests
-                    </p>
-                  </div>
-                  <i v-if="selectedPlanId === plan.id" class="fas fa-check-circle text-green-500 flex-shrink-0"></i>
-                </label>
+              <div>
+                <label class="field-label">Admin Email</label>
+                <input v-model="form.email" type="email" required class="field-input" placeholder="admin@org.com" />
+              </div>
+
+              <div>
+                <label class="field-label">Phone <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+                <input v-model="form.phone" type="text" class="field-input" placeholder="+251 9XX XXX XXX" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="field-label">Password</label>
+                  <input v-model="form.password" type="password" required class="field-input" />
+                </div>
+                <div>
+                  <label class="field-label">Confirm</label>
+                  <input v-model="form.confirm_password" type="password" required class="field-input" />
+                </div>
               </div>
             </div>
-          </template>
+
+            <!-- ── Organization details ── -->
+            <div class="border border-gray-100 rounded-2xl p-5 space-y-4">
+              <p class="text-[10px] font-black uppercase tracking-widest text-gray-400">Organization Details</p>
+
+              <div>
+                <label class="field-label">Organization Name</label>
+                <input v-model="form.org_name" type="text" required class="field-input" placeholder="Acme Corp" />
+              </div>
+
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="field-label">Official Email</label>
+                  <input v-model="form.org_email" type="email" class="field-input" placeholder="info@org.com" />
+                </div>
+                <div>
+                  <label class="field-label">Type</label>
+                  <select v-model="form.org_type" class="field-input bg-white">
+                    <option>Company</option>
+                    <option>University</option>
+                    <option>School</option>
+                    <option>NGO</option>
+                    <option>Research</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <label class="field-label">Address</label>
+                <input v-model="form.address" type="text" class="field-input" placeholder="Bole, Addis Ababa" />
+              </div>
+            </div>
+
+            <!-- Error -->
+            <div v-if="error"
+              class="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-xs font-medium">
+              <i class="fas fa-exclamation-circle shrink-0"></i>
+              {{ error }}
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" :disabled="loading"
+              class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-sm transition disabled:opacity-50 flex items-center justify-center gap-2">
+              <i v-if="loading" class="fas fa-spinner animate-spin text-xs"></i>
+              {{ loading ? 'Creating account...' : 'Create Account' }}
+            </button>
+          </form>
+        </template>
+
+        <!-- ══════════════════════════════════════════════════
+             INDIVIDUAL FORM
+        ══════════════════════════════════════════════════ -->
+        <form v-if="accountType === 'individual'" @submit.prevent="register" class="space-y-4">
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="field-label">First Name</label>
+              <input v-model="form.first_name" type="text" required class="field-input" />
+            </div>
+            <div>
+              <label class="field-label">Last Name</label>
+              <input v-model="form.last_name" type="text" required class="field-input" />
+            </div>
+          </div>
+
+          <div>
+            <label class="field-label">Email</label>
+            <input v-model="form.email" type="email" required class="field-input" />
+          </div>
+
+          <div>
+            <label class="field-label">Phone <span class="text-gray-300 normal-case font-normal">(optional)</span></label>
+            <input v-model="form.phone" type="text" placeholder="+251 911 000 000" class="field-input" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="field-label">Password</label>
+              <input v-model="form.password" type="password" required class="field-input" />
+            </div>
+            <div>
+              <label class="field-label">Confirm</label>
+              <input v-model="form.confirm_password" type="password" required class="field-input" />
+            </div>
+          </div>
 
           <!-- Error -->
-          <div v-if="error" class="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-xs font-medium">
-            <i class="fas fa-exclamation-circle"></i>
+          <div v-if="error"
+            class="flex items-center gap-2 bg-red-50 border border-red-100 text-red-600 px-4 py-3 rounded-xl text-xs font-medium">
+            <i class="fas fa-exclamation-circle shrink-0"></i>
             {{ error }}
           </div>
 
           <!-- Submit -->
-          <button
-            type="submit"
-            :disabled="loading || (accountType === 'organization' && !selectedPlanId)"
-            class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-sm transition disabled:opacity-50 flex items-center justify-center gap-2"
-          >
+          <button type="submit" :disabled="loading"
+            class="w-full py-3.5 bg-slate-900 hover:bg-slate-800 text-white font-semibold rounded-xl text-sm transition disabled:opacity-50 flex items-center justify-center gap-2">
             <i v-if="loading" class="fas fa-spinner animate-spin text-xs"></i>
             {{ loading ? 'Creating account...' : 'Create Account' }}
           </button>
-
-          <p v-if="accountType === 'organization' && !selectedPlanId" class="text-center text-xs text-amber-600">
-            <i class="fas fa-exclamation-triangle mr-1"></i>
-            Please select a plan to continue
-          </p>
         </form>
 
         <p class="text-center text-xs text-gray-400 mt-6">
@@ -193,6 +246,7 @@
             Sign in
           </button>
         </p>
+
       </div>
     </div>
   </div>
@@ -203,37 +257,33 @@ export default {
   name: 'RegisterModal',
   emits: ['close', 'switch-to-login'],
 
+  props: {
+    // Optional: pre-selected plan passed in from pricing page
+    preSelectedPlan: {
+      type: Object,
+      default: null,
+    },
+  },
+
   data() {
     return {
       accountType: 'individual',
       loading: false,
-      loadingPlans: false,
       error: '',
-      plans: [],
-      selectedPlanId: null,
+      selectedPlan: null,
 
       form: {
         first_name: '', last_name: '', email: '', phone: '',
         password: '', confirm_password: '',
         // org fields
-        org_name: '', org_email: '', org_phone: '',
-        org_type: 'Company', address: '', description: '',
+        org_name: '', org_email: '', org_type: 'Company', address: '',
       },
     };
   },
 
   methods: {
-    async fetchPlans() {
-      this.loadingPlans = true;
-      try {
-        const res = await this.$apiGet('/plans');
-        // Only show monthly plans (exclude yearly variants)
-        this.plans = (res.data || []).filter(p => p.billing_cycle !== 'yearly');
-      } catch (e) {
-        console.error(e);
-      } finally {
-        this.loadingPlans = false;
-      }
+    switchToIndividual() {
+      this.accountType = 'individual';
     },
 
     async register() {
@@ -244,67 +294,109 @@ export default {
         return;
       }
 
-      if (this.accountType === 'organization' && !this.selectedPlanId) {
-        this.error = 'Please select a plan for your organization.';
+      // Validate password strength
+      if (this.form.password.length < 6) {
+        this.error = 'Password must be at least 6 characters long.';
         return;
       }
 
       this.loading = true;
       try {
         if (this.accountType === 'individual') {
-          // Register as individual tester
-          await this.$apiPost('/auth/register', {
-            first_name:  this.form.first_name,
-            last_name:   this.form.last_name,
-            email:       this.form.email,
-            phone:       this.form.phone,
-            password:    this.form.password,
+          const response = await this.$apiPost('/auth/register', {
+            first_name: this.form.first_name,
+            last_name:  this.form.last_name,
+            email:      this.form.email,
+            phone:      this.form.phone || null,
+            password:   this.form.password,
           });
+
+          // Show success message
+          this.$root.$refs.toast?.showToast('Account created successfully! Please login.', 'success');
+          
+          this.$emit('close');
+          this.$emit('switch-to-login');
         } else {
-          // Step 1: Create organization
-          const orgRes = await this.$apiPost('/organization', {
-            name:           this.form.org_name,
-            official_email: this.form.org_email,
-            official_phone: this.form.org_phone,
-            address:        this.form.address,
-            org_type:       this.form.org_type,
-            description:    this.form.description,
-          });
+          // Organization registration - send in nested format
+          const payload = {
+            user: {
+              first_name: this.form.first_name,
+              last_name:  this.form.last_name,
+              email:      this.form.email,
+              phone:      this.form.phone || null,
+              password:   this.form.password,
+            },
+            organization: {
+              name:           this.form.org_name,
+              official_email: this.form.org_email || null,
+              official_phone: this.form.org_phone || null,
+              address:        this.form.address || null,
+              org_type:       this.form.org_type,
+              description:    this.form.description || null,
+            }
+          };
 
-          const orgId = orgRes?.id || orgRes?.data?.id;
+          const orgRes = await this.$apiPost('/organization', payload);
+          const orgId = orgRes?.organization?.id;
 
-          // Step 2: Register admin user for the org
-          await this.$apiPost('/auth/register', {
-            first_name:      this.form.first_name,
-            last_name:       this.form.last_name,
-            email:           this.form.email,
-            phone:           this.form.phone,
-            password:        this.form.password,
-            organization_id: orgId,
-          });
-
-          // Step 3: Assign selected plan to the org
-          if (orgId && this.selectedPlanId) {
+          // Assign selected plan if exists
+          if (orgId && this.selectedPlan?.id) {
             await this.$apiPost('/subscriptions', {
               organization_id: orgId,
-              plan_id:         this.selectedPlanId,
+              plan_id:         this.selectedPlan.id,
               activated_by:    null,
             });
           }
-        }
 
-        this.$emit('close');
-        this.$emit('switch-to-login');
+          // Show success message
+          this.$root.$refs.toast?.showToast('Organization account created successfully! Please login.', 'success');
+          
+          this.$emit('close');
+          this.$emit('switch-to-login');
+        }
       } catch (err) {
-        this.error = err?.message || 'Registration failed. Please try again.';
+        console.error('Registration error:', err);
+        
+        // Extract error message from different response formats
+        let errorMessage = 'Registration failed. Please try again.';
+        
+        if (err?.response?.data?.error) {
+          errorMessage = err.response.data.error;
+        } else if (err?.response?.data?.detail) {
+          errorMessage = err.response.data.detail;
+        } else if (err?.response?.data?.message) {
+          errorMessage = err.response.data.message;
+        } else if (err?.message) {
+          errorMessage = err.message;
+        }
+        
+        this.error = errorMessage;
       } finally {
         this.loading = false;
       }
     },
   },
 
+  watch: {
+    // No-op — kept for future use
+  },
+
   mounted() {
-    this.fetchPlans();
+    // If a plan was passed in from the pricing page, pre-select it and go straight to org form
+    if (this.preSelectedPlan) {
+      this.selectedPlan = this.preSelectedPlan;
+      this.accountType = 'organization';
+    }
   },
 };
 </script>
+
+<style scoped>
+.field-label {
+  @apply block text-xs font-semibold text-gray-600 mb-1.5 uppercase tracking-wide;
+}
+.field-input {
+  @apply w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm
+    focus:outline-none focus:ring-2 focus:ring-green-500 transition;
+}
+</style>

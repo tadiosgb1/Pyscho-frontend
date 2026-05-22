@@ -1,218 +1,398 @@
 <template>
-  <div>
-    <Toast ref="toast" />
-    
-    <Teleport to="body">
-      <transition name="auth-overlay">
-        <div
-          v-if="visible"
-          class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-md p-4 overflow-y-auto"
-          @click.self="$emit('close')"
-        >
-          <div class="bg-white w-full max-w-2xl rounded-[2rem] shadow-2xl relative overflow-hidden animate-pop-in">
+  <div class="p-6 bg-gray-50 min-h-screen text-sm text-gray-800">
+    <!-- Loading -->
+    <Loading :visible="loading" message="Loading Profile..." />
+
+    <!-- Page Header -->
+    <div class="flex items-center justify-between mb-6 border-b pb-4 border-gray-200">
+      <div>
+        <h1 class="text-lg font-bold text-gray-800">My Profile</h1>
+        <p class="text-xs text-gray-400 mt-0.5">
+          View and manage your personal information
+        </p>
+      </div>
+    </div>
+
+    <!-- Profile Content -->
+    <div class="max-w-4xl mx-auto space-y-6">
+      
+      <!-- Personal Information Card -->
+      <div class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="bg-gradient-to-r from-green-500 to-green-600 px-6 py-4 flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center text-white text-2xl font-bold">
+              {{ userInitials }}
+            </div>
+            <div class="text-white">
+              <h2 class="text-xl font-bold">{{ fullName }}</h2>
+              <p class="text-sm text-green-100">{{ userEmail }}</p>
+            </div>
+          </div>
+          <button
+            v-if="!editMode"
+            @click="editMode = true"
+            class="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 rounded-lg font-medium shadow-md flex items-center space-x-2 text-sm transition-all"
+          >
+            <i class="fas fa-edit"></i>
+            <span>Edit Profile</span>
+          </button>
+        </div>
+
+        <form @submit.prevent="updateProfile" class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            <div class="bg-white px-8 py-6 border-b border-slate-100 flex justify-between items-center">
-              <div class="flex items-center gap-4">
-                <div class="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center text-primary">
-                  <i class="fas fa-user-edit text-xl"></i>
-                </div>
-                <div>
-                  <h2 class="text-xl font-black text-slate-800 tracking-tight">Update Profile</h2>
-                  <p class="text-[10px] font-black uppercase tracking-widest text-slate-400">Personal Information Settings</p>
-                </div>
-              </div>
-              <button 
-                @click="$emit('close')" 
-                class="w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all"
-              >
-                <i class="fas fa-times"></i>
-              </button>
+            <!-- First Name -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">
+                <i class="fas fa-user text-gray-400 mr-2"></i>First Name
+              </label>
+              <input
+                v-model="form.first_name"
+                type="text"
+                :disabled="!editMode"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-50 disabled:text-gray-600 text-sm"
+                placeholder="Enter first name"
+              />
             </div>
 
-            <form @submit.prevent="updateProfile" class="p-8">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5">
-                
-                <div class="space-y-1">
-                  <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">First Name</label>
-                  <div class="relative group">
-                    <i class="fas fa-signature absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-xs"></i>
-                    <input v-model="form.first_name" type="text" class="compact-input" placeholder="John" />
-                  </div>
-                </div>
+            <!-- Middle Name -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">
+                <i class="fas fa-user text-gray-400 mr-2"></i>Middle Name
+              </label>
+              <input
+                v-model="form.middle_name"
+                type="text"
+                :disabled="!editMode"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-50 disabled:text-gray-600 text-sm"
+                placeholder="Enter middle name"
+              />
+            </div>
 
-                <div class="space-y-1">
-                  <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Middle Name</label>
-                  <div class="relative group">
-                    <i class="fas fa-pen-nib absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-xs"></i>
-                    <input v-model="form.middle_name" type="text" class="compact-input" placeholder="Edward" />
-                  </div>
-                </div>
+            <!-- Last Name -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">
+                <i class="fas fa-user text-gray-400 mr-2"></i>Last Name
+              </label>
+              <input
+                v-model="form.last_name"
+                type="text"
+                :disabled="!editMode"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-50 disabled:text-gray-600 text-sm"
+                placeholder="Enter last name"
+              />
+            </div>
 
-                <div class="space-y-1">
-                  <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Last Name</label>
-                  <div class="relative group">
-                    <i class="fas fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-xs"></i>
-                    <input v-model="form.last_name" type="text" class="compact-input" placeholder="Doe" />
-                  </div>
-                </div>
+            <!-- Email -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">
+                <i class="fas fa-envelope text-gray-400 mr-2"></i>Email Address
+              </label>
+              <input
+                v-model="form.email"
+                type="email"
+                :disabled="!editMode"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-50 disabled:text-gray-600 text-sm"
+                placeholder="Enter email address"
+              />
+            </div>
 
-                <div class="space-y-1">
-                  <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Email Address</label>
-                  <div class="relative group">
-                    <i class="fas fa-envelope absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-xs"></i>
-                    <input v-model="form.email" type="email" class="compact-input" placeholder="john.doe@alpha.com" />
-                  </div>
-                </div>
+            <!-- Phone -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">
+                <i class="fas fa-phone text-gray-400 mr-2"></i>Phone Number
+              </label>
+              <input
+                v-model="form.phone"
+                type="text"
+                :disabled="!editMode"
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 disabled:bg-gray-50 disabled:text-gray-600 text-sm"
+                placeholder="Enter phone number"
+              />
+            </div>
 
-                <div class="space-y-1">
-                  <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Phone Number</label>
-                  <div class="relative group">
-                    <i class="fas fa-phone absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-xs"></i>
-                    <input v-model="form.phone_number" type="text" class="compact-input" placeholder="+123 456 7890" />
-                  </div>
-                </div>
-
-                <div class="space-y-1">
-                  <label class="text-[10px] font-black uppercase tracking-widest text-slate-400 ml-1">Physical Address</label>
-                  <div class="relative group">
-                    <i class="fas fa-map-marker-alt absolute left-4 top-1/2 -translate-y-1/2 text-slate-300 group-focus-within:text-primary transition-colors text-xs"></i>
-                    <input v-model="form.address" type="text" class="compact-input" placeholder="Street, City, Country" />
-                  </div>
-                </div>
-              </div>
-
-              <div class="mt-10 pt-6 border-t border-slate-50 flex items-center justify-end gap-3">
-                <button 
-                  type="button" 
-                  @click="$emit('close')"
-                  class="px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest text-slate-400 hover:bg-slate-50 transition-all"
+            <!-- Roles (Read-only) -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">
+                <i class="fas fa-id-badge text-gray-400 mr-2"></i>Role(s)
+              </label>
+              <div class="flex flex-wrap gap-2">
+                <span
+                  v-for="role in userRoles"
+                  :key="role"
+                  class="px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-xs font-semibold"
                 >
-                  Cancel
-                </button>
-                <button 
-                  type="submit" 
-                  class="bg-dprimary hover:bg-primary text-white px-10 py-3.5 rounded-xl font-black text-[10px] uppercase tracking-[0.2em] shadow-lg shadow-dprimary/20 transition-all active:scale-95"
-                  :disabled="loading"
-                >
-                  <span v-if="!loading">Save Changes</span>
-                  <span v-else class="flex items-center gap-2">
-                    <div class="w-3 h-3 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                    Updating...
-                  </span>
-                </button>
+                  {{ role }}
+                </span>
               </div>
-            </form>
+            </div>
+
+          </div>
+
+          <!-- Action Buttons (only shown in edit mode) -->
+          <div v-if="editMode" class="mt-6 pt-6 border-t border-gray-200 flex items-center justify-end gap-3">
+            <button
+              type="button"
+              @click="cancelEdit"
+              class="px-6 py-2.5 border border-gray-300 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-50 transition-all"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              :disabled="saving"
+              class="bg-green-500 hover:bg-green-600 text-white px-6 py-2.5 rounded-lg font-medium shadow-md flex items-center space-x-2 text-sm transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <i v-if="!saving" class="fas fa-save"></i>
+              <i v-else class="fas fa-spinner fa-spin"></i>
+              <span>{{ saving ? 'Saving...' : 'Save Changes' }}</span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Organization Information Card (for organization users and testers from organizations) -->
+      <div v-if="showOrganizationInfo" class="bg-white rounded-xl border border-gray-200 shadow-sm overflow-hidden">
+        <div class="bg-gradient-to-r from-blue-500 to-blue-600 px-6 py-4">
+          <div class="flex items-center gap-3 text-white">
+            <i class="fas fa-building text-2xl"></i>
+            <div>
+              <h2 class="text-lg font-bold">Organization Information</h2>
+              <p class="text-sm text-blue-100">Your organization details</p>
+            </div>
           </div>
         </div>
-      </transition>
-    </Teleport>
+
+        <div v-if="organization" class="p-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            
+            <!-- Organization Name -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">
+                <i class="fas fa-building text-gray-400 mr-2"></i>Organization Name
+              </label>
+              <input
+                :value="organization.name"
+                type="text"
+                disabled
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm"
+              />
+            </div>
+
+            <!-- Organization Email -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">
+                <i class="fas fa-envelope text-gray-400 mr-2"></i>Official Email
+              </label>
+              <input
+                :value="organization.official_email || '—'"
+                type="text"
+                disabled
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm"
+              />
+            </div>
+
+            <!-- Organization Phone -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">
+                <i class="fas fa-phone text-gray-400 mr-2"></i>Official Phone
+              </label>
+              <input
+                :value="organization.official_phone || '—'"
+                type="text"
+                disabled
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm"
+              />
+            </div>
+
+            <!-- Organization Address -->
+            <div>
+              <label class="block text-xs font-semibold text-gray-600 mb-2">
+                <i class="fas fa-map-marker-alt text-gray-400 mr-2"></i>Address
+              </label>
+              <input
+                :value="organization.address || '—'"
+                type="text"
+                disabled
+                class="w-full px-4 py-2.5 border border-gray-300 rounded-lg bg-gray-50 text-gray-600 text-sm"
+              />
+            </div>
+
+          </div>
+
+          <!-- Edit Organization Button (only for organization role) -->
+          <div v-if="isOrganization" class="mt-6 pt-6 border-t border-gray-200">
+            <button
+              @click="editOrganization"
+              class="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2.5 rounded-lg font-medium shadow-md flex items-center space-x-2 text-sm transition-all"
+            >
+              <i class="fas fa-edit"></i>
+              <span>Edit Organization</span>
+            </button>
+          </div>
+        </div>
+
+        <div v-else class="p-6 text-center text-gray-400">
+          <i class="fas fa-building text-4xl mb-3"></i>
+          <p>No organization information available</p>
+        </div>
+      </div>
+
+    </div>
   </div>
 </template>
 
-<style scoped>
-/* Input Field Styling */
-.compact-input {
-  @apply w-full pl-11 pr-4 py-3.5 bg-slate-50 border border-slate-100 rounded-2xl focus:bg-white focus:ring-4 focus:ring-primary/10 focus:border-primary outline-none transition-all text-sm font-bold text-slate-800 placeholder:text-slate-300 placeholder:font-medium;
-}
-
-/* Animations */
-@keyframes popIn {
-  0% { opacity: 0; transform: scale(0.95) translateY(10px); }
-  100% { opacity: 1; transform: scale(1) translateY(0); }
-}
-.animate-pop-in {
-  animation: popIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.auth-overlay-enter-active, .auth-overlay-leave-active {
-  transition: opacity 0.3s ease;
-}
-.auth-overlay-enter-from, .auth-overlay-leave-to {
-  opacity: 0;
-}
-</style>
-
 <script>
+import Loading from "@/components/Loading.vue";
 
-import Toast from "../../components/Toast.vue";
 export default {
   name: "Profile",
-    components:{Toast},
-  props: {
-    visible: {
-      type: Boolean,
-      default: false,
-    },
-  },
+  components: { Loading },
+
   data() {
     return {
+      loading: false,
+      saving: false,
+      editMode: false,
       form: {
         first_name: "",
         middle_name: "",
         last_name: "",
         email: "",
-        phone_number: "",
-        address: "",
+        phone: "",
       },
+      originalForm: {},
+      organization: null,
     };
   },
-  watch: {
-    visible(newVal) {
-      if (newVal) {
-        this.loadProfile();
+
+  computed: {
+    userId() {
+      return localStorage.getItem("userId");
+    },
+    userRoles() {
+      try {
+        const raw = localStorage.getItem("roles");
+        if (!raw) return [];
+        
+        // Handle both JSON array and plain string
+        try {
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed : [parsed];
+        } catch {
+          return [raw];
+        }
+      } catch {
+        return [];
       }
+    },
+    isAdmin() {
+      return this.userRoles.some(r => r.toLowerCase() === 'admin');
+    },
+    isOrganization() {
+      return this.userRoles.some(r => r.toLowerCase() === 'organization');
+    },
+    isTester() {
+      return this.userRoles.some(r => r.toLowerCase() === 'tester');
+    },
+    showOrganizationInfo() {
+      // Show organization info for organization users or testers who belong to an organization
+      return (this.isOrganization || (this.isTester && this.organization));
+    },
+    fullName() {
+      const parts = [this.form.first_name, this.form.middle_name, this.form.last_name].filter(Boolean);
+      return parts.join(" ") || "User";
+    },
+    userInitials() {
+      const first = this.form.first_name?.[0] || "";
+      const last = this.form.last_name?.[0] || "";
+      return (first + last).toUpperCase() || "U";
+    },
+    userEmail() {
+      return this.form.email || "No email";
     },
   },
+
   methods: {
     async loadProfile() {
+      this.loading = true;
       try {
-        const id = localStorage.getItem("userId");
-        const res = await this.$apiGet(`/get_user/${id}`);
-        //this.form = res;
-        this.form.email=res.email;
-        this.form.first_name=res.first_name;
-        this.form.last_name=res.last_name;
-        this.form.middle_name=res.middle_name;
-        this.form.phone_number=res.phone_number;
-        this.form.address=res.address;
-
-
-
-      } catch (err) {
-        console.error("Failed to fetch user", err);
-      }
-    },
-    async updateProfile() {
-      try {
-        const id = localStorage.getItem("userId");
-
-        console.log("this form",this.form);
-
-       const res = await this.$apiPatch(`/old_update_user`, id, this.form);
-         if(res && res.error){
- this.$root.$refs.toast.showToast(
-          res.error || "Failed to update profile ",
-          "error"
-        );
-         this.$emit("close");
-        } else {
-        this.$root.$refs.toast.showToast(
-          "Profile updated successfully ",
-          "success"
-        );
-      this.$emit("updated", this.form);
-        this.$emit("close");
-        }
+        const response = await this.$apiGet(`/users/${this.userId}`);
         
-       
-      } catch (err) {
-        console.error("Update failed", err);
-       this.$root.$refs.toast.showToast(
-         "Failed to update profile ",
-          "error"
-        );
+        // Populate form with user data
+        this.form = {
+          first_name: response.first_name || "",
+          middle_name: response.middle_name || "",
+          last_name: response.last_name || "",
+          email: response.email || "",
+          phone: response.phone || "",
+        };
+
+        // Store original form for cancel functionality
+        this.originalForm = { ...this.form };
+
+        // Load organization data if available
+        if (response.organization) {
+          this.organization = response.organization;
+        }
+      } catch (error) {
+        console.error("Failed to load profile:", error);
+        this.$root.$refs.toast?.showToast("Failed to load profile", "error");
+      } finally {
+        this.loading = false;
       }
     },
+
+    async updateProfile() {
+      this.saving = true;
+      try {
+        const response = await this.$apiPut(`/users`, this.userId, this.form);
+        
+        if (response && !response.error) {
+          this.$root.$refs.toast?.showToast("Profile updated successfully", "success");
+          this.originalForm = { ...this.form };
+          this.editMode = false;
+        } else {
+          throw new Error(response.error || "Update failed");
+        }
+      } catch (error) {
+        console.error("Failed to update profile:", error);
+        this.$root.$refs.toast?.showToast(
+          error.message || "Failed to update profile",
+          "error"
+        );
+      } finally {
+        this.saving = false;
+      }
+    },
+
+    cancelEdit() {
+      this.form = { ...this.originalForm };
+      this.editMode = false;
+    },
+
+    editOrganization() {
+      // Navigate to organization edit page
+      this.$router.push({
+        name: "Organization-edit",
+        params: { id: this.organization.id },
+      });
+    },
+  },
+
+  mounted() {
+    this.loadProfile();
   },
 };
 </script>
+
+<style scoped>
+/* Custom scrollbar for consistency */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 10px;
+}
+</style>

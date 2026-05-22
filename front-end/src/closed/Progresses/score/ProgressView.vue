@@ -6,7 +6,11 @@
     <div class="flex items-center justify-between mb-6 border-b pb-4 border-gray-200">
       <div>
         <h1 class="text-lg font-bold text-gray-800">Test Progress</h1>
-        <p class="text-xs text-gray-500 mt-0.5">All test attempts across users</p>
+        <p class="text-xs text-gray-400 mt-0.5">
+          <span v-if="isAdmin">All test attempts and progress records in the system</span>
+          <span v-else-if="isOrganization">Test progress for your organization's users</span>
+          <span v-else>Your test attempts and progress tracking</span>
+        </p>
       </div>
     </div>
 
@@ -142,20 +146,93 @@ export default {
     };
   },
 
+  computed: {
+    userRoles() {
+      try {
+        const raw = localStorage.getItem('roles');
+        return raw ? JSON.parse(raw).map(r => (typeof r === 'string' ? r : r.name || '').toLowerCase()) : [];
+      } catch {
+        return [];
+      }
+    },
+    isAdmin() {
+      return this.userRoles.includes('admin');
+    },
+    isOrganization() {
+      return this.userRoles.includes('organization');
+    },
+    userId() {
+      return localStorage.getItem('userId');
+    },
+    organizationId() {
+      return localStorage.getItem('organizationId');
+    },
+  },
+
   methods: {
     async fetchItems(page = 1) {
       this.loading = true;
       this.currentPage = page;
       try {
+        // Fetch with large page size to get all data for client-side filtering
         const res = await this.$apiGet('/progress', {
-          page: this.currentPage,
-          page_size: this.pageSize,
+          page: 1,
+          page_size: 1000, // Get all progress for filtering
           search: this.searchQuery,
         });
-        this.items = res.data || [];
-        this.count = res.count || 0;
+        
+        let allProgress = res.data || [];
+        let filteredProgress = [];
+        
+        // Get user info
+        const userId = parseInt(this.userId);
+        const orgId = parseInt(this.organizationId);
+        
+        console.log('=== PROGRESS VIEW DEBUG ===');
+        console.log('Current User ID:', userId);
+        console.log('Current Org ID:', orgId);
+        console.log('User Roles:', this.userRoles);
+        console.log('Is Admin:', this.isAdmin);
+        console.log('Is Organization:', this.isOrganization);
+        console.log('Total progress from API:', allProgress.length);
+        
+        // Apply role-based filtering
+        if (this.isAdmin) {
+          console.log('ADMIN MODE - Showing all progress');
+          filteredProgress = allProgress;
+        } else if (this.isOrganization) {
+          console.log('ORGANIZATION MODE - Filtering by org_id:', orgId);
+          filteredProgress = allProgress.filter(progress => {
+            const userOrgId = progress.User?.organization_id;
+            const matches = progress.User && userOrgId === orgId;
+            if (!matches) {
+              console.log(`Filtered out progress ${progress.id}: user_org_id=${userOrgId} !== ${orgId}`);
+            }
+            return matches;
+          });
+          console.log('Filtered progress for organization:', filteredProgress.length);
+        } else {
+          console.log('TESTER MODE - Filtering by user_id:', userId);
+          filteredProgress = allProgress.filter(progress => 
+            progress.user_id === userId || (progress.User && progress.User.id === userId)
+          );
+          console.log('Filtered progress for tester:', filteredProgress.length);
+        }
+        
+        console.log('Final items to display:', filteredProgress.length);
+        console.log('=== END DEBUG ===');
+        
+        // Set total count BEFORE pagination
+        this.count = filteredProgress.length;
+        
+        // Apply client-side pagination
+        const startIndex = (this.currentPage - 1) * this.pageSize;
+        const endIndex = startIndex + this.pageSize;
+        this.items = filteredProgress.slice(startIndex, endIndex);
       } catch (e) {
         console.error(e);
+        this.items = [];
+        this.count = 0;
       } finally {
         this.loading = false;
       }

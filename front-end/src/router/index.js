@@ -10,6 +10,8 @@ import Status from  '../views/opened/landing/apidocs/Status.vue'
 import About from  '../views/opened/landing/about.vue'
 import Products from  '../views/opened/landing/products.vue'
 import Pricing from  '../views/opened/landing/plans.vue'
+import NewsEvents from '../views/opened/landing/NewsEvents.vue'
+import ContactPage from '../views/opened/landing/ContactPage.vue'
 
 import Login from '../views/opened/auth/login.vue'
 
@@ -37,12 +39,12 @@ const routes = [
     meta:
       { requiresGuest: true }
   },
-  {
-    path: "/login", name: "login",
-    component: Login,
-    meta:
-      { requiresGuest: true }
-  },
+  // {
+  //   path: "/login", name: "login",
+  //   component: Login,
+  //   meta:
+  //     { requiresGuest: true }
+  // },
 
   {
     path: "/register", name: "register",
@@ -96,11 +98,10 @@ const routes = [
   },
 
 
-    {
+  {
     path: "/about", name: "/about",
     component: About,
-    meta:
-      { requiresGuest: true }
+    meta: { requiresGuest: true }
   },
 
 
@@ -116,6 +117,18 @@ const routes = [
     component: Pricing,
     meta:
       { requiresGuest: true }
+  },
+
+  {
+    path: "/news-events", name: "/news-events",
+    component: NewsEvents,
+    meta: { requiresGuest: true }
+  },
+
+  {
+    path: "/contact", name: "/contact",
+    component: ContactPage,
+    meta: { requiresGuest: true }
   },
 
   {
@@ -434,6 +447,11 @@ const routes = [
       {
         path: "first-dash", name: "first-dash",
         component: first_dash,
+      },
+
+      {
+        path: "profile", name: "Profile",
+        component: () => import('../views/closed/Profile.vue'),
       },
 
       {

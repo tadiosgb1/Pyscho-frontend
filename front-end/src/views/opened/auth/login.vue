@@ -157,6 +157,7 @@ export default {
         localStorage.setItem("refresh", response.refreshToken);
         localStorage.setItem("access", response.accessToken);
         localStorage.setItem("userId", response.id);
+        localStorage.setItem("organizationId", response.organization_id || '');
         localStorage.setItem("email", response.email);
         localStorage.setItem("name", response.email);
         // Store role names as a JSON array e.g. ["admin"]

@@ -138,7 +138,7 @@
 
             <!-- CTA -->
             <button
-              @click="$emit('open-register')"
+              @click="selectPlan(plan)"
               class="block w-full text-center py-3 rounded-xl text-sm font-semibold transition-all"
               :class="plan.slug === 'professional' || plan.slug === 'professional_yearly'
                 ? 'bg-green-500 hover:bg-green-600 text-white shadow-md shadow-green-500/20'
@@ -155,7 +155,7 @@
             <h3 class="text-xl font-black text-white mb-2">Need a custom Enterprise plan?</h3>
             <p class="text-slate-400 text-sm">Unlimited everything, dedicated support, custom integrations, and SLA guarantees.</p>
           </div>
-          <button @click="showRegister = true"
+          <button @click="$router.push('/contact')"
             class="flex-shrink-0 px-8 py-3.5 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-xl transition-all text-sm whitespace-nowrap">
             Contact Sales
           </button>
@@ -195,8 +195,9 @@
     />
     <register-modal
       v-if="showRegister"
-      @close="showRegister = false"
-      @switch-to-login="showRegister = false; showLogin = true"
+      :pre-selected-plan="pendingPlan"
+      @close="showRegister = false; pendingPlan = null"
+      @switch-to-login="showRegister = false; showLogin = true; pendingPlan = null"
     />
   </div>
 </template>
@@ -218,6 +219,7 @@ export default {
       billingCycle: 'monthly',
       showLogin: false,
       showRegister: false,
+      pendingPlan: null,
 
       faqs: [
         { q: 'Can I change my plan later?',           a: 'Yes. You can upgrade or downgrade at any time. Changes take effect at the start of the next billing period.', open: false },
@@ -244,6 +246,12 @@ export default {
   },
 
   methods: {
+    selectPlan(plan) {
+      // Open the register modal with this plan pre-selected
+      this.pendingPlan = plan;
+      this.showRegister = true;
+    },
+
     async fetchPlans() {
       this.loading = true;
       try {
