@@ -1,124 +1,123 @@
 <template>
-  <div class="relative min-h-screen bg-gray-200">
-    <!-- Forgot Password Form -->
-    <div v-if="showForm" class="flex justify-center items-center min-h-screen">
-      <Toast ref="toast" />
-      <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
-        <h2 class="text-2xl font-bold text-center text-gray-800 mb-6">
-          Forgot Password
-        </h2>
-        <form @submit.prevent="submitForm">
-          <div class="mb-4">
-            <label
-              for="email"
-              class="block text-sm font-semibold text-gray-700 mb-2"
-              >Email Address</label
-            >
-            <input
-              type="email"
-              id="email"
-              v-model="email"
-              required
-              placeholder="Enter your email"
-              class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent"
-            />
+  <div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center px-4 font-sans">
+
+    <!-- Logo -->
+    <router-link to="/" class="flex items-center gap-2 mb-10 group">
+      <div class="w-9 h-9 bg-green-500 rounded-xl flex items-center justify-center shadow group-hover:bg-green-600 transition">
+        <i class="fas fa-brain text-white text-sm"></i>
+      </div>
+      <span class="text-lg font-black text-gray-900 tracking-tight">
+        Alpha<span class="text-green-500">Psych</span>
+      </span>
+    </router-link>
+
+    <!-- Card -->
+    <div class="w-full max-w-sm bg-white rounded-2xl shadow-lg border border-gray-100 overflow-hidden">
+
+      <!-- Top accent -->
+      <div class="h-1 w-full bg-gradient-to-r from-green-400 to-green-600"></div>
+
+      <div class="p-8">
+
+        <!-- ── Step 1: form ── -->
+        <template v-if="step === 'form'">
+          <div class="text-center mb-7">
+            <div class="w-12 h-12 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <i class="fas fa-lock-open text-green-500 text-lg"></i>
+            </div>
+            <h1 class="text-xl font-black text-gray-900">Forgot Password?</h1>
+            <p class="text-gray-400 text-xs mt-1.5 leading-relaxed">
+              Enter your email and we'll send you a reset link.
+            </p>
           </div>
-          <div class="flex items-center justify-between mb-4">
+
+          <form @submit.prevent="submit" class="space-y-4">
+            <div>
+              <label class="block text-xs font-semibold text-gray-500 mb-1.5">Email Address</label>
+              <div class="relative">
+                <i class="fas fa-envelope absolute left-3 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                <input
+                  v-model="email"
+                  type="email"
+                  required
+                  placeholder="you@example.com"
+                  class="w-full pl-9 pr-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-green-400 focus:border-green-400 transition"
+                  :class="{ 'border-red-400 focus:ring-red-300': error }"
+                />
+              </div>
+              <p v-if="error" class="text-red-500 text-[11px] mt-1.5 flex items-center gap-1">
+                <i class="fas fa-exclamation-circle"></i> {{ error }}
+              </p>
+            </div>
+
             <button
               type="submit"
               :disabled="loading"
-              class="w-full bg-primary text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-primary disabled:opacity-60"
+              class="w-full py-2.5 bg-green-500 hover:bg-green-600 text-white text-sm font-semibold rounded-xl transition disabled:opacity-60 flex items-center justify-center gap-2"
             >
-              <i v-if="!loading" class="fas fa-envelope mr-2"></i>
-              <span v-if="loading">Sending...</span>
-              <span v-else>Send Reset Link</span>
+              <i v-if="loading" class="fas fa-spinner fa-spin text-xs"></i>
+              <i v-else class="fas fa-paper-plane text-xs"></i>
+              {{ loading ? 'Sending…' : 'Send Reset Link' }}
             </button>
+          </form>
+        </template>
+
+        <!-- ── Step 2: sent ── -->
+        <template v-else>
+          <div class="text-center py-2">
+            <div class="w-14 h-14 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-5">
+              <i class="fas fa-envelope-open-text text-green-500 text-2xl"></i>
+            </div>
+            <h1 class="text-lg font-black text-gray-900 mb-2">Check your inbox</h1>
+            <p class="text-gray-400 text-xs leading-relaxed mb-1">We sent a reset link to</p>
+            <p class="text-green-600 font-bold text-sm mb-5">{{ email }}</p>
+            <p class="text-gray-400 text-[11px] leading-relaxed">
+              Didn't get it? Check spam, or
+              <button
+                @click="step = 'form'; error = ''"
+                class="text-green-500 font-semibold hover:underline"
+              >try again</button>.
+            </p>
           </div>
-          <div
-            v-if="message"
-            :class="messageType"
-            class="text-center text-sm mt-4"
-          >
-            <p>{{ message }}</p>
-          </div>
-        </form>
-        <div class="mt-6 text-center">
-          <p class="text-sm text-gray-600">
-            Remember your password?
-            <router-link
-              to="/"
-              class="text-indigo-600 hover:text-indigo-800"
-              >Back to Home</router-link
-            >
-          </p>
-        </div>
+        </template>
+
       </div>
     </div>
 
-    <!-- Reset Info Message -->
-    <div
-      v-if="showRestInfo"
-      class="flex justify-center items-center min-h-screen px-4"
+    <!-- Back to login -->
+    <router-link
+      to="/"
+      class="mt-6 text-xs text-gray-400 hover:text-green-500 font-semibold flex items-center gap-1.5 transition"
     >
-      <div
-        class="max-w-xl w-full p-6 bg-white border-l-4 border-primary shadow-md rounded-md"
-      >
-        <div class="flex items-start space-x-4">
-          <div class="text-primary text-2xl mt-1">
-            <i class="fas fa-envelope-open-text"></i>
-          </div>
-          <div>
-            <h3 class="text-lg font-semibold text-gray-800 mb-1">
-              Reset Link Sent
-            </h3>
-            <p class="text-sm text-gray-600">
-              We've sent a secure password reset link to your email address.
-              Please check your
-              <span class="text-blue-600 font-bold">inbox </span>and follow the
-              instructions. If you don’t see the email, check your
-              <span class="text-pink-400 font-bold">spam or junk</span> folder.
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
+      <i class="fas fa-arrow-left text-[10px]"></i> Back to Login
+    </router-link>
+
   </div>
 </template>
 
 <script>
-import axios from "axios";
-import Toast from "../../../components/Toast.vue";
-
 export default {
-  components: { Toast },
+  name: 'ForgotPassword',
   data() {
     return {
-      showForm: true,
-      showRestInfo: false,
-      email: "",
-      message: "",
-      messageType: "text-green-600",
+      step: 'form',
+      email: '',
       loading: false,
+      error: '',
     };
   },
   methods: {
-    async submitForm() {
+    async submit() {
+      this.error = '';
       this.loading = true;
-      this.message = "";
-
       try {
-        const response = await axios.post(
-          "https://alphapms.sunriseworld.org/api/send_password_reset_email",
-          { email: this.email }
-        );
-
-        this.showForm = false;
-        this.showRestInfo = true;
-        this.$refs.toast.showSuccessToastMessage(response.data.message);
-      } catch (error) {
-        this.message =
-          error.response?.data.message || "Something went wrong!";
-        this.messageType = "text-red-600";
+        await this.$apiPost('/auth/forgot-password', { email: this.email });
+        this.step = 'sent';
+      } catch (e) {
+        const raw = e?.message;
+        this.error = (raw && typeof raw === 'object' && raw.error)
+          ? raw.error
+          : (typeof raw === 'string' ? raw : 'Something went wrong. Please try again.');
       } finally {
         this.loading = false;
       }

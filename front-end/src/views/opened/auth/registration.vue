@@ -256,7 +256,7 @@
 import Toast from "../../../components/Toast.vue";
 
 export default {
-  name: "RegisterAlphaPsych",
+  name: "RegisterGYZPsych",
   components: { Toast },
 
   data() {

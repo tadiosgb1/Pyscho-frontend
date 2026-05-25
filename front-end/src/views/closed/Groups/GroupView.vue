@@ -157,6 +157,7 @@
       @confirm="confirmDelete"
       @cancel="deleteModalVisible=false"
     />
+    
   </div>
 </template>
 

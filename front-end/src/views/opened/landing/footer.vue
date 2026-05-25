@@ -57,13 +57,19 @@
       <!-- Bottom bar -->
       <div class="pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
         <p class="text-xs text-white/30">
-          © {{ new Date().getFullYear() }} Alpha Psychometrics. All rights reserved.
+          © {{ new Date().getFullYear() }} GYZ Psychometrics. All rights reserved.
         </p>
         <div class="flex gap-6">
           <a href="#" class="text-xs text-white/30 hover:text-white/60 transition-colors">Privacy Policy</a>
           <a href="#" class="text-xs text-white/30 hover:text-white/60 transition-colors">Terms of Service</a>
           <a href="#" class="text-xs text-white/30 hover:text-white/60 transition-colors">Data Ethics</a>
         </div>
+        <!-- Scroll to top -->
+        <a href="#top"
+          class="w-10 h-10 bg-white/5 hover:bg-green-500 border border-white/10 hover:border-green-500 rounded-xl flex items-center justify-center text-white/40 hover:text-white transition-all duration-300 hover:-translate-y-0.5"
+          title="Back to top">
+          <i class="fas fa-arrow-up text-xs"></i>
+        </a>
       </div>
 
     </div>

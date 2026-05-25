@@ -10,7 +10,7 @@
       <div class="max-w-4xl mb-24">
         <div class="flex items-center gap-4 mb-6">
           <span class="h-[1px] w-12 bg-primary"></span>
-          <span class="text-[10px] font-black tracking-[0.4em] text-primary uppercase">Alpha Psychometrics 1.0</span>
+          <span class="text-[10px] font-black tracking-[0.4em] text-primary uppercase">GYZ Psychometrics 1.0</span>
         </div>
         <h2 class="text-5xl md:text-7xl font-black text-slate-900 mb-8 tracking-tighter leading-none">
           Scientific Insights for <br/>

@@ -21,7 +21,7 @@
           <div class="w-9 h-9 bg-slate-900 rounded-xl flex items-center justify-center">
             <i class="fas fa-brain text-green-400 text-sm"></i>
           </div>
-          <span class="font-black text-slate-900 text-lg tracking-tight">Alpha<span class="text-green-500">Psych</span></span>
+          <span class="font-black text-slate-900 text-lg tracking-tight">Gyz<span class="text-green-500">Psych</span></span>
         </div>
 
         <h2 class="text-2xl font-black text-slate-900 mb-1">Welcome back</h2>

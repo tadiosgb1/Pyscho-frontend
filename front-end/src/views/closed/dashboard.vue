@@ -115,11 +115,11 @@
                     <span class="text-xs font-bold uppercase tracking-tighter">My Profile</span>
                   </a>
                   
-                  <a href="#" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-50 transition-colors text-slate-600 group/item">
+                  <a href="#" @click.prevent="showChangePassword = true" class="flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-slate-50 transition-colors text-slate-600 group/item">
                     <div class="w-8 h-8 rounded-lg bg-slate-100 flex items-center justify-center text-slate-500 group-hover/item:bg-slate-900 group-hover/item:text-white transition-all">
                       <i class="fas fa-key text-xs"></i>
                     </div>
-                    <span class="text-xs font-bold uppercase tracking-tighter">Security</span>
+                    <span class="text-xs font-bold uppercase tracking-tighter">Change Password</span>
                   </a>
 
                   <div class="h-px bg-slate-100 my-2 mx-2"></div>
@@ -179,6 +179,12 @@
       </main>
     </div>
   </div>
+
+  <!-- Change Password Modal -->
+  <ChangePasswordModal
+    v-if="showChangePassword"
+    @close="showChangePassword = false; isProfileDropdownOpen = false"
+  />
 </template>
 
 <style scoped>
@@ -199,10 +205,11 @@
 </style>
 <script>
 import Sidebar from "@/components/layouts/leftSidevar.vue";
+import ChangePasswordModal from "@/components/ChangePasswordModal.vue";
 
 export default {
   name: "AppLayout",
-  components: { Sidebar },
+  components: { Sidebar, ChangePasswordModal },
   data() {
     return {
       notifications: [],
@@ -213,6 +220,7 @@ export default {
       isNotificationDropdownOpen: false,
       screenWidth: window.innerWidth,
       currentLanguage: "English",
+      showChangePassword: false,
     };
   },
   async created() {

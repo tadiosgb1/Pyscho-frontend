@@ -12,7 +12,7 @@
       </div>
       <div class="relative max-w-4xl mx-auto px-6 text-center">
         <span class="inline-block px-4 py-1.5 mb-6 text-xs font-semibold tracking-widest text-green-400 bg-green-400/10 rounded-full uppercase border border-green-400/20">
-          About Alpha Psycho
+          About GYZ Psycho
         </span>
         <h1 class="text-4xl sm:text-5xl font-black text-white leading-tight mb-6">
           The Science Behind<br/>
@@ -35,7 +35,7 @@
             Making psychometrics accessible to every organization
           </h2>
           <p class="text-gray-500 leading-relaxed mb-4">
-            Psychometrics — the science of measuring psychological attributes — has long been confined to expensive consultancies and academic institutions. Alpha Psycho changes that.
+            Psychometrics — the science of measuring psychological attributes — has long been confined to expensive consultancies and academic institutions. GYZ Psycho changes that.
           </p>
           <p class="text-gray-500 leading-relaxed mb-4">
             We provide a SaaS platform that gives HR teams, educators, and researchers access to the same validated assessment frameworks used by Fortune 500 companies, at a fraction of the cost.
@@ -89,7 +89,7 @@
           <span class="text-xs font-semibold tracking-widest text-green-600 uppercase">Assessment Frameworks</span>
           <h2 class="text-3xl font-black text-gray-900 mt-2">Built on validated science</h2>
           <p class="text-gray-500 mt-3 max-w-xl mx-auto text-sm">
-            Every assessment on Alpha Psycho is grounded in peer-reviewed psychological research.
+            Every assessment on GYZ Psycho is grounded in peer-reviewed psychological research.
           </p>
         </div>
 
@@ -227,7 +227,7 @@ export default {
         },
         {
           title: 'Standardization',
-          desc: 'Standardized tests are administered and scored in a consistent manner. Alpha Psycho enforces uniform conditions and uses norm-referenced scoring to enable meaningful comparisons.',
+          desc: 'Standardized tests are administered and scored in a consistent manner. GYZ Psycho enforces uniform conditions and uses norm-referenced scoring to enable meaningful comparisons.',
           icon: 'fas fa-balance-scale', bg: 'bg-purple-50', color: 'text-purple-600',
         },
         {

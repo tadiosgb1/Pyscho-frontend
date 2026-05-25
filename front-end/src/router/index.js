@@ -487,6 +487,7 @@ const routes = [
   },
   { path: "/forgot-password", name: "forgotPassword", component: ForgotPassword },
   { path: "/reset/:token", name: "reset", component: Reset, meta: { requiresGuest: true } },
+  { path: "/test-login/:token", name: "test-login", component: () => import('../views/opened/auth/TestLogin.vue'), meta: { requiresGuest: true } },
   { path: "/:pathMatch(.*)*", name: "accessDenied", component: AccessDenied, meta: { requiresGuest: true } },
 ];
 

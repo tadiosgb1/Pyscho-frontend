@@ -27,7 +27,7 @@
         </div>
 
         <h2 class="text-2xl font-black text-slate-900 mb-1">Create Account</h2>
-        <p class="text-sm text-gray-400 mb-6">Join thousands of organizations using Alpha Psycho</p>
+        <p class="text-sm text-gray-400 mb-6">Join thousands of organizations using GYZ Psycho</p>
 
         <!-- Account type toggle -->
         <div class="flex bg-gray-100 rounded-xl p-1 mb-6">

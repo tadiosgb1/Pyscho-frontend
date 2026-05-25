@@ -108,7 +108,7 @@ const enter = (el, done) => {
   })
 }
 
-// Updated FAQ Content for Alpha Psychometrics
+// Updated FAQ Content for GYZ Psychometrics
 const faqs = [
   {
     question: 'How accurate are the behavioral results?',

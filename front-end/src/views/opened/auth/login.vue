@@ -9,7 +9,7 @@
           <div class="w-12 h-12 bg-primary rounded-2xl flex items-center justify-center shadow-lg shadow-primary/30">
             <i class="fas fa-brain text-white text-xl"></i>
           </div>
-          <span class="text-white font-black text-3xl tracking-tighter uppercase">Alpha<span class="text-primary">Psych</span></span>
+          <span class="text-white font-black text-3xl tracking-tighter uppercase">GYZ<span class="text-primary">Psych</span></span>
         </div>
 
         <div class="space-y-6">
@@ -48,7 +48,7 @@
           <div class="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-4 text-white">
              <i class="fas fa-user-check"></i>
           </div>
-          <h2 class="text-3xl font-black text-slate-900 tracking-tighter uppercase">Alpha Psych</h2>
+          <h2 class="text-3xl font-black text-slate-900 tracking-tighter uppercase">GYZ Psych</h2>
         </div>
 
         <div class="bg-white rounded-[3rem] shadow-2xl shadow-slate-200/60 p-10 md:p-12 border border-slate-100 relative overflow-hidden">
@@ -138,7 +138,7 @@
 import Toast from "../../../components/Toast.vue";
 
 export default {
-  name: "LoginAlphaPsych",
+  name: "LoginGYZPsych",
   components: { Toast },
   data() {
     return {

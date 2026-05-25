@@ -4,7 +4,7 @@
     <!-- Header -->
     <div class="mb-6 border-b pb-4 border-gray-200">
       <h1 class="text-lg font-bold text-gray-800">Admin Dashboard</h1>
-      <p class="text-xs text-gray-500 mt-0.5">System-wide overview — Alpha Psycho Platform</p>
+      <p class="text-xs text-gray-500 mt-0.5">System-wide overview — GYZ Psycho Platform</p>
     </div>
 
     <!-- Loading -->

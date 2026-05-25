@@ -94,7 +94,7 @@ export default {
       loading: false,
       contactInfo: [
         { label: 'Regional HQ', value: 'Bole Area, Addis Ababa, Ethiopia', icon: 'fas fa-map-marker-alt' },
-        { label: 'Expert Support', value: 'consult@alpha-psych.com', icon: 'fas fa-user-tie' },
+        { label: 'Expert Support', value: 'consult@gyz-psych.com', icon: 'fas fa-user-tie' },
         { label: 'Partnerships', value: '+251 911 00 11 22', icon: 'fas fa-handshake' },
       ],
       form: {

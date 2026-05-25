@@ -18,7 +18,7 @@
           Stay Ahead of the Curve
         </h1>
         <p class="text-slate-400 text-lg max-w-2xl mx-auto leading-relaxed">
-          Platform updates, research insights, upcoming webinars, and partnership announcements from the Alpha Psycho team.
+          Platform updates, research insights, upcoming webinars, and partnership announcements from the GYZ Psycho team.
         </p>
       </div>
     </section>
@@ -62,7 +62,7 @@
           <div class="p-10 lg:p-14 flex flex-col justify-center">
             <p class="text-[10px] text-white/40 font-bold uppercase tracking-widest mb-3">April 28, 2026</p>
             <h2 class="text-2xl lg:text-3xl font-black text-white leading-tight mb-4 group-hover:text-green-400 transition-colors">
-              Alpha Psycho v2.0 — Real-time Analytics &amp; New Trait Engine
+              GYZ Psycho v2.0 — Real-time Analytics &amp; New Trait Engine
             </h2>
             <p class="text-white/60 text-sm leading-relaxed mb-8">
               Our biggest release yet brings live dashboards, an upgraded Big Five scoring engine, a redesigned report builder, and multi-language support for Amharic and Tigrigna. This update reflects months of feedback from our partner organizations across East Africa.
@@ -243,7 +243,7 @@ export default {
       posts: [
         {
           title: 'New: Multi-language Assessment Support (Amharic & Tigrigna)',
-          excerpt: 'Alpha Psycho now supports assessments in Amharic and Tigrigna, expanding access to psychometric tools across East Africa.',
+          excerpt: 'GYZ Psycho now supports assessments in Amharic and Tigrigna, expanding access to psychometric tools across East Africa.',
           date: 'April 10, 2026',
           tag: 'Feature',
           icon: 'fas fa-language',
@@ -264,7 +264,7 @@ export default {
           keywords: ['Big Five', 'HR'],
         },
         {
-          title: 'Alpha Psycho Partners with 3 Leading Universities in Ethiopia',
+          title: 'GYZ Psycho Partners with 3 Leading Universities in Ethiopia',
           excerpt: 'We are proud to announce partnerships with Addis Ababa University, Jimma University, and Hawassa University for student aptitude programs.',
           date: 'March 22, 2026',
           tag: 'Partnership',
@@ -324,7 +324,7 @@ export default {
         },
         {
           title: 'Workshop: Building Custom Psychometric Tests',
-          desc: 'Hands-on workshop for HR professionals on designing and validating custom assessments on the Alpha Psycho platform.',
+          desc: 'Hands-on workshop for HR professionals on designing and validating custom assessments on the GYZ Psycho platform.',
           month: 'Jun',
           day: '3',
           time: '10:00 AM EAT',
@@ -336,7 +336,7 @@ export default {
         },
         {
           title: 'East Africa HR Summit 2026',
-          desc: 'Alpha Psycho will be exhibiting at the annual East Africa HR Summit. Visit our booth for live demos and exclusive offers.',
+          desc: 'GYZ Psycho will be exhibiting at the annual East Africa HR Summit. Visit our booth for live demos and exclusive offers.',
           month: 'Jul',
           day: '20',
           time: 'All Day',

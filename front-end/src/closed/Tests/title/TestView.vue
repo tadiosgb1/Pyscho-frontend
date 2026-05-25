@@ -108,7 +108,16 @@
                 <button @click="viewDetails(item.id)" title="View" class="text-green-500 hover:text-green-700">
                   <i class="fas fa-eye"></i>
                 </button>
+                <button @click="openResultsDrawer(item)" title="Results" class="text-indigo-500 hover:text-indigo-700">
+                  <i class="fas fa-chart-bar"></i>
+                </button>
+                <button @click="openProgressDrawer(item)" title="Progress" class="text-purple-500 hover:text-purple-700">
+                  <i class="fas fa-tasks"></i>
+                </button>
                 <template v-if="isAdmin || isOrganization">
+                  <button @click="openAddQuestionModal(item.id)" title="Add Question" class="text-green-600 hover:text-green-800">
+                    <i class="fas fa-plus-circle"></i>
+                  </button>
                   <button @click="editItem(item)" title="Edit" class="text-blue-500 hover:text-blue-700">
                     <i class="fas fa-edit"></i>
                   </button>
@@ -140,7 +149,16 @@
             <button @click="viewDetails(item.id)" class="text-green-500 hover:text-green-700">
               <i class="fas fa-eye"></i>
             </button>
+            <button @click="openResultsDrawer(item)" title="Results" class="text-indigo-500 hover:text-indigo-700">
+              <i class="fas fa-chart-bar"></i>
+            </button>
+            <button @click="openProgressDrawer(item)" title="Progress" class="text-purple-500 hover:text-purple-700">
+              <i class="fas fa-tasks"></i>
+            </button>
             <template v-if="isAdmin || isOrganization">
+              <button @click="openAddQuestionModal(item.id)" title="Add Question" class="text-green-600 hover:text-green-800">
+                <i class="fas fa-plus-circle"></i>
+              </button>
               <button @click="editItem(item)" class="text-blue-500 hover:text-blue-700">
                 <i class="fas fa-edit"></i>
               </button>
@@ -208,6 +226,28 @@
     <add-test v-if="showModal && !editMode" :data="selectedItem" @close="showModal=false" @saved="fetchItems"/>
     <edit-test v-if="showModal && editMode" :data="selectedItem" @close="showModal=false" @saved="fetchItems"/>
 
+    <!-- Add Question directly from this test row -->
+    <add-question
+      v-if="showAddQuestion"
+      :test-id="addQuestionTestId"
+      @close="showAddQuestion = false; addQuestionTestId = null"
+      @saved="showAddQuestion = false; addQuestionTestId = null"
+    />
+
+    <!-- Results Drawer -->
+    <test-results-drawer
+      v-if="showResultsDrawer && drawerTest"
+      :test="drawerTest"
+      @close="showResultsDrawer = false; drawerTest = null"
+    />
+
+    <!-- Progress Drawer -->
+    <test-progress-drawer
+      v-if="showProgressDrawer && drawerTest"
+      :test="drawerTest"
+      @close="showProgressDrawer = false; drawerTest = null"
+    />
+
     <!-- Delete Confirmation Modal -->
     <delete-confirm-modal
       :visible="deleteModalVisible"
@@ -224,9 +264,12 @@ import AddTest from "./AddTest.vue";
 import EditTest from "./EditTest.vue";
 import Loading from "@/components/Loading.vue";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal.vue";
+import AddQuestion from "@/closed/Questions/question_text/AddQuestion.vue";
+import TestResultsDrawer from "./TestResultsDrawer.vue";
+import TestProgressDrawer from "./TestProgressDrawer.vue";
 
 export default {
-  components: { AddTest, EditTest, Loading, DeleteConfirmModal },
+  components: { AddTest, EditTest, Loading, DeleteConfirmModal, AddQuestion, TestResultsDrawer, TestProgressDrawer },
 
   data() {
     return {
@@ -245,6 +288,12 @@ export default {
       deleteModalVisible: false,
       deleteId: null,
       completedTestIds: [], // Track which tests user has completed
+      showAddQuestion: false,
+      addQuestionTestId: null,
+      // Results / Progress drawers
+      showResultsDrawer: false,
+      showProgressDrawer: false,
+      drawerTest: null,
     };
   },
 
@@ -427,6 +476,22 @@ export default {
 
     openAddModal() { this.editMode = false; this.selectedItem = null; this.showModal = true; },
     editItem(item)  { this.editMode = true;  this.selectedItem = item;  this.showModal = true; },
+    openAddQuestionModal(testId) {
+      this.addQuestionTestId = testId;
+      this.showAddQuestion = true;
+    },
+
+    openResultsDrawer(item) {
+      this.drawerTest = item;
+      this.showProgressDrawer = false;
+      this.showResultsDrawer = true;
+    },
+
+    openProgressDrawer(item) {
+      this.drawerTest = item;
+      this.showResultsDrawer = false;
+      this.showProgressDrawer = true;
+    },
 
     viewDetails(id) {
       this.$router.push({ name: 'Test-detail', params: { id } });

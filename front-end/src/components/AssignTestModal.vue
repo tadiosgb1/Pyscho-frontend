@@ -76,6 +76,16 @@
           ></textarea>
         </div>
 
+        <!-- Email notice -->
+        <div class="flex items-start gap-2.5 bg-indigo-50 border border-indigo-100 rounded-xl px-4 py-3 text-xs text-indigo-700">
+          <i class="fas fa-envelope mt-0.5 shrink-0 text-indigo-400"></i>
+          <span>
+            A notification email with a <strong>secure one-time login link</strong> will be sent automatically to
+            {{ targetType === 'group' ? 'all members of this group' : 'this user' }}.
+            The link expires in <strong>48 hours</strong> and includes the test name, duration, and due date.
+          </span>
+        </div>
+
         <!-- Actions -->
         <div class="flex justify-end gap-3 pt-2">
           <button type="button" @click="$emit('close')"

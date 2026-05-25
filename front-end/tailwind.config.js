@@ -25,6 +25,7 @@ export default {
       animation: {
         'border-loop': 'border-loop 4s linear infinite',
         swing: 'swing 0.8s ease-in-out',
+        'spin-slow': 'spin 6s linear infinite',
       },
       keyframes: {
          glow: {
