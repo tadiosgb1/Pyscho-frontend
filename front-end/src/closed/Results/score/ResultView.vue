@@ -1,287 +1,439 @@
 <template>
   <div class="p-6 bg-gray-50 min-h-screen text-sm text-gray-800 relative">
-    <Loading :visible="loading" message="Processing tracking matrix..." />
+    <!-- Loading -->
+    <Loading :visible="loading" message="Loading results..." />
 
-    <!-- Page Header -->
-    <div class="flex items-center justify-between mb-6 border-b pb-4 border-gray-200">
+    <!-- Header -->
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-6">
       <div>
-        <h1 class="text-lg font-bold text-gray-800">Results Management Matrix</h1>
-        <p class="text-xs text-gray-400 mt-0.5">
-          <span v-if="isAdmin">All psychometric assessment results in the system</span>
-          <span v-else-if="isOrganization">Assessment results for your organization's users</span>
-          <span v-else>Your completed psychometric assessment results</span>
+        <h1 class="text-2xl font-bold text-gray-800">
+          Results Management Matrix
+        </h1>
+
+        <p class="text-gray-500 mt-1">
+          Monitor assessment results, answer breakdowns, and recommendations.
         </p>
       </div>
-    </div>
 
-    <!-- Search + Page Size Controls -->
-    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-      <input v-model="searchQuery" @input="fetchItems(1)" type="text" placeholder="Search by interpretation..."
-        class="border border-gray-300 rounded-lg px-4 py-2 text-sm w-full sm:max-w-xs focus:outline-none focus:ring-2 focus:ring-green-500 shadow-sm transition duration-150" />
-      <div class="flex items-center gap-2 text-sm text-gray-600">
-        <label>Show</label>
-        <select v-model="pageSize" @change="fetchItems(1)" class="border border-gray-300 rounded-lg px-2 py-1 text-sm bg-white focus:ring-green-500 focus:border-green-500">
-          <option v-for="size in [5, 10, 20, 50, 100]" :key="size" :value="size">{{ size }}</option>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <input
+          v-model="searchQuery"
+          @input="fetchItems(1)"
+          type="text"
+          placeholder="Search interpretation..."
+          class="border border-gray-300 rounded-xl px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+
+        <select
+          v-model="pageSize"
+          @change="fetchItems(1)"
+          class="border border-gray-300 rounded-xl px-4 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-green-500"
+        >
+          <option v-for="size in [5,10,20,50]" :key="size" :value="size">
+            {{ size }} entries
+          </option>
         </select>
-        <span>entries</span>
       </div>
     </div>
 
-    <!-- Desktop Table Layout -->
-    <div class="bg-white overflow-hidden rounded-xl border border-gray-200 hidden md:block">
+    <!-- Summary Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+      <div
+        v-for="test in uniqueTests"
+        :key="test.id"
+        class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm"
+      >
+        <div class="flex items-center justify-between">
+          <span class="text-xs font-mono bg-gray-100 px-2 py-1 rounded">
+            ID #{{ test.id }}
+          </span>
+
+          <span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+            {{ test.testers.length }} submissions
+          </span>
+        </div>
+
+        <h3 class="mt-4 text-lg font-bold text-gray-800 line-clamp-2">
+          {{ test.title }}
+        </h3>
+
+        <div class="mt-5 flex items-center justify-between">
+          <div>
+            <p class="text-xs uppercase text-gray-400">
+              Average Score
+            </p>
+
+            <p class="text-xl font-bold text-green-600">
+              {{ calculateAverageScore(test.testers) }}%
+            </p>
+          </div>
+
+          <button
+            @click="openTestBreakdownModal(test)"
+            class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-xl text-xs font-semibold transition"
+          >
+            View Testers
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Desktop Table -->
+    <div class="hidden lg:block bg-white rounded-2xl border border-gray-200 overflow-hidden shadow-sm">
       <div class="overflow-x-auto">
-        <table class="min-w-full text-sm divide-y divide-gray-200">
-          <thead class="bg-gray-100 text-gray-700 uppercase text-xs font-semibold">
+        <table class="min-w-full divide-y divide-gray-200">
+          <thead class="bg-gray-50 text-gray-600 uppercase text-xs tracking-wider">
             <tr>
-              <th class="px-6 py-3 text-left">#</th>
-              <th class="px-6 py-3 text-left">Tester</th>
-              <th class="px-6 py-3 text-left">Test Identity</th>
-              <th class="px-6 py-3 text-center">Score</th>
-              <th class="px-6 py-3 text-center">Status</th>
-              <th class="px-6 py-3 text-left">Interpretation</th>
-              <th class="px-6 py-3 text-left">Completed</th>
-              <th class="px-6 py-3 text-center">Details & Calibration Panels</th>
-              <th class="px-6 py-3 text-center">Actions</th>
+              <th class="px-6 py-4 text-left">#</th>
+              <th class="px-6 py-4 text-left">Tester</th>
+              <th class="px-6 py-4 text-left">Test</th>
+              <th class="px-6 py-4 text-center">Score</th>
+              <th class="px-6 py-4 text-center">Status</th>
+              <th class="px-6 py-4 text-left">Interpretation</th>
+              <th class="px-6 py-4 text-center">Details</th>
+              <th class="px-6 py-4 text-center">Actions</th>
             </tr>
           </thead>
-          <tbody class="bg-white divide-y divide-gray-200">
-            <template v-for="(item, index) in items" :key="item.id">
 
-              <!-- Base Result Item Row -->
-              <tr class="hover:bg-green-50 transition duration-150">
-                <td class="px-6 py-4">{{ (currentPage - 1) * pageSize + index + 1 }}</td>
+          <tbody class="divide-y divide-gray-100">
+            <template v-for="(item,index) in items" :key="item.id">
 
-                <!-- Tester Metadata -->
+              <!-- Main Row -->
+              <tr class="hover:bg-green-50 transition">
                 <td class="px-6 py-4">
-                  <p class="font-medium text-gray-700">
-                    {{ item.User ? item.User.first_name + ' ' + item.User.last_name : '—' }}
+                  {{ (currentPage - 1) * pageSize + index + 1 }}
+                </td>
+
+                <td class="px-6 py-4">
+                  <p class="font-semibold text-gray-800">
+                    {{ item.User?.first_name }} {{ item.User?.last_name }}
                   </p>
-                  <p class="text-xs text-gray-400">{{ item.User?.email || '' }}</p>
+
+                  <p class="text-xs text-gray-400">
+                    {{ item.User?.email }}
+                  </p>
                 </td>
 
-                <!-- Test Reference Metadata -->
-                <td class="px-6 py-4 font-medium text-gray-700">
-                  <span class="block">{{ item.Test?.title || '—' }}</span>
-                  <span class="text-[10px] bg-gray-100 text-gray-500 px-1.5 py-0.2 rounded font-mono">ID: {{ item.test_id }}</span>
-                </td>
+                <td class="px-6 py-4">
+                  <p class="font-semibold text-gray-700">
+                    {{ item.Test?.title }}
+                  </p>
 
-                <!-- Scores Badge Context -->
-                <td class="px-6 py-4 text-center">
-                  <span :class="scoreBadge(item.score)">{{ item.score ?? '—' }}</span>
-                </td>
-
-                <!-- Verification Status Flag -->
-                <td class="px-6 py-4 text-center">
-                  <span :class="statusBadge(item.status)">
-                    {{ item.status === 'confirmed' ? 'Confirmed' : 'Pending' }}
+                  <span class="text-xs text-gray-400 font-mono">
+                    #{{ item.test_id }}
                   </span>
                 </td>
 
-                <!-- Narrative Summary Interpretation Output -->
+                <td class="px-6 py-4 text-center">
+                  <span :class="scoreBadge(item.score)">
+                    {{ item.score }}%
+                  </span>
+                </td>
+
+                <td class="px-6 py-4 text-center">
+                  <span :class="statusBadge(item.status)">
+                    {{ item.status }}
+                  </span>
+                </td>
+
                 <td class="px-6 py-4 max-w-xs">
-                  <p class="text-gray-700 font-medium truncate" :title="item.interpretation">{{ item.interpretation || '—' }}</p>
+                  <p class="truncate">
+                    {{ item.interpretation }}
+                  </p>
                 </td>
 
-                <!-- Table Timestamp Completion Stamp -->
-                <td class="px-6 py-4 text-gray-500 whitespace-nowrap">
-                  {{ formatDate(item.completed_at) }}
-                </td>
-
-                <!-- Row Inspection Operations -->
-                <td class="px-6 py-4 text-center space-x-2 whitespace-nowrap">
+                <td class="px-6 py-4 text-center">
                   <button
-                    @click="lazyLoadMatrixToggle(item, 'answers')"
-                    class="text-xs px-2.5 py-1 rounded-full border transition"
-                    :class="activePanels[item.id] === 'answers'
-                      ? 'bg-emerald-50 border-emerald-200 text-emerald-700'
-                      : 'border-gray-200 text-gray-500 hover:bg-gray-50'"
+                    @click="openDetailsModal(item)"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2 rounded-xl"
                   >
-                    <i class="fas fa-network-wired mr-1"></i> Question Matrix
-                  </button>
-                  <button
-                    @click="lazyLoadMatrixToggle(item, 'recommendations')"
-                    class="text-xs px-2.5 py-1 rounded-full border transition"
-                    :class="activePanels[item.id] === 'recommendations'
-                      ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
-                      : 'border-gray-200 text-gray-500 hover:bg-gray-50'"
-                  >
-                    <i class="fas fa-lightbulb mr-1"></i> Recommendations
+                    View Details
                   </button>
                 </td>
 
-                <!-- Core Lifecycle Direct Operations -->
-                <td class="px-6 py-4 text-center space-x-3">
-                  <button 
-                    v-if="(isAdmin || isOrganization) && item.status === 'pending'"
-                    @click="confirmResultMatrixWorkflow(item)" 
-                    title="Confirm Metric Profile" 
-                    class="text-green-500 hover:text-green-700 text-base">
-                    <i class="fas fa-check-circle"></i>
-                  </button>
-                  <button 
-                    v-if="isAdmin"
-                    @click="openDeleteModal(item.id)" 
-                    title="Delete Record" 
-                    class="text-red-500 hover:text-red-700 text-base">
-                    <i class="fas fa-trash"></i>
-                  </button>
+                <td class="px-6 py-4 text-center">
+                  <div class="flex items-center justify-center gap-3">
+                    <button
+                      v-if="item.status === 'pending'"
+                      @click="confirmResult(item)"
+                      class="text-green-600 hover:text-green-700"
+                    >
+                      <i class="fas fa-check-circle text-lg"></i>
+                    </button>
+
+                    <button
+                      @click="openDeleteModal(item.id)"
+                      class="text-red-500 hover:text-red-600"
+                    >
+                      <i class="fas fa-trash text-lg"></i>
+                    </button>
+                  </div>
                 </td>
               </tr>
 
-              <!-- Nested Sub-Row Dynamic Inspection Array View -->
-              <tr v-if="activePanels[item.id]" :key="'panel-' + item.id">
-                <td colspan="9" class="px-8 py-5 bg-gray-50 border-l-4 shadow-inner" :class="activePanels[item.id] === 'answers' ? 'border-emerald-500' : 'border-indigo-500'">
-                  
-                  <!-- Key Matrix Panel -->
-                  <div v-if="activePanels[item.id] === 'answers'">
-                    <div class="mb-3 flex items-center justify-between border-b pb-2">
-                      <h3 class="text-xs font-bold uppercase tracking-wider text-emerald-800 flex items-center gap-1.5">
-                        <i class="fas fa-database"></i> Answers Matrix Tracker (Test Reference ID: {{ answersMatrix[item.id]?.test_id || item.test_id }})
-                      </h3>
-                      <span class="text-[11px] bg-emerald-100 text-emerald-800 font-mono px-2 py-0.5 rounded shadow-sm">
-                        Total Questions: {{ answersMatrix[item.id]?.total_questions || '—' }} | Grade: {{ answersMatrix[item.id]?.score_percentage ?? '—' }}%
-                      </span>
-                    </div>
-                    
-                    <div v-if="answersMatrix[item.id] && Object.keys(answersMatrix[item.id].questions).length > 0" class="space-y-3 max-w-4xl">
-                      <div v-for="(qDetails, qId) in answersMatrix[item.id].questions" :key="'q-key-' + qId" class="p-3 bg-white border border-gray-200 rounded-lg shadow-sm">
-                        <div class="flex items-start justify-between gap-4">
-                          <div>
-                            <span class="text-[11px] bg-gray-200 text-gray-700 font-mono px-1.5 py-0.5 rounded">Question Ref ID Key: {{ qId }}</span>
-                            <p class="font-medium text-gray-800 mt-1.5 block">{{ qDetails.question_text }}</p>
-                            <span class="mt-1 inline-block text-[10px] uppercase font-bold px-1.5 py-0.2 rounded" :class="qDetails.is_correct ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
-                              {{ qDetails.is_correct ? 'Correct Choice' : 'Incorrect Choice' }}
-                            </span>
-                          </div>
-                        </div>
-
-                        <!-- User Selection Value Text Matrix Content Row -->
-                        <div class="mt-2 pl-4 border-l-2 bg-gray-50/50 p-2 rounded" :class="qDetails.is_correct ? 'border-green-400' : 'border-red-400'">
-                          <span class="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Submitting Tester Choice Value:</span>
-                          <p class="text-sm font-serif italic text-gray-700 mt-0.5">
-                            "{{ qDetails.selected_option_text || 'Empty response record returned' }}"
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                    <div v-else class="text-xs text-gray-400 italic py-4 pl-2">No structural submission matrix available for this workspace target identity.</div>
-                  </div>
-
-                  <!-- Panel B: Content Management Recommendations Canvas -->
-                  <div v-if="activePanels[item.id] === 'recommendations'">
-                    <div class="flex items-center justify-between mb-3 border-b pb-2">
-                      <h3 class="text-xs font-bold uppercase tracking-wider text-indigo-800 flex items-center gap-1.5">
-                        <i class="fas fa-lightbulb"></i> Strategic Performance Recommendation Text
-                      </h3>
-                    </div>
-
-                    <div v-if="isAdmin || isOrganization" class="space-y-3 max-w-3xl">
-                      <textarea 
-                        v-model="item.recommendations" 
-                        rows="4" 
-                        placeholder="Input detailed recommendation reports directly..."
-                        class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none bg-white shadow-inner leading-relaxed"
-                      ></textarea>
-                      <div class="flex justify-end">
-                        <button 
-                          @click="updateRecommendations(item)"
-                          class="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-medium transition flex items-center gap-1.5 shadow-sm"
-                        >
-                          <i class="fas fa-save"></i> Commit Report Text Changes
-                        </button>
-                      </div>
-                    </div>
-                    <div v-else class="max-w-3xl">
-                      <p class="text-sm text-gray-700 leading-relaxed bg-white p-4 border rounded-lg shadow-sm font-light italic">
-                        {{ item.recommendations || 'No explicit developmental narrative recommendations generated.' }}
-                      </p>
-                    </div>
-                  </div>
-
-                </td>
-              </tr>
             </template>
 
             <tr v-if="items.length === 0">
-              <td colspan="9" class="text-center py-6 text-gray-400 italic">No validation profiles match your filter options.</td>
+              <td colspan="8" class="text-center py-10 text-gray-400">
+                No result data found.
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
     </div>
 
-    <!-- Mobile Inspection Component Cards -->
-    <div class="md:hidden space-y-4">
-      <div v-for="item in items" :key="'mob-' + item.id" class="bg-white border border-gray-200 rounded-xl shadow p-4">
-        <div class="flex justify-between mb-2">
+    <!-- Mobile Cards -->
+    <div class="lg:hidden space-y-4">
+      <div
+        v-for="item in items"
+        :key="item.id"
+        class="bg-white rounded-2xl border border-gray-200 p-5 shadow-sm"
+      >
+        <div class="flex justify-between items-start">
           <div>
-            <p class="font-bold text-gray-800">
-              {{ item.User ? item.User.first_name + ' ' + item.User.last_name : 'User Key ID: ' + item.user_id }}
+            <h3 class="font-bold text-gray-800">
+              {{ item.User?.first_name }} {{ item.User?.last_name }}
+            </h3>
+
+            <p class="text-xs text-gray-400 mt-1">
+              {{ item.Test?.title }}
             </p>
-            <p class="text-xs text-gray-500 font-medium">{{ item.Test?.title || 'Test Identity Key: ' + item.test_id }}</p>
           </div>
-          <div class="flex items-center gap-2">
-            <span :class="scoreBadge(item.score)">{{ item.score ?? '—' }}</span>
-            <button v-if="isAdmin" @click="openDeleteModal(item.id)" class="text-red-500 hover:text-red-700 text-sm">
-              <i class="fas fa-trash"></i>
-            </button>
-          </div>
+
+          <span :class="scoreBadge(item.score)">
+            {{ item.score }}%
+          </span>
         </div>
 
-        <p class="text-sm font-medium text-gray-700 mb-1">{{ item.interpretation || '—' }}</p>
-        <p class="text-xs text-gray-400 mb-3">{{ formatDate(item.completed_at) }}</p>
+        <p class="mt-4 text-gray-600">
+          {{ item.interpretation }}
+        </p>
 
-        <div class="flex gap-3 border-t pt-3 mt-2">
-          <button @click="lazyLoadMatrixToggle(item, 'answers')" class="text-xs text-emerald-600 font-medium">
-            <i class="fas fa-network-wired"></i> {{ activePanels[item.id] === 'answers' ? 'Hide Lookup' : 'Open Matrix' }}
+        <div class="mt-4 flex gap-2">
+          <button
+            @click="openDetailsModal(item)"
+            class="flex-1 bg-indigo-600 text-white py-2 rounded-xl text-xs font-semibold"
+          >
+            View Details
           </button>
-          <button @click="lazyLoadMatrixToggle(item, 'recommendations')" class="text-xs text-indigo-600 font-medium">
-            <i class="fas fa-edit"></i> {{ activePanels[item.id] === 'recommendations' ? 'Close Recs' : 'Edit Recs' }}
-          </button>
-        </div>
 
-        <!-- Mobile Inner Expanded Panels -->
-        <div v-if="activePanels[item.id] === 'answers'" class="mt-3 bg-emerald-50/60 rounded-lg p-3 space-y-3 text-xs">
-          <template v-if="answersMatrix[item.id]">
-            <div v-for="(qDetails, qId) in answersMatrix[item.id].questions" :key="'mob-q-'+qId" class="bg-white p-2 border rounded shadow-sm">
-              <span class="text-[9px] text-gray-400 font-mono">Q_ID: {{ qId }}</span>
-              <p class="font-medium text-gray-800 mt-0.5">{{ qDetails.question_text }}</p>
-              <p class="text-gray-600 italic mt-1 font-serif">"{{ qDetails.selected_option_text || 'Empty response record returned' }}"</p>
-            </div>
-          </template>
-        </div>
-
-        <div v-if="activePanels[item.id] === 'recommendations'" class="mt-3 bg-indigo-50 rounded-lg p-3 text-xs">
-          <textarea v-if="isAdmin || isOrganization" v-model="item.recommendations" rows="3" class="w-full border p-2 rounded bg-white text-xs"></textarea>
-          <button v-if="isAdmin || isOrganization" @click="updateRecommendations(item)" class="mt-2 w-full bg-indigo-600 text-white text-[11px] py-1.5 rounded font-medium shadow-sm">Update Report Details</button>
-          <p v-else class="text-gray-700 leading-relaxed font-serif italic bg-white p-2 border rounded">"{{ item.recommendations || 'No narrative assigned.' }}"</p>
-        </div>
-
-        <div v-if="(isAdmin || isOrganization) && item.status === 'pending'" class="mt-3 pt-3 border-t">
-          <button @click="confirmResultMatrixWorkflow(item)" class="w-full bg-green-600 hover:bg-green-700 text-white font-medium text-xs py-2 rounded-lg transition shadow-sm">
-            Save Modifications & Verify State
+          <button
+            @click="openDeleteModal(item.id)"
+            class="bg-red-100 text-red-600 px-4 rounded-xl"
+          >
+            <i class="fas fa-trash"></i>
           </button>
         </div>
       </div>
-      <p v-if="items.length === 0" class="text-center text-gray-400 py-6 italic">No results data found.</p>
     </div>
 
-    <!-- Pagination Footer -->
-    <div class="flex items-center justify-between mt-6 text-sm text-gray-600">
-      <span>
-        Showing {{ count === 0 ? 0 : (currentPage - 1) * pageSize + 1 }}
-        to {{ Math.min(currentPage * pageSize, count) }}
-        of {{ count }} total entries
-      </span>
+    <!-- Pagination -->
+    <div class="mt-8 flex items-center justify-between">
+      <p class="text-sm text-gray-500">
+        Showing
+        {{ count === 0 ? 0 : (currentPage - 1) * pageSize + 1 }}
+        -
+        {{ Math.min(currentPage * pageSize, count) }}
+        of {{ count }}
+      </p>
+
       <div class="flex items-center gap-2">
-        <button @click="fetchItems(currentPage - 1)" :disabled="currentPage <= 1"
-          class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150">← Previous</button>
-        <span class="px-3 py-1 bg-green-600 text-white rounded-lg font-medium">{{ currentPage }}</span>
-        <button @click="fetchItems(currentPage + 1)" :disabled="currentPage * pageSize >= count"
-          class="px-3 py-1 border border-gray-300 rounded-lg hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition duration-150">Next →</button>
+        <button
+          @click="fetchItems(currentPage - 1)"
+          :disabled="currentPage <= 1"
+          class="px-4 py-2 border rounded-xl bg-white disabled:opacity-40"
+        >
+          Previous
+        </button>
+
+        <span class="px-4 py-2 bg-green-600 text-white rounded-xl font-bold">
+          {{ currentPage }}
+        </span>
+
+        <button
+          @click="fetchItems(currentPage + 1)"
+          :disabled="currentPage * pageSize >= count"
+          class="px-4 py-2 border rounded-xl bg-white disabled:opacity-40"
+        >
+          Next
+        </button>
       </div>
     </div>
 
+    <!-- DETAILS MODAL -->
+    <div
+      v-if="detailsModalVisible"
+      class="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+      @click.self="detailsModalVisible = false"
+    >
+      <div class="bg-white w-full max-w-5xl rounded-3xl overflow-hidden shadow-2xl">
+        
+        <!-- Modal Header -->
+        <div class="px-6 py-5 border-b flex items-center justify-between">
+          <div>
+            <h2 class="text-xl font-bold text-gray-800">
+              Result Details
+            </h2>
+
+            <p class="text-sm text-gray-400 mt-1">
+              {{ selectedItem?.Test?.title }}
+            </p>
+          </div>
+
+          <button
+            @click="detailsModalVisible = false"
+            class="text-3xl text-gray-400 hover:text-gray-600"
+          >
+            &times;
+          </button>
+        </div>
+
+        <!-- Body -->
+        <div class="p-6 overflow-y-auto max-h-[80vh]">
+
+          <!-- User Info -->
+          <div class="grid md:grid-cols-3 gap-4 mb-6">
+            <div class="bg-gray-50 rounded-2xl p-4 border">
+              <p class="text-xs uppercase text-gray-400">
+                Participant
+              </p>
+
+              <h3 class="font-bold text-gray-800 mt-2">
+                {{ selectedItem?.User?.first_name }}
+                {{ selectedItem?.User?.last_name }}
+              </h3>
+
+              <p class="text-sm text-gray-500 mt-1">
+                {{ selectedItem?.User?.email }}
+              </p>
+            </div>
+
+            <div class="bg-gray-50 rounded-2xl p-4 border">
+              <p class="text-xs uppercase text-gray-400">
+                Score
+              </p>
+
+              <h3 class="font-bold text-2xl text-green-600 mt-2">
+                {{ selectedItem?.score }}%
+              </h3>
+            </div>
+
+            <div class="bg-gray-50 rounded-2xl p-4 border">
+              <p class="text-xs uppercase text-gray-400">
+                Status
+              </p>
+
+              <div class="mt-2">
+                <span :class="statusBadge(selectedItem?.status)">
+                  {{ selectedItem?.status }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interpretation -->
+          <div class="mb-6">
+            <h3 class="font-bold text-gray-800 mb-3">
+              Interpretation
+            </h3>
+
+            <div class="bg-white border rounded-2xl p-5 leading-relaxed">
+              {{ selectedItem?.interpretation }}
+            </div>
+          </div>
+
+          <!-- Recommendations -->
+          <div class="mb-6">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="font-bold text-gray-800">
+                Recommendations
+              </h3>
+
+              <button
+                @click="updateRecommendations(selectedItem)"
+                class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2 rounded-xl"
+              >
+                Save
+              </button>
+            </div>
+
+            <textarea
+              v-model="selectedItem.recommendations"
+              rows="5"
+              class="w-full border border-gray-300 rounded-2xl p-4 focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+            ></textarea>
+          </div>
+
+          <!-- Answer Matrix -->
+          <div>
+            <div class="flex items-center justify-between mb-4">
+              <h3 class="font-bold text-gray-800">
+                Answer Matrix
+              </h3>
+
+              <button
+                @click="loadAnswersMatrix(selectedItem)"
+                class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs px-4 py-2 rounded-xl"
+              >
+                Load Answers
+              </button>
+            </div>
+
+            <div
+              v-if="answersMatrix[selectedItem?.id]"
+              class="space-y-4"
+            >
+              <div
+                v-for="(qDetails,qId) in answersMatrix[selectedItem.id].questions"
+                :key="qId"
+                class="border rounded-2xl p-4 bg-gray-50"
+              >
+                <div class="flex justify-between items-start gap-4">
+                  <div>
+                    <span class="text-xs font-mono text-gray-400">
+                      QID: {{ qId }}
+                    </span>
+
+                    <h4 class="font-semibold text-gray-800 mt-2">
+                      {{ qDetails.question_text }}
+                    </h4>
+                  </div>
+
+                  <span
+                    class="text-xs px-3 py-1 rounded-full font-semibold"
+                    :class="qDetails.is_correct
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-red-100 text-red-700'"
+                  >
+                    {{ qDetails.is_correct ? 'Correct' : 'Incorrect' }}
+                  </span>
+                </div>
+
+                <div class="mt-4 bg-white rounded-xl p-4 border">
+                  <p class="text-xs uppercase text-gray-400">
+                    Selected Answer
+                  </p>
+
+                  <p class="mt-2 italic text-gray-700">
+                    "{{ qDetails.selected_option_text }}"
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div
+              v-else
+              class="text-sm text-gray-400 italic"
+            >
+              Answers not loaded.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Delete Modal -->
     <delete-confirm-modal
       :visible="deleteModalVisible"
       title="Delete Result"
@@ -297,161 +449,218 @@ import Loading from "@/components/Loading.vue";
 import DeleteConfirmModal from "@/components/DeleteConfirmModal.vue";
 
 export default {
-  components: { Loading, DeleteConfirmModal },
+  components: {
+    Loading,
+    DeleteConfirmModal
+  },
 
   data() {
     return {
+      loading: false,
+
       items: [],
       count: 0,
+
       currentPage: 1,
       pageSize: 10,
+
       searchQuery: "",
-      loading: false,
+
       deleteModalVisible: false,
       deleteId: null,
-      activePanels: {},
+
+      detailsModalVisible: false,
+      selectedItem: null,
+
       answersMatrix: {}
     };
   },
 
   computed: {
-    userRoles() {
-      try {
-        const raw = localStorage.getItem('roles');
-        return raw ? JSON.parse(raw).map(r => (typeof r === 'string' ? r : r.name || '').toLowerCase()) : [];
-      } catch {
-        return [];
-      }
-    },
-    isAdmin() { return this.userRoles.includes('admin'); },
-    isOrganization() { return this.userRoles.includes('organization'); },
-    userId() { return localStorage.getItem('userId'); },
-    organizationId() { return localStorage.getItem('organizationId'); },
+    uniqueTests() {
+      const grouped = {};
+
+      this.items.forEach(item => {
+        if (!grouped[item.test_id]) {
+          grouped[item.test_id] = {
+            id: item.test_id,
+            title: item.Test?.title,
+            testers: []
+          };
+        }
+
+        grouped[item.test_id].testers.push(item);
+      });
+
+      return Object.values(grouped);
+    }
   },
 
   methods: {
     async fetchItems(page = 1) {
       this.loading = true;
+
       this.currentPage = page;
-      const params = { page: 1, page_size: 1000, search: this.searchQuery };
-      
+
       try {
-        const res = await this.$apiGet('/result', params);
-        let allResults = res.data || [];
-        let filteredResults = [];
-        
-        const orgId = parseInt(this.organizationId);
-        const uId = parseInt(this.userId);
-        
-        if (this.isAdmin) {
-          filteredResults = allResults;
-        } else if (this.isOrganization) {
-          filteredResults = allResults.filter(result => result.User && result.User.organization_id === orgId);
-        } else {
-          filteredResults = allResults.filter(result => result.user_id === uId || result.User?.id === uId);
-        }
-        
-        this.count = filteredResults.length;
-        const startIndex = (this.currentPage - 1) * this.pageSize;
-        this.items = filteredResults.slice(startIndex, startIndex + this.pageSize);
-        
-      } catch (e) {
-        console.error(e);
+        const params = {
+          page,
+          page_size: this.pageSize,
+          search: this.searchQuery
+        };
+
+        const res = await this.$apiGet("/result", params);
+
+        this.items = res.data || [];
+        this.count = res.count || 0;
+
+      } catch (error) {
+        console.error(error);
+
         this.items = [];
         this.count = 0;
+
       } finally {
         this.loading = false;
       }
     },
 
-    async lazyLoadMatrixToggle(item, panelSelection) {
-      const resultId = item.id;
+    calculateAverageScore(testers) {
+      if (!testers.length) return 0;
 
-      if (this.activePanels[resultId] === panelSelection) {
-        delete this.activePanels[resultId];
-        return;
-      }
+      const total = testers.reduce((sum,item) => {
+        return sum + Number(item.score || 0);
+      },0);
 
-      if (panelSelection === 'answers' && !this.answersMatrix[resultId]) {
-        this.loading = true;
-        try {
-          const res = await this.$apiGet(`/result/user/${item.user_id}/test/${item.test_id}/answers-matrix`);
-          if (res && res.success) {
-            this.answersMatrix[resultId] = res;
-          }
-        } catch (error) {
-          console.error('Failed to construct data retrieval loop sequence map:', error);
-          this.$root.$refs.toast?.showToast('Error downloading assessment matrix structural records.', 'error');
-        } finally {
-          this.loading = false;
+      return Math.round(total / testers.length);
+    },
+
+    openDetailsModal(item) {
+      this.selectedItem = JSON.parse(JSON.stringify(item));
+      this.detailsModalVisible = true;
+    },
+
+    async loadAnswersMatrix(item) {
+      if (this.answersMatrix[item.id]) return;
+
+      this.loading = true;
+
+      try {
+        const res = await this.$apiGet(
+          `/result/user/${item.user_id}/test/${item.test_id}/answers-matrix`
+        );
+
+        if (res.success) {
+          this.$set(this.answersMatrix, item.id, res);
         }
-      }
 
-      this.activePanels[resultId] = panelSelection;
+      } catch (error) {
+        console.error(error);
+
+      } finally {
+        this.loading = false;
+      }
     },
 
     async updateRecommendations(item) {
       this.loading = true;
+
       try {
-        const payload = { recommendations: item.recommendations };
-        await this.$apiPut(`/result/${item.id}`, '', payload);
-        this.$root.$refs.toast?.showToast('Recommendations update saved.', 'success');
-      } catch (e) {
-        console.error(e);
-        this.$root.$refs.toast?.showToast('Failed to update recommendation details.', 'error');
+        await this.$apiPut(
+          `/result/${item.id}`,
+          "",
+          {
+            recommendations: item.recommendations
+          }
+        );
+
+        this.$root.$refs.toast?.showToast(
+          "Recommendations updated.",
+          "success"
+        );
+
+      } catch (error) {
+        console.error(error);
+
       } finally {
         this.loading = false;
       }
     },
 
-    async confirmResultMatrixWorkflow(item) {
+    async confirmResult(item) {
       this.loading = true;
-      const submissionPayload = {
-        status: 'confirmed',
-        recommendations: item.recommendations,
-        test_id: item.test_id
-      };
 
       try {
-        await this.$apiPut(`/result/${item.id}/status`, '', submissionPayload);
-        this.$root.$refs.toast?.showToast('Calculations mapped successfully.', 'success');
-        delete this.activePanels[item.id];
+        await this.$apiPut(
+          `/result/${item.id}/status`,
+          "",
+          {
+            status: "confirmed",
+            recommendations: item.recommendations,
+            test_id: item.test_id
+          }
+        );
+
+        this.$root.$refs.toast?.showToast(
+          "Result confirmed.",
+          "success"
+        );
+
         this.fetchItems(this.currentPage);
-      } catch (e) {
-        console.error('Execution pipeline verification issue:', e);
-        this.$root.$refs.toast?.showToast('Failed to lock data array state configurations downstream.', 'error');
+
+      } catch (error) {
+        console.error(error);
+
       } finally {
         this.loading = false;
       }
     },
 
-    openDeleteModal(id) { this.deleteId = id; this.deleteModalVisible = true; },
+    openDeleteModal(id) {
+      this.deleteId = id;
+      this.deleteModalVisible = true;
+    },
 
     async confirmDelete() {
-      const res = await this.$apiDelete('/result', this.deleteId);
-      if (res) this.$root.$refs.toast.showToast('Result deleted successfully', 'success');
-      this.deleteModalVisible = false;
-      this.fetchItems(this.currentPage);
+      try {
+        await this.$apiDelete("/result", this.deleteId);
+
+        this.$root.$refs.toast?.showToast(
+          "Result deleted successfully.",
+          "success"
+        );
+
+        this.fetchItems(this.currentPage);
+
+      } catch (error) {
+        console.error(error);
+
+      } finally {
+        this.deleteModalVisible = false;
+      }
     },
 
     scoreBadge(score) {
-      if (score === null || score === undefined) return 'px-2 py-0.5 rounded text-gray-400 bg-gray-100 text-xs font-medium';
-      if (score >= 80) return 'px-2 py-0.5 rounded text-green-700 bg-green-100 text-xs font-medium';
-      if (score >= 60) return 'px-2 py-0.5 rounded text-amber-700 bg-amber-100 text-xs font-medium';
-      return 'px-2 py-0.5 rounded text-red-700 bg-red-100 text-xs font-medium';
+      if (score >= 80) {
+        return "bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-bold";
+      }
+
+      if (score >= 60) {
+        return "bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-bold";
+      }
+
+      return "bg-red-100 text-red-700 px-3 py-1 rounded-full text-xs font-bold";
     },
 
     statusBadge(status) {
-      if (status === 'confirmed') return 'px-2 py-0.5 rounded-full text-green-700 bg-green-100 text-xs font-semibold';
-      return 'px-2 py-0.5 rounded-full text-amber-700 bg-amber-100 text-xs font-semibold';
-    },
-
-    formatDate(date) {
-      if (!date) return '—';
-      return new Date(date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
-    },
+      return status === "confirmed"
+        ? "bg-green-100 text-green-700 px-3 py-1 rounded-full text-xs font-semibold uppercase"
+        : "bg-amber-100 text-amber-700 px-3 py-1 rounded-full text-xs font-semibold uppercase";
+    }
   },
 
-  mounted() { this.fetchItems(); },
+  mounted() {
+    this.fetchItems();
+  }
 };
 </script>

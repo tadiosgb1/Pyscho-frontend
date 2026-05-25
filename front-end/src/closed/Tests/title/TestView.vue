@@ -115,6 +115,9 @@
                   <i class="fas fa-tasks"></i>
                 </button>
                 <template v-if="isAdmin || isOrganization">
+                  <button @click="openAssignModal(item)" title="Assign Test" class="text-amber-500 hover:text-amber-700">
+                    <i class="fas fa-user-plus"></i>
+                  </button>
                   <button @click="openAddQuestionModal(item.id)" title="Add Question" class="text-green-600 hover:text-green-800">
                     <i class="fas fa-plus-circle"></i>
                   </button>
